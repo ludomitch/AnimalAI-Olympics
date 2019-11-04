@@ -77,8 +77,9 @@ class ArenaConfig(yaml.YAMLObject):
         out = json.loads(out)
         json.dump(out, open(json_path, 'w'), indent=4)
 
-    def dict_to_arena_config(self) -> UnityRLResetInput:
+    def dict_to_arena_config(self, seed=-1) -> UnityRLResetInput:
         config_out = UnityRLResetInput()
+        config_out.seed = seed
 
         for k in self.arenas:
             config_out.arenas[k].CopyFrom(ArenaParametersProto())

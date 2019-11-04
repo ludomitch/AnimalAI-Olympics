@@ -241,7 +241,7 @@ class UnityEnvironment(object):
         Number of Training Brains : {2}'''.format(self._academy_name, str(self._num_brains),
                                                   str(self._num_external_brains))
 
-    def reset(self, arenas_configurations=None, train_mode=True) -> AllBrainInfo:
+    def reset(self, arenas_configurations=None, train_mode=True, seed=-1) -> AllBrainInfo:
         """
         Sends a signal to reset the unity environment.
         :return: AllBrainInfo  : A data structure corresponding to the initial reset state of the environment.
@@ -250,7 +250,7 @@ class UnityEnvironment(object):
             self.arenas_configurations.update(arenas_configurations)
 
             outputs = self.communicator.exchange(
-                self._generate_reset_input(train_mode, arenas_configurations)
+                self._generate_reset_input(train_mode, arenas_configurations, seed)
             )
             if outputs is None:
                 raise KeyboardInterrupt
@@ -483,13 +483,13 @@ class UnityEnvironment(object):
                 rl_in.command = 0
         return self.wrap_unity_input(rl_in)
 
-    def _generate_reset_input(self, training, config: ArenaConfig) -> UnityRLInput:
+    def _generate_reset_input(self, training, config: ArenaConfig, seed: int) -> UnityRLInput:
         rl_in = UnityRLInput()
         rl_in.is_training = training
         rl_in.command = 1
         rl_reset = UnityRLResetInput()
         if (config is not None):
-            rl_reset.CopyFrom(config.dict_to_arena_config())
+            rl_reset.CopyFrom(config.dict_to_arena_config(seed))
         result = UnityInput()
         result.rl_input.CopyFrom(rl_in)
         result.rl_reset_input.CopyFrom(rl_reset)

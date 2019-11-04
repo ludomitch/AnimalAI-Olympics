@@ -141,13 +141,13 @@ class AnimalAIEnv(gym.Env):
                                       shape=(self._n_agents, brain.vector_observation_space_size))
             self._observation_space = spaces.Tuple((image_space, vector_space))
 
-    def reset(self, arenas_configurations=None):
+    def reset(self, arenas_configurations=None, seed=-1):
         """Resets the state of the environment and returns an initial observation.
         In the case of multi-agent environments, this is a list.
         Returns: observation (object/list): the initial observation of the
             space.
         """
-        info = self._env.reset(arenas_configurations=arenas_configurations)[self.brain_name]
+        info = self._env.reset(arenas_configurations=arenas_configurations, seed=seed)[self.brain_name]
         n_agents = len(info.agents)
         self._check_agents(n_agents)
         self.game_over = False

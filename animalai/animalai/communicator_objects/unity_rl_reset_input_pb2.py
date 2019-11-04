@@ -21,7 +21,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='communicator_objects',
   syntax='proto3',
   serialized_options=_b('\252\002\034MLAgents.CommunicatorObjects'),
-  serialized_pb=_b('\n8animalai/communicator_objects/unity_rl_reset_input.proto\x12\x14\x63ommunicator_objects\x1a:animalai/communicator_objects/arena_parameters_proto.proto\"\xb3\x01\n\x11UnityRLResetInput\x12\x43\n\x06\x61renas\x18\x01 \x03(\x0b\x32\x33.communicator_objects.UnityRLResetInput.ArenasEntry\x1aY\n\x0b\x41renasEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\x39\n\x05value\x18\x02 \x01(\x0b\x32*.communicator_objects.ArenaParametersProto:\x02\x38\x01\x42\x1f\xaa\x02\x1cMLAgents.CommunicatorObjectsb\x06proto3')
+  serialized_pb=_b('\n8animalai/communicator_objects/unity_rl_reset_input.proto\x12\x14\x63ommunicator_objects\x1a:animalai/communicator_objects/arena_parameters_proto.proto\"\xc1\x01\n\x11UnityRLResetInput\x12\x43\n\x06\x61renas\x18\x01 \x03(\x0b\x32\x33.communicator_objects.UnityRLResetInput.ArenasEntry\x12\x0c\n\x04seed\x18\x02 \x01(\x05\x1aY\n\x0b\x41renasEntry\x12\x0b\n\x03key\x18\x01 \x01(\x05\x12\x39\n\x05value\x18\x02 \x01(\x0b\x32*.communicator_objects.ArenaParametersProto:\x02\x38\x01\x42\x1f\xaa\x02\x1cMLAgents.CommunicatorObjectsb\x06proto3')
   ,
   dependencies=[animalai_dot_communicator__objects_dot_arena__parameters__proto__pb2.DESCRIPTOR,])
 
@@ -61,8 +61,8 @@ _UNITYRLRESETINPUT_ARENASENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=233,
-  serialized_end=322,
+  serialized_start=247,
+  serialized_end=336,
 )
 
 _UNITYRLRESETINPUT = _descriptor.Descriptor(
@@ -79,6 +79,13 @@ _UNITYRLRESETINPUT = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='seed', full_name='communicator_objects.UnityRLResetInput.seed', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -92,7 +99,7 @@ _UNITYRLRESETINPUT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=143,
-  serialized_end=322,
+  serialized_end=336,
 )
 
 _UNITYRLRESETINPUT_ARENASENTRY.fields_by_name['value'].message_type = animalai_dot_communicator__objects_dot_arena__parameters__proto__pb2._ARENAPARAMETERSPROTO

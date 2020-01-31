@@ -1,15 +1,18 @@
 # Animal-AI Olympics
 
 ## The competition is now over
-Final ranking will be computed on a larger test set, the final results will be communicated soon!
+
+Congratulations to our winners!
+
+1st: Trrrrr
+2nd: ironbar
+3rd: sirius
+
+Results [here](http://animalaiolympics.com)
+
+Full paper, release of testing configurations, results analsysis and write-up and WBA prize announcment to come.
+
 We will also reopen submissions in the coming days in order to allow you to keep working on the Animal-AI Olympics until we disclose the test sets, these new submissions will not count as part of the competition.
-
-## ~~Final Submission Guidelines~~
-~~[Find the details here](https://github.com/beyretb/AnimalAI-Olympics/blob/master/documentation/final_submission.md)~~
-
-## ~~Note for WBA Prize Submissions~~
-
-  ~~-> WBA Submission deatils are available [here](https://www.easychair.org/cfp/AAI2019WBA). Deadline November 1st.~~
 
 <p align="center">
   <img height="300" src="documentation/PrefabsPictures/steampunkFOURcrop.png">

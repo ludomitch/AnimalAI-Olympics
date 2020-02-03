@@ -19,12 +19,12 @@ setup(
     zip_safe=False,
 
     install_requires=[
-        'Pillow>=4.2.1,<=5.4.1',
-        'numpy>=1.13.3,<=1.14.5',
-        'protobuf>=3.6,<3.7',
-        'grpcio>=1.11.0,<1.12.0',
-        'pyyaml>=5.1',
-        'jsonpickle>=1.2',
+        'Pillow', #>=6.2.0',
+        'numpy', #>=1.13.3,<=1.14.5',
+        'protobuf', #>=3.6,<3.7',
+        'grpcio', #>=1.11.0,<1.12.0',
+        'pyyaml', #>=5.1',
+        'jsonpickle', #>=1.2',
         'gym'],
-    python_requires=">=3.5,<3.8",
+    python_requires=">=3.5", #,<3.8",
 )

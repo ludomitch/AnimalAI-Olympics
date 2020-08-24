@@ -22,24 +22,25 @@ arenas:
       - !Vector3 {x: 20, y: .5, z: 1}
       rotations: [0]
     - !Item
-      name: CylinderTunnel
+      name: Wall
       positions:
-      - !Vector3 {x: 30, y: 0, z: 20}
+      - !Vector3 {x: 10, y: 0, z: 20}
       sizes:
-      - !Vector3 {x: 5, y: 5, z: 5}
-      rotations: [83]
+      - !Vector3 {x: 10, y: 2, z: .5}
+      rotations: [135]
       colors:
       - !RGB {r: 153, g: 153, b: 153}
     - !Item
       name: GoodGoal
       positions: 
-      - !Vector3 {x: 30, y: 0, z: 20}
+      - !Vector3 {x: 10, y: 0, z: 24}
       sizes:
       - !Vector3 {x: 1, y: 1, z: 1}
     - !Item
-      name: CylinderTunnelTransparent
+      name: Wall
       positions:
-      - !Vector3 {x: 10, y: 0, z: 20}
+      - !Vector3 {x: 30, y: 0, z: 20}
       sizes:
-      - !Vector3 {x: 5, y: 5, z: 5}
-      rotations: [128]
+      - !Vector3 {x: 8, y: 0.1, z: 7}
+      colors:
+      - !RGB {r: 153, g: 153, b: 153}

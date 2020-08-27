@@ -1,5 +1,5 @@
 from animalai.envs.arena_config import ArenaConfig
-from animalai.envs.cvis import ExtractFeatures
+from animalai.envs.cvis_img import ExtractFeatures
 import atexit
 import glob
 import uuid
@@ -60,6 +60,9 @@ from mlagents_envs.side_channel.side_channel import (
     OutgoingMessage,
 )
 from mlagents_envs.side_channel.raw_bytes_channel import RawBytesChannel
+
+from PIL import Image
+import io
 
 logger = logging.getLogger("mlagents_envs")
 
@@ -310,7 +313,7 @@ class UnityEnvironment(BaseEnv):
                     shell=True,
                 )
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='gtg'):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual'):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
         agent_infos = rl_output.agentInfos
@@ -321,22 +324,46 @@ class UnityEnvironment(BaseEnv):
             # 1) Change vector observations to desired size
             vector_obs = agent_obs[1]
             vector_obs.shape.remove(2)
-            if mode == 'gtg':
-                vector_obs.shape.extend([6])
-            elif mode == 'octx':
-                vector_obs.shape.extend([10])
-            else:
-                raise Exception(f"Mode {mode} not supported")
-            # 2) Extract image in bytes and then remove visual observations
-            img = agent_obs[0].compressed_data
-            if self.debug:
-                self.img = img
-            # self.img = img
-            del agent_obs[0]
+            if mode != 'dual':
+                if mode == 'gtg':
+                    vector_obs.shape.extend([6])
+                elif mode == 'octx':
+                    vector_obs.shape.extend([10])
+                else:
+                    raise Exception(f"Mode {mode} not supported")
 
-            #3) Run CV and retrieve bounding boxes as a list
-            res = self.ef.run(img, mode)
-            vector_obs.float_data.data.extend(res)
+                # 2) Extract image in bytes and then remove visual observations
+                img = agent_obs[0].compressed_data
+                if self.debug:
+                    self.img = img
+                # self.img = img
+                del agent_obs[0]
+
+                #3) Run CV and retrieve bounding boxes as a list
+                res = self.ef.run(img, mode)
+                vector_obs.float_data.data.extend(res)
+            else:
+                # Single bbox, 2vel + 4 box
+                vector_obs.shape.extend([6])
+
+                # 2) Extract image in bytes and then remove visual observations
+                img = agent_obs[0].compressed_data
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(3)
+                agent_obs[0].shape.extend([84,84,1])
+                #3) Run CV and retrieve bounding boxes as a list
+                mask_img, bbox = self.ef.run_dual(img, mode)
+
+
+                # Convert img to bytes
+                byteImgIO = io.BytesIO()
+                byteImg = Image.fromarray(mask_img.astype(np.uint8))
+                byteImg.save(byteImgIO, "PNG")
+                byteImgIO.seek(0)
+                byteImg = byteImgIO.read()
+                vector_obs.float_data.data.extend(bbox)
+                agent_obs[0].compressed_data = byteImg
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:
         init_output = output.rl_initialization_output

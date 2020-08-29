@@ -1,0 +1,23 @@
+!ArenaConfig
+    arenas:
+      -1: !Arena
+        items:
+        - !Item
+          name: Agent
+          positions:
+          - !Vector3 {x: 19, y: 0, z: 1}
+          rotations: [348]
+        - !Item
+          name: DeathZone
+          positions:
+          - !Vector3 {x: 11, y: 0, z: 11.0}
+          sizes:
+          - !Vector3 {x: 8, y: 0, z: 8}
+        - !Item
+          name: GoodGoal
+          positions:
+          - !Vector3 {x: 11, y: 0, z: 17}
+          sizes:
+          - !Vector3 {x: 3, y: 3, z: 3}
+        pass_mark: 0
+        t: 250

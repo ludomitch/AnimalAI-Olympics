@@ -324,7 +324,7 @@ class UnityEnvironment(BaseEnv):
                 agent_name].value[agent].observations
             # 1) Change vector observations to desired size
             vector_obs = agent_obs[1]
-            vector_obs.shape.remove(2)
+
             if mode != 'dual':
                 if mode == 'gtg':
                     vector_obs.shape.extend([6])
@@ -345,7 +345,15 @@ class UnityEnvironment(BaseEnv):
                 vector_obs.float_data.data.extend(res)
             else:
                 # Single bbox, 2vel + 4 box
+                vector_obs.shape.remove(3)
                 vector_obs.shape.extend([6])
+
+                vel_vector = list(vector_obs.float_data.data)
+                vel_vector = [vel_vector[0]/5.81, vel_vector[2]/11.6]
+
+                del vector_obs.float_data.data[0]
+                del vector_obs.float_data.data[0]
+                del vector_obs.float_data.data[0]
 
                 # 2) Extract image in bytes and then remove visual observations
                 img = agent_obs[0].compressed_data
@@ -353,8 +361,10 @@ class UnityEnvironment(BaseEnv):
                 agent_obs[0].shape.remove(84)
                 agent_obs[0].shape.remove(3)
                 agent_obs[0].shape.extend([84,84,1])
+
                 #3) Run CV and retrieve bounding boxes as a list
                 mask_img, bbox = self.ef.run_dual(img, mode)
+                vector_obs.float_data.data.extend(vel_vector + bbox)
 
 
                 # plt.imshow(mask_img)
@@ -373,7 +383,7 @@ class UnityEnvironment(BaseEnv):
                 byteImg.save(byteImgIO, "PNG")
                 byteImgIO.seek(0)
                 byteImg = byteImgIO.read()
-                vector_obs.float_data.data.extend(bbox)
+                # vector_obs.float_data.data.extend(bbox)
                 agent_obs[0].compressed_data = byteImg
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:

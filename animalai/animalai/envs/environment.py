@@ -184,7 +184,7 @@ class UnityEnvironment(BaseEnv):
         self._is_first_message = True
         self.alter_obs = alter_obs
         self._update_group_specs(aca_output)
-        self.ef = ExtractFeatures()
+        self.ef = ExtractFeatures(display=False)
         self.debug=False
 
     @staticmethod
@@ -316,6 +316,7 @@ class UnityEnvironment(BaseEnv):
     def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual'):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
+
         agent_infos = rl_output.agentInfos
         for agent in range(0, len(agent_infos[
             agent_name].value)):
@@ -355,6 +356,16 @@ class UnityEnvironment(BaseEnv):
                 #3) Run CV and retrieve bounding boxes as a list
                 mask_img, bbox = self.ef.run_dual(img, mode)
 
+
+                # plt.imshow(mask_img)
+                # plt.savefig('/Users/ludo/Desktop/before.png',bbox_inches='tight',transparent=True, pad_inches=0)
+                # print(mask_img.shape)
+                # s = np.mean(mask_img, axis=2)
+                # print(s.shape)
+                # plt.imshow(mask_img)
+                # plt.savefig('/Users/ludo/Desktop/after.png',bbox_inches='tight',transparent=True, pad_inches=0)
+                # s = np.reshape(s, [s.shape[0], s.shape[1], 1])
+                # print(s.shape)
 
                 # Convert img to bytes
                 byteImgIO = io.BytesIO()

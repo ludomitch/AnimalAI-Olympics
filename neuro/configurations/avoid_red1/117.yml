@@ -10,19 +10,19 @@
         - !Item
           name: DeathZone
           positions:
-          - !Vector3 {x: 15, y: 0, z: 8.0}
+          - !Vector3 {x: 15, y: 0, z: 12.0}
           sizes:
           - !Vector3 {x: 12, y: 0, z: 12}
         - !Item
           name: DeathZone
           positions:
-          - !Vector3 {x: 10, y: 0, z: 8.0}
+          - !Vector3 {x: 10, y: 0, z: 12.0}
           sizes:
           - !Vector3 {x: 12, y: 0, z: 12}
         - !Item
           name: GoodGoal
           positions:
-          - !Vector3 {x: 15, y: 0, z: 16}
+          - !Vector3 {x: 15, y: 0, z: 20}
           sizes:
           - !Vector3 {x: 2, y: 2, z: 2}
         pass_mark: 0

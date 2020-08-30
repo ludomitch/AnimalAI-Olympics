@@ -5,24 +5,27 @@
         - !Item
           name: Agent
           positions:
-          - !Vector3 {x: 28, y: 0, z: 1}
-          rotations: [1]
+          - !Vector3 {x: 20, y: 0, z: 5}
+          rotations: [3]
         - !Item
           name: DeathZone
           positions:
-          - !Vector3 {x: 29, y: 0, z: 6.0}
+          - !Vector3 {x: 16, y: 0, z: 11}
           sizes:
-          - !Vector3 {x: 8, y: 0, z: 8}
+          - !Vector3 {x: 6, y: 0, z: 20}
+          rotations: [0]
         - !Item
           name: DeathZone
           positions:
-          - !Vector3 {x: 34, y: 0, z: 6.0}
+          - !Vector3 {x: 24, y: 0, z: 11}
           sizes:
-          - !Vector3 {x: 8, y: 0, z: 8}
+          - !Vector3 {x: 6, y: 0, z: 20}
+          rotations: [0]
+
         - !Item
           name: GoodGoal
           positions:
-          - !Vector3 {x: 29, y: 0, z: 12}
+          - !Vector3 {x: 25, y: 0, z: 25}
           sizes:
           - !Vector3 {x: 1, y: 1, z: 1}
         pass_mark: 0

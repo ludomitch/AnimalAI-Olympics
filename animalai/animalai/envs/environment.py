@@ -181,7 +181,8 @@ class UnityEnvironment(BaseEnv):
         self._is_first_message = True
         self.alter_obs = alter_obs
         self._update_group_specs(aca_output)
-        self.ef = ExtractFeatures()
+        self.ef = ExtractFeatures(display=False)
+        self.debug=False
 
     @staticmethod
     def get_communicator(worker_id, base_port, timeout_wait):
@@ -308,7 +309,8 @@ class UnityEnvironment(BaseEnv):
                     stderr=subprocess.PIPE,
                     shell=True,
                 )
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0'):
+
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='gtg'):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
         agent_infos = rl_output.agentInfos
@@ -318,15 +320,28 @@ class UnityEnvironment(BaseEnv):
                 agent_name].value[agent].observations
             # 1) Change vector observations to desired size
             vector_obs = agent_obs[1]
-            vector_obs.shape.remove(2)
-            vector_obs.shape.extend([6])
+            vector_obs.shape.remove(3)
+            if mode == 'gtg':
+                vector_obs.shape.extend([6])
+            elif mode == 'octx':
+                vector_obs.shape.extend([10])
+            else:
+                raise Exception(f"Mode {mode} not supported")
             # 2) Extract image in bytes and then remove visual observations
             img = agent_obs[0].compressed_data
+            if self.debug:
+                self.img = img
+            # self.img = img
             del agent_obs[0]
 
             #3) Run CV and retrieve bounding boxes as a list
-            res = self.ef.run(img)
-            vector_obs.float_data.data.extend(res[0])
+            res = self.ef.run(img, mode)
+            vel_vector = list(vector_obs.float_data.data)
+            vel_vector = [vel_vector[0]/5.81, vel_vector[2]/11.6]
+            del vector_obs.float_data.data[0]
+            del vector_obs.float_data.data[0]
+            del vector_obs.float_data.data[0]
+            vector_obs.float_data.data.extend(vel_vector + res)
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:
         init_output = output.rl_initialization_output

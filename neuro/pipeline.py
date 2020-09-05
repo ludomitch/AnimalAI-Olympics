@@ -236,8 +236,8 @@ class Pipeline:
         self.bk = ""
         self.gg_id = 0
         env_path = args.env
-        worker_id = 1
-        seed = 1
+        worker_id = 0
+        seed = 0
         arena_path = args.arena_config
         ac = ArenaConfig(arena_path)
         # Load Unity environment based on config file with Gym or ML agents wrapper
@@ -248,6 +248,7 @@ class Pipeline:
             arenas_configurations=ac,
             seed=seed,
             grayscale=False,
+            inference=True
         )
     @staticmethod
     def visible(df):

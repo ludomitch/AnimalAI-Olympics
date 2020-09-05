@@ -1,0 +1,8 @@
+animalai==2.0.0
+animalai-train==2.0.0
+clyngor==0.3.31
+matplotlib==3.2.1
+opencv-python==4.3.0.36
+pandas==1.0.4
+tensorboard==1.15.0
+tensorflow>=1.7,<2.0 

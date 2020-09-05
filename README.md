@@ -1,3 +1,11 @@
+# Detect, Understand, Act: Neuro-Symbolic Hierarchical Reinforcement Learning
+
+This is the main repository for the novel DUA system. It is a fork of the main AnimalAI branch and contains the modifications necessary for DUA to function. Modifications to the original AnimalAI code are found in `/animalai`, `/animalai_train` and `ml-agents-envs`.
+
+For all DUA specific code please refer to the `/neuro` directory which contains the implementation of the whole system. It also contains its own Readme.md describing the various modules.
+
+
+
 # Animal-AI 2.0.0
 
 <p align="center">
@@ -138,5 +146,9 @@ For earlier versions see [here](documentation/versions.md)
 ## USEFUL COMMANDS
 screen -S jupyter-ludo -m jupyter notebook --no-browser --port=8889
 pkill -9 -u `id -u ludovico`
-tensorboard --port 6606
-ssh - L 6606:localhost:6606 ludovico@neuroanimal.doc.ic.ac.uk
+tensorboard --logdir summaries --port 6606 &
+python3 train.py -e bb2  -cc curriculum4 -r octxbb2 -ne 4 -na 8
+tensorboard --port 6606 &
+ssh -L 6606:localhost:6606 ludovico@neuroanimal.doc.ic.ac.uk
+ssh -L 6606:localhost:6606 ludovico@neurobeast.doc.ic.ac.uk
+pkill -9 -f bb2

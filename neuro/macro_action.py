@@ -10,7 +10,7 @@ import time
 import cv2
 goal_visible = Grounder().goal_visible # Func
 
-test=True
+test=False
 class RollingChecks:
     @staticmethod
     def visible(state, obj_id):
@@ -290,8 +290,8 @@ class MacroAction:
                 left = [i for i in count if i[0][0]<0.5]
                 right = [i for i in count if i[0][0]>0.5]
                 if len(left) > len(right):
-                    # print("More on left")
-                    self.action_args = [left[0][3]]
+                    print("More on left")
+                    self.action_args = [left[1][3]]
                 elif len(left)==len(right):
                     size_left = sum([i[2] for i in left])
                     size_right  = sum([i[2] for i in right])
@@ -302,7 +302,7 @@ class MacroAction:
                         # print('bigger right')
                         self.action_args = [right[0][3]]
                 else:
-                    # print("more on right")
+                    print("more on right")
                     self.action_args = [right[0][3]]
 
 
@@ -319,7 +319,7 @@ class MacroAction:
                 monitor_sight.append(any(vector_obs[2:]))
             action = self.get_action(vector_obs)
             self.step_results = self.env.step(action)
-            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'], self.action)
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             go, stats = self.checks_clean()

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 import cv2
 import numpy as np
-
+import os
 
 class HSV:
 	"""Color lower and upper bounds in HSV format"""
@@ -27,6 +27,14 @@ objects['goal1'] = hsv_cls.orange
 objects['red'] = hsv_cls.red
 objects['wall'] = hsv_cls.grey
 objects['platform'] = hsv_cls.blue
+fpath = "/Users/ludo/Desktop/demo_vids/numerosity-fail/"
+clr_map = {
+	'goal': (245,191,66), # light blue
+	'goal1': (245,191,66), # light blue
+	'wall': (28,27,26), # black
+	'platform': (21,41,153), # bordeaux
+
+}
 class ExtractFeatures:
 	
 	def __init__(self, display=True, training=True):
@@ -35,6 +43,7 @@ class ExtractFeatures:
 		self.img_dim = None
 		self.display = display
 		self.training = training
+		self.cnter = 0
 
 	def mask_img(self, hsv):
 		mask = cv2.inRange(self.hsv_img, hsv[0], hsv[1])
@@ -60,8 +69,8 @@ class ExtractFeatures:
 			# print(x,y,w,h)
 			# print(x,y, x+w, y+h)
 			if self.display:
-				color = (0,255,0) if obj=='platform' else (255,0,0)
-				cv2.rectangle(self.img,(x,y),(x+w-2,y+h-2),color,1)
+				color = clr_map[obj]
+				cv2.rectangle(self.img,(x,y),(x+w-1,y+h-1),color,2)
 			# Normalize bbox to be between 0 and 1
 			res.append([
 				x/self.img_dim[0], y/self.img_dim[1],
@@ -100,9 +109,9 @@ class ExtractFeatures:
 		features = [item for sublist in features for item in sublist]
 		return masked_img, features
 
-	def run(self, img, step=None, mode='dual'):
+	def run(self, img, step=None, mode='dual', macro_action=None):
 		if not self.training:
-			return self.run_test(img, step)
+			return self.run_test(img, step, macro_action)
 
 		img = np.ascontiguousarray(
 			cv2.imdecode(np.frombuffer(img, np.uint8), -1))
@@ -132,8 +141,9 @@ class ExtractFeatures:
 		features = [item for sublist in features for item in sublist]
 		return features
 
-	def run_test(self, img, step=None):
+	def run_test(self, img, step=None, macro_action=None):
 		"""Returns list of tuples"""
+		# print(macro_action)
 		self.img = (img*255)[:,:,::-1].astype(np.uint8)
 		self.hsv_img = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
 		self.img_dim = self.img.shape
@@ -148,12 +158,17 @@ class ExtractFeatures:
 			# 	print(box[2], box[3])
 			for box in coords:
 				occluding_area = round(box[2]*box[3]*1000)
-				if (obj_type=='wall')&(occluding_area<0.5):#|(box[2]<0.05):
+				if (obj_type=='wall')&(occluding_area<0.05):#|(box[2]<0.05):
 					# print('skipping')
 					continue
 				# if obj_type=='wall':
 				features[obj_type] += [(box, obj_type, occluding_area)]
 		if self.display:
-			cv2.imwrite(f"/Users/ludo/Desktop/ba.png", self.img)
+			# if step is None:
+			# if os.path.exists(f"{fpath}/{macro_action}{c}-{step}.png"):
+			# 	cv2.imwrite(f"{fpath}/{macro_action}{c+1}-{step}.png", self.img)
+			# else:
+			cv2.imwrite(f"{fpath}/{self.cnter}{macro_action}-{step}.png", self.img)
+			self.cnter+=1
 		return features
 

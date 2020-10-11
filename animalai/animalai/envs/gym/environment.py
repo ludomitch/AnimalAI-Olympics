@@ -94,7 +94,7 @@ class AnimalAIGym(UnityEnv):
         #     )
         self.use_visual = self._get_n_vis_obs() >= 1
         self.uint8_visual = uint8_visual
-
+        self.resolution = resolution
         # Check for number of agents in scene.
         self._env.reset()
         step_result = self._env.get_step_result(self.brain_name)

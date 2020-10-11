@@ -9,7 +9,7 @@ object_types = {
     'goal':0, 'goal1':30, 'wall':10, 'platform':20, 'red':40
 }
 
-ef = ExtractFeatures(display=False, training=False)
+ef = ExtractFeatures(display=True, training=False)
 
 def load_pb(path_to_pb):
     with tf.gfile.GFile(path_to_pb, "rb") as f:
@@ -26,11 +26,12 @@ def dual_process(visual_obs):
     res = ef.run_dual(visual_obs)
     return res
 
-def preprocess(ct, step_results, step, reward):
+def preprocess(ct, step_results, step, reward, macro_action=None):
+    # print(macro_action)
     visual_obs = step_results[3]["batched_step_result"].obs[0][0] # last 0 idx bc batched
     vector_obs = step_results[3]["batched_step_result"].obs[1][0]
     vector_obs = [vector_obs[0]/5.81, vector_obs[2]/11.6]
-    bboxes = ef.run(visual_obs, step)
+    bboxes = ef.run(visual_obs, step, macro_action=macro_action)
     ids = {k:[] for k in object_types}
     for ot,  ct_i in ct.items():
         converted_boxes = [convert(i[0]) for i in bboxes[ot]]

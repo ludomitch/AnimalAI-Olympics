@@ -18,7 +18,7 @@ class Pipeline:
         worker_id = 1
         seed = args.seed
         self.arenas = args.arena_config
-        self.buffer_size = 10
+        self.buffer_size = 30
         first_arena = self.arenas[0] if self.arenas is not None else None
 
         # ac = ArenaConfig(arena_path)
@@ -49,7 +49,7 @@ class Pipeline:
         )
         return res
 
-    def take_macro_step(self, env, state, step_results, macro_action, pass_mark):
+    def take_macro_step(self, env, state, step_results, macro_action, pass_mark=0):
         ma = MacroAction(env, self.ct, state, step_results, macro_action)
         # print(f"Initiating macro_action: {macro_action['initiate']}")
         step_results, state, macro_stats, micro_step = ma.run(pass_mark)
@@ -66,10 +66,12 @@ class Pipeline:
         choice = 'random'
         for idx in range(self.args.num_episodes):
             self.env.reset(self.arenas[0])
-            print(f"======Running episode {idx}=====")
+            # print(f"======Running episode {idx}=====")
             step_results = self.env.step([[0, 0]])  # Take 0,0 step
             global_steps = 0
             macro_step = 0
+            reward = 0
+
             self.ct = {ot: CentroidTracker() for ot in object_types} # Initialise tracker
             actions_buffer = []
             observables_buffer = []
@@ -82,7 +84,7 @@ class Pipeline:
                     success = False
                     print("Exceeded max global steps")
                     break
-                state = preprocess(self.ct, step_results, global_steps)
+                state = preprocess(self.ct, step_results, global_steps, reward)
                 macro_action, observables = self.logic.run(
                     macro_step,
                     state,
@@ -110,7 +112,7 @@ class Pipeline:
             self.logic.update_examples(filtered_observables_buffer[-1:], filtered_action_buffer[-1:], success)
 
             nl_success = "Success" if success else "Failure"
-            print(f"Episode was a {nl_success}")
+            # print(f"Episode was a {nl_success}")
             success_count += success
 
         print(

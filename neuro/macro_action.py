@@ -242,7 +242,7 @@ class MacroAction:
         tracker_offset = 0
         for c in range(50):
             self.step_results = self.env.step([[0, 1]])
-            self.state = preprocess(self.ct, self.step_results, self.micro_step)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             self.reward = self.step_results[1]
@@ -253,7 +253,7 @@ class MacroAction:
         for _ in range(3): # add extra 3 rotations to be looking straight at object
             self.step_results = self.env.step([[0, 1]])
             self.reward = self.step_results[1]
-            self.state = preprocess(self.ct, self.step_results, self.micro_step)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
         return self.step_results, self.state, self.macro_stats(

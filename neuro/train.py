@@ -42,7 +42,7 @@ def train(opt):
         train_method = {"arena_config": ArenaConfig(opt.arena_config)}
     else:
         print(f"Using curriculum {opt.curric_config}")
-        train_method = {"curriculum_config": "configurations/{opt.curric_config}"}
+        train_method = {"curriculum_config": f"configurations/{opt.curric_config}"}
     if opt.load_model:
         model_path = f"models/{opt.load_model}"
     run_id = opt.run_id

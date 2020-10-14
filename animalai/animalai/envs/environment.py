@@ -310,7 +310,7 @@ class UnityEnvironment(BaseEnv):
                     shell=True,
                 )
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='gtg'):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='box'):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
         agent_infos = rl_output.agentInfos
@@ -318,10 +318,11 @@ class UnityEnvironment(BaseEnv):
             agent_name].value)):
             agent_obs = agent_infos[
                 agent_name].value[agent].observations
+
             # 1) Change vector observations to desired size
             vector_obs = agent_obs[1]
             vector_obs.shape.remove(3)
-            if mode == 'gtg':
+            if mode == 'box':
                 vector_obs.shape.extend([6])
             elif mode == 'octx':
                 vector_obs.shape.extend([10])
@@ -410,8 +411,19 @@ class UnityEnvironment(BaseEnv):
         if outputs is None:
             raise UnityCommunicationException("Communicator has stopped.")
 
-        self._update_group_specs(outputs)
         rl_output = outputs.rl_output
+
+        # Reward shaping
+        try:
+            name = 'AnimalAI?team=0'
+            forward_bonus = 0.02
+            if self._env_actions[name][0][0]: # Positive reward for going forward
+                reward = rl_output.agentInfos[name].value[0].reward
+                rl_output.agentInfos[name].value[0].reward = reward + forward_bonus
+
+        except IndexError:
+            pass
+        self._update_group_specs(outputs)
         self._update_state(rl_output)
         self._env_actions.clear()
 

@@ -314,7 +314,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual'):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask'):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -329,13 +329,12 @@ class UnityEnvironment(BaseEnv):
             vector_obs = agent_obs[1]
             # 2) Reformat vector obs size
             vector_obs.shape.remove(3)
-            vector_obs.shape.extend([6]) # 2 velocity + 4 bbox
             vel_vector = list(vector_obs.float_data.data)
             vel_vector = [vel_vector[0]/5.81, vel_vector[2]/11.6]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
-            if mode != 'dual':
+            if mode == 'normal':
                 # 3) Extract image in bytes and then remove visual observations
                 img = agent_obs[0].compressed_data
                 if self.debug:
@@ -344,8 +343,28 @@ class UnityEnvironment(BaseEnv):
 
                 #4) Run CV and retrieve bounding boxes as a list
                 res = self.ef.run(img, mode)
+                vector_obs.shape.extend([6]) # 2 velocity + 4 bbox
                 vector_obs.float_data.data.extend(vel_vector + res)
-            else:
+            elif mode == 'mask':
+                # 3) Extract image in bytes and then remove visual observations
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(3)
+                agent_obs[0].shape.extend([84,84,1])
+
+                #4) Run CV and retrieve bounding boxes as a list
+                mask_img, bbox = self.ef.run_mask(img, mode)
+                vector_obs.shape.extend([2]) # 2 velocity
+                vector_obs.float_data.data.extend(vel_vector)
+
+                # 5) Convert img to bytes
+                byteImgIO = io.BytesIO()
+                byteImg = Image.fromarray(mask_img.astype(np.uint8))
+                byteImg.save(byteImgIO, "PNG")
+                byteImgIO.seek(0)
+                byteImg = byteImgIO.read()
+                agent_obs[0].compressed_data = byteImg                
+            else: # dual
                 # 3) Extract image in bytes and then remove visual observations
                 agent_obs[0].shape.remove(84)
                 agent_obs[0].shape.remove(84)
@@ -354,6 +373,7 @@ class UnityEnvironment(BaseEnv):
 
                 #4) Run CV and retrieve bounding boxes as a list
                 mask_img, bbox = self.ef.run_dual(img, mode)
+                vector_obs.shape.extend([6]) # 2 velocity + 4 bbox
                 vector_obs.float_data.data.extend(vel_vector + bbox)
 
 

@@ -23,8 +23,11 @@ class HSV:
 hsv_cls = HSV()
 objects = OD()
 objects['goal'] =  hsv_cls.green
-objects['danger_zone'] = hsv_cls.red
+# objects['danger_zone'] = hsv_cls.red
 # objects['wall'] = hsv_cls.grey
+objects['goal1'] = hsv_cls.orange
+
+mask_clr = 'goal1'
 
 class ExtractFeatures:
 	
@@ -67,6 +70,18 @@ class ExtractFeatures:
 				])
 		return res
 
+
+	def run_mask(self, img, mode='dual'):
+		img = np.ascontiguousarray(
+			cv2.imdecode(np.frombuffer(img, np.uint8), -1))
+		# plt.imshow(img)
+		# img = (img*255)[:,:,::-1].astype(np.uint8)
+		setattr(self, 'img', img)
+		setattr(self, 'hsv_img', cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV))
+		setattr(self, 'img_dim', img.shape)
+		masked_img = self.mask_img(objects["mask_clr"]).astype(np.float64)
+		return masked_img
+
 	def run_dual(self, img, mode='dual'):
 		"""Returns bbox of goal and mask for another colour."""
 		# print(np.frombuffer(img))
@@ -79,7 +94,7 @@ class ExtractFeatures:
 		setattr(self, 'hsv_img', cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV))
 		setattr(self, 'img_dim', img.shape)
 
-		masked_img = self.mask_img(objects["danger_zone"]).astype(np.float64)
+		masked_img = self.mask_img(objects["mask_clr"]).astype(np.float64)
 		ctr, hier = self.get_contour(objects['goal'])
 		features = []
 		if ctr is None:

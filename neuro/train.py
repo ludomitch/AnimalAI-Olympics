@@ -57,7 +57,7 @@ def train(opt):
         n_arenas_per_env=number_of_arenas_per_environment,
         alter_obs=opt.alter_obs,
         load_model=opt.load_model,
-        train_model=True
+        train_model=True,
         **train_method
     )
 

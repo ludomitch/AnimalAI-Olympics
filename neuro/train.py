@@ -10,6 +10,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 from mlagents.trainers.trainer_util import load_config;
 from animalai_train.run_options_aai import RunOptionsAAI;
 from animalai_train.run_training_aai import run_training_aai;
+from animalai.envs.arena_config import ArenaConfig
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -19,6 +20,7 @@ def get_args():
     parser.add_argument('-tc', '--train_config', type=str, default='no_vis_config', help='Prefix of training config file')
     parser.add_argument('-e', '--env_name', type=str, default='aai_no_vis', help='Env prefix name')
     parser.add_argument('-cc', '--curric_config', type=str, default='curriculum1', help='Curriculum prefix name')
+    parser.add_argument('-ac', '--arena_config', type=str, default='arena1', help='Arena prefix name')
     parser.add_argument('-r', '--run_id', type=str, default='run1', help='Curriculum prefix name')
     parser.add_argument('-ne', '--num_envs', type=int, default=1, help='Number of simultaneous envs open')
     parser.add_argument('-na', '--num_arenas', type=int, default=1, help='Number of simultaneous arenas on each env')
@@ -35,7 +37,10 @@ def train(opt):
     with open(trainer_config_path) as f:
         print(f.read())
     environment_path = f"linux_builds/{opt.env_name}.x86_64"
-    curriculum_path = f"configurations/{opt.curric_config}"
+    if opt.curric_config== "curriculum1": # i.e. default
+        train_method = {"arena_config": ArenaConfig(opt.arena_config)}
+    else:
+        train_method = {"curriculum_config": "configurations/{opt.curric_config}"}
     if opt.load_model:
         model_path = f"models/{opt.load_model}"
     run_id = opt.run_id
@@ -49,11 +54,11 @@ def train(opt):
         run_id=run_id,
         base_port=base_port,
         num_envs=number_of_environments,
-        curriculum_config=curriculum_path,
         n_arenas_per_env=number_of_arenas_per_environment,
         alter_obs=opt.alter_obs,
         load_model=opt.load_model,
         train_model=True
+        **train_method
     )
 
     print(

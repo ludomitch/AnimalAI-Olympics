@@ -353,7 +353,7 @@ class UnityEnvironment(BaseEnv):
                 agent_obs[0].shape.extend([84,84,1])
 
                 #4) Run CV and retrieve bounding boxes as a list
-                mask_img, bbox = self.ef.run_mask(img, mode)
+                mask_img = self.ef.run_mask(img, mode)
                 vector_obs.shape.extend([2]) # 2 velocity
                 vector_obs.float_data.data.extend(vel_vector)
 

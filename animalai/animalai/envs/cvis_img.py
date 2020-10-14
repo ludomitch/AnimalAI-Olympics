@@ -18,6 +18,7 @@ class HSV:
 	green = [[33,80,40], [102,255,255]]
 	red = [[0,162,142], [179,203,188]]
 	grey = [[0,0,0], [0,0,224]]
+	orange = [[20,121,158], [23,255,255]]
 	brown = [[7,53,40], [18,87,121]]
 
 hsv_cls = HSV()
@@ -79,7 +80,7 @@ class ExtractFeatures:
 		setattr(self, 'img', img)
 		setattr(self, 'hsv_img', cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV))
 		setattr(self, 'img_dim', img.shape)
-		masked_img = self.mask_img(objects["mask_clr"]).astype(np.float64)
+		masked_img = self.mask_img(objects[mask_clr]).astype(np.float64)
 		return masked_img
 
 	def run_dual(self, img, mode='dual'):
@@ -94,7 +95,7 @@ class ExtractFeatures:
 		setattr(self, 'hsv_img', cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV))
 		setattr(self, 'img_dim', img.shape)
 
-		masked_img = self.mask_img(objects["mask_clr"]).astype(np.float64)
+		masked_img = self.mask_img(objects[mask_clr]).astype(np.float64)
 		ctr, hier = self.get_contour(objects['goal'])
 		features = []
 		if ctr is None:

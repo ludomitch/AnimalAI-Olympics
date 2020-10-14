@@ -38,8 +38,10 @@ def train(opt):
         print(f.read())
     environment_path = f"linux_builds/{opt.env_name}.x86_64"
     if opt.curric_config== "curriculum1": # i.e. default
+        print(f"Using Arena {opt.arena_config}")
         train_method = {"arena_config": ArenaConfig(opt.arena_config)}
     else:
+        print(f"Using curriculum {opt.curric_config}")
         train_method = {"curriculum_config": "configurations/{opt.curric_config}"}
     if opt.load_model:
         model_path = f"models/{opt.load_model}"

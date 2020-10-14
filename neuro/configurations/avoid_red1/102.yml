@@ -1,0 +1,29 @@
+!ArenaConfig
+    arenas:
+      -1: !Arena
+        items:
+        - !Item
+          name: Agent
+          positions:
+          - !Vector3 {x: 18, y: 0, z: 4}
+          rotations: [352]
+        - !Item
+          name: BadGoal
+          positions:
+          - !Vector3 {x: 13, y: 0, z: 12.0}
+          sizes:
+          - !Vector3 {x: 10, y: 0, z: 10}
+        - !Item
+          name: BadGoal
+          positions:
+          - !Vector3 {x: 8, y: 0, z: 12.0}
+          sizes:
+          - !Vector3 {x: 10, y: 0, z: 10}
+        - !Item
+          name: GoodGoal
+          positions:
+          - !Vector3 {x: 13, y: 0, z: 19}
+          sizes:
+          - !Vector3 {x: 2, y: 2, z: 2}
+        pass_mark: 0
+        t: 250

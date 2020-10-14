@@ -1,6 +1,7 @@
 import sys
 sys.path.insert(0, "/media/home/ludovico/aai/animalai")
 sys.path.insert(1, "/media/home/ludovico/aai/animalai_train")
+sys.path.insert(1, "/media/home/ludovico/aai/ml-agents-envs")
 
 import argparse
 import tensorflow as tf
@@ -22,6 +23,8 @@ def get_args():
     parser.add_argument('-ne', '--num_envs', type=int, default=1, help='Number of simultaneous envs open')
     parser.add_argument('-na', '--num_arenas', type=int, default=1, help='Number of simultaneous arenas on each env')
     parser.add_argument('-ao', '--alter_obs', type=bool, default=True, help='Whether to alter observations or not with CV')
+    parser.add_argument('-lm', '--load_model', type=bool, default=True, help='Whether to load_model')
+
 
     args = parser.parse_args()
     return args
@@ -33,7 +36,8 @@ def train(opt):
         print(f.read())
     environment_path = f"linux_builds/{opt.env_name}.x86_64"
     curriculum_path = f"configurations/{opt.curric_config}"
-
+    if opt.load_model:
+        model_path = f"models/{opt.load_model}"
     run_id = opt.run_id
     base_port = 5005
     number_of_environments = opt.num_envs
@@ -47,7 +51,9 @@ def train(opt):
         num_envs=number_of_environments,
         curriculum_config=curriculum_path,
         n_arenas_per_env=number_of_arenas_per_environment,
-        alter_obs=opt.alter_obs
+        alter_obs=opt.alter_obs,
+        load_model=opt.load_model,
+        train_model=True
     )
 
     print(

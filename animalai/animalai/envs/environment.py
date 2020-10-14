@@ -1,5 +1,5 @@
 from animalai.envs.arena_config import ArenaConfig
-from animalai.envs.cvis import ExtractFeatures
+from animalai.envs.cvis_img import ExtractFeatures
 import atexit
 import glob
 import uuid
@@ -60,6 +60,9 @@ from mlagents_envs.side_channel.side_channel import (
     OutgoingMessage,
 )
 from mlagents_envs.side_channel.raw_bytes_channel import RawBytesChannel
+
+from PIL import Image
+import io
 
 logger = logging.getLogger("mlagents_envs")
 
@@ -310,39 +313,67 @@ class UnityEnvironment(BaseEnv):
                     shell=True,
                 )
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='box'):
+
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual'):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
+
         agent_infos = rl_output.agentInfos
         for agent in range(0, len(agent_infos[
             agent_name].value)):
             agent_obs = agent_infos[
                 agent_name].value[agent].observations
 
-            # 1) Change vector observations to desired size
-            vector_obs = agent_obs[1]
-            vector_obs.shape.remove(3)
-            if mode == 'box':
-                vector_obs.shape.extend([6])
-            elif mode == 'octx':
-                vector_obs.shape.extend([10])
-            else:
-                raise Exception(f"Mode {mode} not supported")
-            # 2) Extract image in bytes and then remove visual observations
+            # 1) Retrieve vector and img obs
             img = agent_obs[0].compressed_data
-            if self.debug:
-                self.img = img
-            # self.img = img
-            del agent_obs[0]
-
-            #3) Run CV and retrieve bounding boxes as a list
-            res = self.ef.run(img, mode)
+            vector_obs = agent_obs[1]
+            # 2) Reformat vector obs size
+            vector_obs.shape.remove(3)
+            vector_obs.shape.extend([6]) # 2 velocity + 4 bbox
             vel_vector = list(vector_obs.float_data.data)
             vel_vector = [vel_vector[0]/5.81, vel_vector[2]/11.6]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
-            vector_obs.float_data.data.extend(vel_vector + res)
+            if mode != 'dual':
+                # 3) Extract image in bytes and then remove visual observations
+                img = agent_obs[0].compressed_data
+                if self.debug:
+                    self.img = img
+                del agent_obs[0]
+
+                #4) Run CV and retrieve bounding boxes as a list
+                res = self.ef.run(img, mode)
+                vector_obs.float_data.data.extend(vel_vector + res)
+            else:
+                # 3) Extract image in bytes and then remove visual observations
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(3)
+                agent_obs[0].shape.extend([84,84,1])
+
+                #4) Run CV and retrieve bounding boxes as a list
+                mask_img, bbox = self.ef.run_dual(img, mode)
+                vector_obs.float_data.data.extend(vel_vector + bbox)
+
+
+                # plt.imshow(mask_img)
+                # plt.savefig('/Users/ludo/Desktop/before.png',bbox_inches='tight',transparent=True, pad_inches=0)
+                # print(mask_img.shape)
+                # s = np.mean(mask_img, axis=2)
+                # print(s.shape)
+                # plt.imshow(mask_img)
+                # plt.savefig('/Users/ludo/Desktop/after.png',bbox_inches='tight',transparent=True, pad_inches=0)
+                # s = np.reshape(s, [s.shape[0], s.shape[1], 1])
+                # print(s.shape)
+
+                # 5) Convert img to bytes
+                byteImgIO = io.BytesIO()
+                byteImg = Image.fromarray(mask_img.astype(np.uint8))
+                byteImg.save(byteImgIO, "PNG")
+                byteImgIO.seek(0)
+                byteImg = byteImgIO.read()
+                agent_obs[0].compressed_data = byteImg
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:
         init_output = output.rl_initialization_output

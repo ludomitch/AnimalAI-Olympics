@@ -24,11 +24,11 @@ class HSV:
 hsv_cls = HSV()
 objects = OD()
 objects['goal'] =  hsv_cls.green
-# objects['danger_zone'] = hsv_cls.red
+objects['danger_zone'] = hsv_cls.red
 # objects['wall'] = hsv_cls.grey
-objects['goal1'] = hsv_cls.orange
+# objects['goal1'] = hsv_cls.orange
 
-mask_clr = 'goal1'
+mask_clr = 'danger_zone'
 
 class ExtractFeatures:
 	

@@ -314,7 +314,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask'):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual'):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -323,17 +323,34 @@ class UnityEnvironment(BaseEnv):
             agent_name].value)):
             agent_obs = agent_infos[
                 agent_name].value[agent].observations
+            reward = agent_infos[agent_name].value[agent].reward
 
             # 1) Retrieve vector and img obs
             img = agent_obs[0].compressed_data
             vector_obs = agent_obs[1]
             # 2) Reformat vector obs size
             vector_obs.shape.remove(3)
-            vel_vector = list(vector_obs.float_data.data)
-            vel_vector = [vel_vector[0]/5.81, vel_vector[2]/11.6]
+            vel_vector_full = list(vector_obs.float_data.data)
+            vel_vector = [vel_vector_full[0]/5.81, vel_vector_full[2]/11.6]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
+
+            # Reward shaping
+            try:
+                backwards_punishment = 1
+                upwards_reward = 1
+                if reward>0.1:
+                    reward += 0.5
+                if vel_vector[1]<0: # Punish going backwards
+                    reward += backwards_punishment*vel_vector[1] # vel vector is negative
+                if vel_vector_full[1]>0:
+                    reward += upwards_reward*vel_vector_full[1]
+                agent_infos[agent_name].value[agent].reward = reward
+
+            except IndexError:
+                pass
+
             if mode == 'normal':
                 # 3) Extract image in bytes and then remove visual observations
                 img = agent_obs[0].compressed_data
@@ -463,17 +480,33 @@ class UnityEnvironment(BaseEnv):
             raise UnityCommunicationException("Communicator has stopped.")
 
         rl_output = outputs.rl_output
+        # agent_infos = rl_output.agentInfos
+        # agent_name = 'AnimalAI?team=0'
+        # agent = 0
+        # agent_obs = agent_infos[
+        #     agent_name].value[agent].observations
+        # reward = agent_infos[agent_name].value[agent].reward
+        # # Reward shaping
+        # vector_obs = agent_obs[1]
+        # vel_vector_full = list(vector_obs.float_data.data)
+        # vel_vector_full = [vel_vector_full[0]/5.81, vel_vector_full[1], vel_vector_full[2]/11.6]
 
-        # Reward shaping
-        try:
-            name = 'AnimalAI?team=0'
-            forward_bonus = 0.02
-            if self._env_actions[name][0][0]: # Positive reward for going forward
-                reward = rl_output.agentInfos[name].value[0].reward
-                rl_output.agentInfos[name].value[0].reward = reward + forward_bonus
+        # try:
+        #     backwards_punishment = 1
+        #     upwards_reward = 1
+        #     if reward>0.1:
+        #         reward += 0.5
+        #     if vel_vector_full[2]<0: # Punish going backwards
+        #         reward += backwards_punishment*vel_vector_full[2] # vel vector is negative
+        #     if vel_vector_full[1]>0:
+        #         reward += upwards_reward*vel_vector_full[1]
+        #     # rl_output.agentInfos[name].value[0].reward = reward
+        #     agent_infos[agent_name].value[agent].reward = reward
+        #     print(agent_infos[agent_name].value[agent].reward)
 
-        except IndexError:
-            pass
+        # except IndexError:
+        #     pass
+
         self._update_group_specs(outputs)
         self._update_state(rl_output)
         self._env_actions.clear()

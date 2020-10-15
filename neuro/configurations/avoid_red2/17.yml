@@ -1,0 +1,34 @@
+!ArenaConfig
+arenas:
+  0: !Arena
+    pass_mark: 2
+    t: 250
+    items:
+    - !Item
+      name: Agent
+    - !Item
+      name: DeathZone
+      sizes:
+      - !Vector3 {x: 10, y: 1, z: 2}
+    # - !Item
+    #   name: DeathZone
+    #   sizes:
+    #   - !Vector3 {x: 10, y: 1, z: 2}
+    # - !Item
+    #   name: DeathZone
+    #   sizes:
+    #   - !Vector3 {x: 10, y: 1, z: 2}
+    # - !Item
+    #   name: DeathZone
+    #   sizes:
+    #   - !Vector3 {x: 15, y: 1, z: 2}
+    # - !Item
+    #   name: DeathZone
+    #   sizes:
+    #   - !Vector3 {x: 15, y: 1, z: 2}
+    - !Item
+      name: BadGoal
+    # - !Item
+    #   name: BadGoal
+    # - !Item
+    #   name: GoodGoal

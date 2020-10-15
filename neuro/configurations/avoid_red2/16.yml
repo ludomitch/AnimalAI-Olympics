@@ -30,5 +30,5 @@ arenas:
     #   name: BadGoal
     # - !Item
     #   name: BadGoal
-    # - !Item
-    #   name: GoodGoal
+    - !Item
+      name: GoodGoal

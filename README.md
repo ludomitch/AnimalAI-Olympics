@@ -148,6 +148,7 @@ screen -S jupyter-ludo -m jupyter notebook --no-browser --port=8889
 pkill -9 -u `id -u ludovico`
 tensorboard --logdir summaries --port 6606 &
 python3 train.py -e bb2  -cc curriculum4 -r octxbb2 -ne 4 -na 8
+python3 train.py -e aai  -cc avoid_red2 -r ar2 -ne 4 -na 8
 python3 -m train.py -e bb2 -cc avoid_red -r ar1 -ne 4 -na 8
 tensorboard --port 6606 &
 ssh -L 6606:localhost:6606 ludovico@neuroanimal.doc.ic.ac.uk

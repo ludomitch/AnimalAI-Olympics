@@ -340,6 +340,8 @@ class UnityEnvironment(BaseEnv):
             try:
                 backwards_punishment = 1
                 upwards_reward = 1
+                if reward < -0.1:
+                    reward +=0.2
                 if reward>0.1:
                     reward += 0.5
                 if vel_vector[1]<0: # Punish going backwards

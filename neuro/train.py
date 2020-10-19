@@ -44,7 +44,7 @@ def train(opt):
         print(f"Using curriculum {opt.curric_config}")
         train_method = {"curriculum_config": f"configurations/{opt.curric_config}"}
     if opt.load_model:
-        model_path = f"models/{opt.load_model}"
+        model_path = f"../models/{opt.load_model}"
     run_id = opt.run_id
     base_port = 5005
     number_of_environments = opt.num_envs

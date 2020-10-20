@@ -347,13 +347,13 @@ class UnityEnvironment(BaseEnv):
             try:
                 backwards_punishment = 1
                 upwards_reward = 1
-                if reward < -0.1:
-                    reward +=0.2
-                if reward>0.1:
-                    reward += 0.5
-                if vel_vector_full[1]<0: # Punish going backwards
+                # if reward < -0.1:
+                #     reward +=0.2
+                # if reward>0.1:
+                #     reward += 0.5
+                if vel_vector_full[-1]<0: # Punish going backwards
                     reward += backwards_punishment*vel_vector[-1] # vel vector is negative
-                if with_up & (vel_vector_full[1]>0):
+                if with_up & (vel_vector_full[1]>0.01):
                     reward += upwards_reward*vel_vector[1]
                 agent_infos[agent_name].value[agent].reward = reward
 
@@ -741,8 +741,8 @@ class AnimalAIEnvironment(UnityEnvironment):
     # Default values for configuration parameters of the environment, can be changed if needed
     # Increasing the timescale value for training might speed up the process on powefull machines
     # but take care as the higher the timescale the more likely the physics might break
-    WINDOW_WIDTH = PlayTrain(play=1200, train=1200)
-    WINDOW_HEIGHT = PlayTrain(play=800, train=800)
+    WINDOW_WIDTH = PlayTrain(play=50, train=50)
+    WINDOW_HEIGHT = PlayTrain(play=50, train=50)
     QUALITY_LEVEL = PlayTrain(play=5, train=100)
     TIMESCALE = PlayTrain(play=1, train=300)
     TARGET_FRAME_RATE = PlayTrain(play=60, train=-1)

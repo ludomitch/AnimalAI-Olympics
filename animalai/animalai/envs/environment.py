@@ -314,7 +314,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual'):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=True):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -331,7 +331,14 @@ class UnityEnvironment(BaseEnv):
             # 2) Reformat vector obs size
             vector_obs.shape.remove(3)
             vel_vector_full = list(vector_obs.float_data.data)
-            vel_vector = [vel_vector_full[0]/5.81, vel_vector_full[2]/11.6]
+
+            if with_up:
+                vel_shape = 3
+                vel_vector = [vel_vector_full[0]/5.81, vel_vector_full[1], vel_vector_full[2]/11.6]
+
+            else:
+                vel_shape = 2
+                vel_vector = [vel_vector_full[0]/5.81, vel_vector_full[2]/11.6]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
@@ -344,16 +351,16 @@ class UnityEnvironment(BaseEnv):
                     reward +=0.2
                 if reward>0.1:
                     reward += 0.5
-                if vel_vector[1]<0: # Punish going backwards
-                    reward += backwards_punishment*vel_vector[1] # vel vector is negative
-                if vel_vector_full[1]>0:
-                    reward += upwards_reward*vel_vector_full[1]
+                if vel_vector_full[1]<0: # Punish going backwards
+                    reward += backwards_punishment*vel_vector[-1] # vel vector is negative
+                if with_up & (vel_vector_full[1]>0):
+                    reward += upwards_reward*vel_vector[1]
                 agent_infos[agent_name].value[agent].reward = reward
 
             except IndexError:
                 pass
 
-            if mode == 'normal':
+            if mode == 'normal': # Just bbox
                 # 3) Extract image in bytes and then remove visual observations
                 img = agent_obs[0].compressed_data
                 if self.debug:
@@ -362,9 +369,9 @@ class UnityEnvironment(BaseEnv):
 
                 #4) Run CV and retrieve bounding boxes as a list
                 res = self.ef.run(img, mode)
-                vector_obs.shape.extend([6]) # 2 velocity + 4 bbox
+                vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
                 vector_obs.float_data.data.extend(vel_vector + res)
-            elif mode == 'mask':
+            elif mode == 'mask': # Just mask
                 # 3) Extract image in bytes and then remove visual observations
                 agent_obs[0].shape.remove(84)
                 agent_obs[0].shape.remove(84)
@@ -373,7 +380,7 @@ class UnityEnvironment(BaseEnv):
 
                 #4) Run CV and retrieve bounding boxes as a list
                 mask_img = self.ef.run_mask(img, mode)
-                vector_obs.shape.extend([2]) # 2 velocity
+                vector_obs.shape.extend([vel_shape]) # 2 velocity
                 vector_obs.float_data.data.extend(vel_vector)
 
                 # 5) Convert img to bytes
@@ -383,7 +390,7 @@ class UnityEnvironment(BaseEnv):
                 byteImgIO.seek(0)
                 byteImg = byteImgIO.read()
                 agent_obs[0].compressed_data = byteImg                
-            else: # dual
+            else: # dual: bbox + mask
                 # 3) Extract image in bytes and then remove visual observations
                 agent_obs[0].shape.remove(84)
                 agent_obs[0].shape.remove(84)
@@ -392,7 +399,7 @@ class UnityEnvironment(BaseEnv):
 
                 #4) Run CV and retrieve bounding boxes as a list
                 mask_img, bbox = self.ef.run_dual(img, mode)
-                vector_obs.shape.extend([6]) # 2 velocity + 4 bbox
+                vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
                 vector_obs.float_data.data.extend(vel_vector + bbox)
 
 
@@ -488,11 +495,12 @@ class UnityEnvironment(BaseEnv):
         # agent_obs = agent_infos[
         #     agent_name].value[agent].observations
         # reward = agent_infos[agent_name].value[agent].reward
+        # print(reward)
         # # Reward shaping
         # vector_obs = agent_obs[1]
         # vel_vector_full = list(vector_obs.float_data.data)
         # vel_vector_full = [vel_vector_full[0]/5.81, vel_vector_full[1], vel_vector_full[2]/11.6]
-
+        # print(vel_vector_full[1])
         # try:
         #     backwards_punishment = 1
         #     upwards_reward = 1

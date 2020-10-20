@@ -1,0 +1,12 @@
+!ArenaConfig
+arenas:
+  0: !Arena
+    pass_mark: 15
+    t: 250
+    items:
+    - !Item
+      name: Agent
+    - !Item
+      name: Ramp
+      colors:
+      - !RGB {r: 0, g: 0, b: 255}

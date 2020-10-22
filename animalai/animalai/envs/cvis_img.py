@@ -24,13 +24,14 @@ class HSV:
 
 hsv_cls = HSV()
 objects = OD()
-objects['goal'] =  hsv_cls.green
-objects['danger_zone'] = hsv_cls.red
+# objects['goal'] =  hsv_cls.green
+# objects['danger_zone'] = hsv_cls.red
 # objects['wall'] = hsv_cls.grey
 # objects['goal1'] = hsv_cls.orange
 objects['platform'] = hsv_cls.blue
 
 mask_clr = 'platform'
+box_clr = "platform"
 
 class ExtractFeatures:
 	
@@ -98,12 +99,12 @@ class ExtractFeatures:
 		setattr(self, 'img_dim', img.shape)
 
 		masked_img = self.mask_img(objects[mask_clr]).astype(np.float64)
-		ctr, hier = self.get_contour(objects['goal'])
+		ctr, hier = self.get_contour(objects[box_clr])
 		features = []
 		if ctr is None:
 			features.append([0,0,0,0])
 		else:
-			coords = self.process_contour(ctr, 'goal')
+			coords = self.process_contour(ctr, box_clr)
 			for i in coords:
 				features.append(i)
 

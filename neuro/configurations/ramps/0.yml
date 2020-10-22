@@ -6,7 +6,84 @@ arenas:
     items:
     - !Item
       name: Agent
+      positions:
+      - !Vector3 {x: -1, y: 0, z: 5}
     - !Item
       name: Ramp
+      rotations: [180]
       colors:
       - !RGB {r: 0, g: 0, b: 255}
+      positions:
+      - !Vector3 {x: -1, y: 0, z: 19}
+      sizes:
+      - !Vector3 {x: -1, y: -1, z: -1}
+    - !Item
+      name: DeathZone
+      rotations: [0]
+      colors:
+      - !RGB {r: 0, g: 0, b: 255}
+      positions:
+      - !Vector3 {x: 20, y: 0, z: 20}
+      sizes:
+      - !Vector3 {x: 40, y: 0, z: 5}
+    - !Item
+      name: GoodGoal
+      positions:
+      - !Vector3 {x: 5, y: 0, z: 32}      
+      - !Vector3 {x: 10, y: 0, z: 32}      
+      - !Vector3 {x: 15, y: 0, z: 32}      
+      - !Vector3 {x: 20, y: 0, z: 32}      
+      - !Vector3 {x: 25, y: 0, z: 32}      
+      - !Vector3 {x: 30, y: 0, z: 32}      
+      - !Vector3 {x: 35, y: 0, z: 32}
+      - !Vector3 {x: 5, y: 0, z: 30}      
+      - !Vector3 {x: 10, y: 0, z: 30}      
+      - !Vector3 {x: 15, y: 0, z: 30}      
+      - !Vector3 {x: 20, y: 0, z: 30}      
+      - !Vector3 {x: 25, y: 0, z: 30}      
+      - !Vector3 {x: 30, y: 0, z: 30}      
+      - !Vector3 {x: 35, y: 0, z: 30}   
+      - !Vector3 {x: 5, y: 0, z: 35}      
+      - !Vector3 {x: 10, y: 0, z: 35}      
+      - !Vector3 {x: 15, y: 0, z: 35}      
+      - !Vector3 {x: 20, y: 0, z: 35}      
+      - !Vector3 {x: 25, y: 0, z: 35}      
+      - !Vector3 {x: 30, y: 0, z: 35}      
+      - !Vector3 {x: 35, y: 0, z: 35}
+      - !Vector3 {x: 5, y: 0, z: 38}      
+      - !Vector3 {x: 10, y: 0, z: 38}      
+      - !Vector3 {x: 15, y: 0, z: 38}      
+      - !Vector3 {x: 20, y: 0, z: 38}      
+      - !Vector3 {x: 25, y: 0, z: 38}      
+      - !Vector3 {x: 30, y: 0, z: 38}      
+      - !Vector3 {x: 35, y: 0, z: 38}
+  
+      sizes:
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}
+      - !Vector3 {x: 4, y: 4, z: 4}

@@ -41,6 +41,18 @@ def run():
     wall_s = vector(ramp_width, ramp_s.y, 3)
     goodgoal_p = vector(wall_p.x, 7, wall_p.z)
     goodgoal_s = vector(3,3,3)
+    agent_limit_x = [max(int(wall_p.x-wall_s.x/2),1), min(int(wall_p.x+wall_s.x/2),37)]
+    agent_limit_z = [max(int(wall_p.z-wall_s.z/2),1), min(int(wall_p.z+wall_s.z/2),37)]
+
+    agent_x = choice([
+        randrange(1,agent_limit_x[0]-1),
+        randrange(agent_limit_x[1]+1, 39)
+        ])
+    agent_z = choice([
+        randrange(1,agent_limit_z[0]-1),
+        randrange(agent_limit_z[1]+1, 39)
+        ])
+    agent_p = vector(agent_x, 0, agent_z) 
     base = """
 !ArenaConfig
 arenas:
@@ -61,7 +73,7 @@ arenas:
     for i in range(int(ramp_width/2)):
         inp = {
             "name": "GoodGoal",
-            "pos": vector(wall_p.x-wall_s.x/2+2*i, 7, wall_p.z),
+            "pos": vector(wall_p.x-wall_s.x/2+1+2*i, 7, wall_p.z),
             "size": vector(2,2,2)
         }
         base+=make_obj(**inp)

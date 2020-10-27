@@ -348,7 +348,7 @@ class UnityEnvironment(BaseEnv):
             # Reward shaping
             try:
                 backwards_punishment = 1
-                upwards_reward = 0.1
+                upwards_reward = 0.3
                 # if reward < -0.1:
                 #     reward +=0.2
                 # if reward>0.1:

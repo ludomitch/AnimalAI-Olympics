@@ -99,6 +99,9 @@ class ExtractFeatures:
 		setattr(self, 'img_dim', img.shape)
 
 		masked_img = self.mask_img(objects[mask_clr]).astype(np.float64)
+		# cv2.imwrite("/Users/ludo/Desktop/bam.png", masked_img)
+		# plt.imshow(masked_img)
+		# plt.savefig("/Users/ludo/Desktop/bam.png",bbox_inches='tight',transparent=True, pad_inches=0)
 		ctr, hier = self.get_contour(objects[box_clr])
 		features = []
 		if ctr is None:

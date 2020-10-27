@@ -103,7 +103,9 @@ class ArenaConfig(yaml.YAMLObject):
 
     def __init__(self, yaml_path: str = None):
 
-        if yaml_path is not None:
+        if isinstance(yaml_path, list):
+            self.arenas = yaml.load(yaml_path[0], Loader=yaml.Loader).arenas
+        elif yaml_path is not None:
             self.arenas = yaml.load(open(yaml_path, "r"), Loader=yaml.Loader).arenas
         else:
             self.arenas = {}

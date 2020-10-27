@@ -1,5 +1,6 @@
 from animalai.envs.arena_config import ArenaConfig
 from animalai.envs.cvis_img import ExtractFeatures
+from animalai.envs.ramp_creator import run as rc
 import atexit
 import glob
 import uuid
@@ -10,6 +11,7 @@ import numpy as np
 import os
 import subprocess
 from typing import Dict, List, Optional, Any
+import yaml
 
 import mlagents_envs
 from mlagents_envs.side_channel.side_channel import SideChannel, IncomingMessage
@@ -346,7 +348,7 @@ class UnityEnvironment(BaseEnv):
             # Reward shaping
             try:
                 backwards_punishment = 1
-                upwards_reward = 1
+                upwards_reward = 0.1
                 # if reward < -0.1:
                 #     reward +=0.2
                 # if reward>0.1:
@@ -829,14 +831,16 @@ class AnimalAIEnvironment(UnityEnvironment):
         return engine_configuration_channel
 
     def reset(self, arenas_configurations: ArenaConfig = None) -> None:
-        if arenas_configurations:
-            arenas_configurations_proto = arenas_configurations.to_proto()
-            arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
-                deterministic=True
-            )
-            self.arenas_parameters_side_channel.send_raw_data(
-                bytearray(arenas_configurations_proto_string)
-            )
+        # if arenas_configurations:
+        # ac = yaml.load(rc()[0], Loader=yaml.Loader)
+        ac = ArenaConfig(rc())
+        arenas_configurations_proto = ac.to_proto()
+        arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
+            deterministic=True
+        )
+        self.arenas_parameters_side_channel.send_raw_data(
+            bytearray(arenas_configurations_proto_string)
+        )
         try:
             super().reset()
         except UnityTimeOutException as timeoutException:

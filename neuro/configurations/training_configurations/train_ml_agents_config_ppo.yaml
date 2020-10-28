@@ -2,8 +2,8 @@ AnimalAI:
     trainer: ppo
     epsilon: 0.2
     lambd: 0.95
-    learning_rate: 7.58e-8
-    learning_rate_schedule: constant
+    learning_rate: 1e-4
+    learning_rate_schedule: linear
     memory_size: 128
     normalize: false
     sequence_length: 64

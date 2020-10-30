@@ -1,3 +1,38 @@
+# !ArenaConfig
+# arenas:
+#   0: !Arena
+#     pass_mark: 2
+#     t: 250
+#     items:
+#     - !Item
+#       name: Agent
+#       positions:
+#       - !Vector3 {x: 1, y: 0, z: 1}
+#       rotations: [45]
+#     - !Item
+#       name: Wall
+#       positions:
+#       - !Vector3 {x: 20, y: 0, z: 20}
+#       rotations: [0]
+#       colors: 
+#       - !RGB {r: 153, g: 153, b: 153}
+#       sizes:
+#       - !Vector3 {x: 5, y: 3, z: 5}
+#     - !Item
+#       name: GoodGoal
+#       positions:
+#       - !Vector3 {x: 20, y: 8, z: 20}      
+#       sizes:
+#       - !Vector3 {x: 3, y: 3, z: 3}
+#     - !Item
+#       name: Ramp
+#       positions: 
+#       - !Vector3 {x: 20, y: 0, z: 15}
+#       rotations: [180]
+#       sizes:
+#       - !Vector3 {x: 5, y: 3, z: 5}
+#       colors:
+#       - !RGB {r: 255, g: 0, b: 255}
 !ArenaConfig
 arenas:
   0: !Arena
@@ -6,32 +41,99 @@ arenas:
     items:
     - !Item
       name: Agent
-    # - !Item
-    #   name: DeathZone
-    #   sizes:
-    #   - !Vector3 {x: 10, y: 1, z: 2}
-    # - !Item
-    #   name: DeathZone
-    #   sizes:
-    #   - !Vector3 {x: 10, y: 1, z: 2}
-    # - !Item
-    #   name: DeathZone
-    #   sizes:
-    #   - !Vector3 {x: 10, y: 1, z: 2}
-    # - !Item
-    #   name: DeathZone
-    #   sizes:
-    #   - !Vector3 {x: 15, y: 1, z: 2}
-    # - !Item
-    #   name: DeathZone
-    #   sizes:
-    #   - !Vector3 {x: 15, y: 1, z: 2}
-    # - !Item
-    #   name: BadGoal
-    # - !Item
-    #   name: BadGoal
+    - !Item
+      name: Ramp
+      positions:
+      - !Vector3 {x: 15 , y: 0, z: 12}
+      sizes:
+      - !Vector3 {x: 8, y: 2, z: 7}
+      rotations: [180]
+    - !Item
+      name: Wall
+      positions:
+      - !Vector3 {x: 15 , y: 0, z: 17.0}
+      sizes:
+      - !Vector3 {x: 8, y: 2, z: 3}
+      rotations: [180]
+    - !Item
+      name: GoodGoal
+      positions:
+      - !Vector3 {x: 11.0 , y: 7, z: 17.0}
+      sizes:
+      - !Vector3 {x: 2, y: 2, z: 2}
+    - !Item
+      name: GoodGoal
+      positions:
+      - !Vector3 {x: 13.0 , y: 7, z: 17.0}
+      sizes:
+      - !Vector3 {x: 2, y: 2, z: 2}
+    - !Item
+      name: GoodGoal
+      positions:
+      - !Vector3 {x: 15.0 , y: 7, z: 17.0}
+      sizes:
+      - !Vector3 {x: 2, y: 2, z: 2}
+    - !Item
+      name: GoodGoal
+      positions:
+      - !Vector3 {x: 17.0 , y: 7, z: 17.0}
+      sizes:
+      - !Vector3 {x: 2, y: 2, z: 2}
     # - !Item
     #   name: GoodGoal
+    #   positions:
+    #   - !Vector3 {x: 18 , y: 7, z: 24}
+    #   sizes:
+    #   - !Vector3 {x: 2, y: 2, z: 2}
+    # - !Item
+    #   name: GoodGoal
+    #   positions:
+    #   - !Vector3 {x: 19 , y: 7, z: 24}
+    #   sizes:
+    #   - !Vector3 {x: 2, y: 2, z: 2}
+    # - !Item
+    #   name: GoodGoal
+    #   positions:
+    #   - !Vector3 {x: 19 , y: 7, z: 25}
+    #   sizes:
+    #   - !Vector3 {x: 3, y: 3, z: 3}
+    #   rotations: [138]
+  # 1: !Arena
+  #   pass_mark: 2
+  #   t: 250
+  #   items:
+  #   - !Item
+  #     name: Agent
+  #     positions:
+  #     - !Vector3 {x: 1, y: 0, z: 1}
+  #     rotations: [45]
+  #   - !Item
+  #     name: Wall
+  #     positions:
+  #     - !Vector3 {x: 20, y: 0, z: 20}
+  #     rotations: [0]
+  #     colors: 
+  #     - !RGB {r: 153, g: 153, b: 153}
+  #     sizes:
+  #     - !Vector3 {x: 5, y: 3, z: 5}
+  # 2: !Arena
+  #   pass_mark: 2
+  #   t: 250
+  #   items:
+  #   - !Item
+  #     name: Agent
+  #     positions:
+  #     - !Vector3 {x: 1, y: 0, z: 1}
+  #     rotations: [45]
+  #   - !Item
+  #     name: Ramp
+  #     positions: 
+  #     - !Vector3 {x: 20, y: 0, z: 15}
+  #     rotations: [180]
+  #     sizes:
+  #     - !Vector3 {x: 5, y: 3, z: 5}
+  #     colors:
+  #     - !RGB {r: 255, g: 0, b: 255}
 
 # !ArenaConfig
 # arenas:

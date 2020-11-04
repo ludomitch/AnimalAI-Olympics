@@ -1,7 +1,8 @@
 import sys
 sys.path.insert(0, "/media/home/ludovico/aai/animalai")
 sys.path.insert(1, "/media/home/ludovico/aai/animalai_train")
-sys.path.insert(1, "/media/home/ludovico/aai/ml-agents-envs")
+sys.path.insert(2, "/media/home/ludovico/aai/ml-agents-envs")
+sys.path.insert(3, "/media/home/ludovico/aai/ml-agents")
 
 import argparse
 import tensorflow as tf

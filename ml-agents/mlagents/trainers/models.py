@@ -72,6 +72,7 @@ class ModelUtils:
         if lr_schedule == LearningRateSchedule.CONSTANT:
             learning_rate = tf.Variable(lr)
         elif lr_schedule == LearningRateSchedule.LINEAR:
+            print(global_step)
             learning_rate = tf.train.polynomial_decay(
                 7.5888e-8, global_step-2.0e7, 2.0e7, 1e-10, power=1.0
             )

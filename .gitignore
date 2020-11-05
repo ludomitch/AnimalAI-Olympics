@@ -6,7 +6,7 @@ envs/*
 # examples/models/*
 neuro/tmp/
 logs/
-summaries/
+# summaries/
 !examples/models/self_control_curriculum_pre_trained/
 
 # Environemnt logfile

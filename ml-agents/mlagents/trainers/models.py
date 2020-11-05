@@ -73,7 +73,7 @@ class ModelUtils:
             learning_rate = tf.Variable(lr)
         elif lr_schedule == LearningRateSchedule.LINEAR:
             learning_rate = tf.train.polynomial_decay(
-                7.5888e-8, tf.assign(global_step, tf.subtract(global_step, 2.0e7)), 2.0e7, 1e-10, power=1.0
+                7.5888e-8, tf.assign(global_step, tf.subtract(global_step, int(2.0e7))), 2.0e7, 1e-10, power=1.0
             )
         else:
             raise UnityTrainerException(

@@ -153,4 +153,4 @@ python3 -m train.py -e bb2 -cc avoid_red -r ar1 -ne 4 -na 8
 tensorboard --port 6606 &
 ssh -L 6606:localhost:6606 ludovico@neuroanimal.doc.ic.ac.uk
 ssh -L 6606:localhost:6606 ludovico@neurobeast.doc.ic.ac.uk
-pkill -9 -f bb2
+pkill -9 -f aai

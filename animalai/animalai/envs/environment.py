@@ -830,9 +830,24 @@ class AnimalAIEnvironment(UnityEnvironment):
         engine_configuration_channel.set_configuration(engine_configuration)
         return engine_configuration_channel
 
+
+    # def reset(self, arenas_configurations: ArenaConfig = None) -> None:
+    #     if arenas_configurations:
+    #         arenas_configurations_proto = arenas_configurations.to_proto()
+    #         arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
+    #             deterministic=True
+    #         )
+    #         self.arenas_parameters_side_channel.send_raw_data(
+    #             bytearray(arenas_configurations_proto_string)
+    #         )
+    #     try:
+    #         super().reset()
+    #     except UnityTimeOutException as timeoutException:
+    #         if self.play:
+    #             pass
+    #         else:
+    #             raise timeoutException
     def reset(self, arenas_configurations: ArenaConfig = None) -> None:
-        # if arenas_configurations:
-        # ac = yaml.load(rc()[0], Loader=yaml.Loader)
         ac = ArenaConfig(rc())
         arenas_configurations_proto = ac.to_proto()
         arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(

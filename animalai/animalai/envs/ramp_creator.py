@@ -1,5 +1,7 @@
 from collections import namedtuple as nt
 from random import randrange, choice
+import math
+
 def make_obj(pos=False, size=False, name=False, rot=False):
     res =  f"""
     - !Item
@@ -52,7 +54,9 @@ def run():
         randrange(1,agent_limit_z[0]-1),
         randrange(agent_limit_z[1]+1, 39)
         ])
-    agent_p = vector(agent_x, 0, agent_z) 
+    
+    agent_rot = round(math.degrees(math.atan2(agent_x -ramp_p.x, agent_z-ramp_p.z)) +180)
+    agent_p = vector(agent_x, 0, agent_z)
     base = """
 !ArenaConfig
 arenas:
@@ -66,8 +70,10 @@ arenas:
             inp['pos'] = locals()[obj.lower()+'_p']
         if obj.lower()+'_s' in locals():
             inp['size'] = locals()[obj.lower()+'_s']
-        if obj not in ['Agent', 'GoodGoal']:
+        if obj not in ['Agent','GoodGoal']:
             inp['rot'] = rot
+        if obj in ['Agent']:
+            inp['rot'] = agent_rot
         base+=make_obj(**inp)
 
     for i in range(int(ramp_width/2)):
@@ -77,4 +83,5 @@ arenas:
             "size": vector(2,2,2)
         }
         base+=make_obj(**inp)
+    print(base)
     return [base]

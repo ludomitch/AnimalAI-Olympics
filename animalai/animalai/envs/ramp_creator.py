@@ -83,5 +83,4 @@ arenas:
             "size": vector(2,2,2)
         }
         base+=make_obj(**inp)
-    print(base)
     return [base]

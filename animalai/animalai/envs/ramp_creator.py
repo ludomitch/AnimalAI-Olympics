@@ -76,7 +76,14 @@ arenas:
             inp['rot'] = agent_rot
         base+=make_obj(**inp)
 
-    for i in range(int(ramp_width/2)):
+    if ramp_width==2:
+        goal_i = range(1)
+    elif ramp_width == 3:
+        goal_i = range(1)
+    else:
+        goal_i = range(1,max(2,int(ramp_width/2)-1))
+
+    for i in goal_i:
         inp = {
             "name": "GoodGoal",
             "pos": vector(wall_p.x-wall_s.x/2+1+2*i, 7, wall_p.z),

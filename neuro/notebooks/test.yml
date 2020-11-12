@@ -41,6 +41,8 @@ arenas:
     items:
     - !Item
       name: Agent
+      rotations: [90]
+
     - !Item
       name: Ramp
       positions:
@@ -55,12 +57,12 @@ arenas:
       sizes:
       - !Vector3 {x: 8, y: 2, z: 3}
       rotations: [180]
-    - !Item
-      name: GoodGoal
-      positions:
-      - !Vector3 {x: 11.0 , y: 7, z: 17.0}
-      sizes:
-      - !Vector3 {x: 2, y: 2, z: 2}
+    # - !Item
+      # name: GoodGoal
+      # positions:
+      # - !Vector3 {x: 11.0 , y: 7, z: 17.0}
+      # sizes:
+      # - !Vector3 {x: 2, y: 2, z: 2}
     - !Item
       name: GoodGoal
       positions:

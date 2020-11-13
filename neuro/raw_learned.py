@@ -114,7 +114,7 @@ class Pipeline:
             nl_success = "Success" if success else "Failure"
             # print(f"Episode was a {nl_success}")
             success_count += success
-
+        self.env.close()
         print(
             f"Final results: {success_count}/{self.args.num_episodes} episodes were completed successfully"
         )

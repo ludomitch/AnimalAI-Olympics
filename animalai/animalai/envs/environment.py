@@ -349,14 +349,18 @@ class UnityEnvironment(BaseEnv):
             try:
                 backwards_punishment = 1
                 upwards_reward = 0.2
+                downwards_punishment = 0.2
                 # if reward < -0.1:
                 #     reward +=0.2
                 # if reward>0.1:
                 #     reward += 0.5
                 if vel_vector_full[-1]<0: # Punish going backwards
                     reward += backwards_punishment*vel_vector[-1] # vel vector is negative
-                if with_up & (vel_vector_full[1]>0.01):
-                    reward += upwards_reward*vel_vector[1]
+                if with_up:
+                    if vel_vector_full[1]>0.01:
+                        reward += upwards_reward*vel_vector[1]
+                    elif vel_vector_full[1]<-0.01:
+                        reward +=downwards_punishment*vel_vector[1]
                 agent_infos[agent_name].value[agent].reward = reward
 
             except IndexError:

@@ -4,6 +4,7 @@ envs/*
 
 # Tensorflow Model Info
 # examples/models/*
+*timers.json
 neuro/tmp/
 logs/
 # summaries/

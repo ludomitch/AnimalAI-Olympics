@@ -348,12 +348,10 @@ class UnityEnvironment(BaseEnv):
             # Reward shaping
             try:
                 backwards_punishment = 1
-                upwards_reward = 0.2
-                downwards_punishment = 0.2
-                # if reward < -0.1:
-                #     reward +=0.2
-                # if reward>0.1:
-                #     reward += 0.5
+                upwards_reward = 0.1
+                downwards_punishment = 0.1
+                if reward>0.1:
+                    reward += 0.5
                 if vel_vector_full[-1]<0: # Punish going backwards
                     reward += backwards_punishment*vel_vector[-1] # vel vector is negative
                 if with_up:

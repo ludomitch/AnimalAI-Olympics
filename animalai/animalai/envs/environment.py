@@ -351,7 +351,7 @@ class UnityEnvironment(BaseEnv):
                 upwards_reward = 0.1
                 downwards_punishment = 0.1
                 if reward>0.1:
-                    reward += 0.5
+                    reward += 1
                 if vel_vector_full[-1]<0: # Punish going backwards
                     reward += backwards_punishment*vel_vector[-1] # vel vector is negative
                 if with_up:
@@ -780,6 +780,8 @@ class AnimalAIEnvironment(UnityEnvironment):
 
         self.configure_side_channels(self.side_channels)
         self.side_channels += [self.arenas_obj_config_side_channel]
+        self.counter = 0
+
         super().__init__(
             file_name=file_name,
             worker_id=worker_id,
@@ -850,7 +852,12 @@ class AnimalAIEnvironment(UnityEnvironment):
     #         else:
     #             raise timeoutException
     def reset(self, arenas_configurations: ArenaConfig = None) -> None:
-        ac = ArenaConfig(rc())
+
+        self.ramp_config =rc(self.counter)
+        ac = ArenaConfig(self.ramp_config)
+        self.counter+=1
+        if self.counter % 500 == 0:
+            print(f"COUNTER: {self.counter}")
         arenas_configurations_proto = ac.to_proto()
         arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
             deterministic=True

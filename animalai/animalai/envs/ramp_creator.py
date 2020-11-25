@@ -28,12 +28,14 @@ def make_obj(pos=False, size=False, name=False, rot=False):
     return res
 
 
-def run():
+def run(counter):
     vector = nt('vec', ['x', 'y', 'z'])
     # agent_p = vector(randrange(1,39), 0 , randrange(1,39), randrange(1,39))
     ramp_p = vector(randrange(10,30),0, randrange(10,30))
-    ramp_width = randrange(2,ramp_p.x)
-    ramp_length = randrange(2,ramp_p.z)
+    ramp_length_upper_limit = (min(40-ramp_p.z, ramp_p.z)-4)*2
+    ramp_width_upper_limit = (min(40-ramp_p.x, ramp_p.x)-4)*2
+    ramp_width = randrange(2,ramp_width_upper_limit)
+    ramp_length = randrange(2,ramp_length_upper_limit)
     ramp_height = randrange(2,max(int(ramp_length*(3/5)),3))
     ramp_s = vector(ramp_width, ramp_height, ramp_length)
     rot = 180
@@ -41,7 +43,7 @@ def run():
 
     wall_p = vector(ramp_p.x, 0, 1.5 + ramp_p.z+ramp_s.z/2)
     wall_s = vector(ramp_width, ramp_s.y, 3)
-    goodgoal_p = vector(wall_p.x, 7, wall_p.z)
+    goodgoal_p = vector(wall_p.x, ramp_height+1, wall_p.z)
     goodgoal_s = vector(3,3,3)
     agent_limit_x = [max(int(wall_p.x-wall_s.x/2),1), min(int(wall_p.x+wall_s.x/2),37)]
     agent_limit_z = [max(int(wall_p.z-wall_s.z/2),1), min(int(wall_p.z+wall_s.z/2),37)]
@@ -54,7 +56,10 @@ def run():
         randrange(1,agent_limit_z[0]-1),
         randrange(agent_limit_z[1]+1, 39)
         ])
-    
+    if counter < 200:
+        agent_z = 1
+        agent_x = ramp_p.x + randrange(-5,5)
+        
     agent_rot = round(math.degrees(math.atan2(agent_x -ramp_p.x, agent_z-ramp_p.z)) +180)
     agent_p = vector(agent_x, 0, agent_z)
     base = """
@@ -86,7 +91,7 @@ arenas:
     for i in goal_i:
         inp = {
             "name": "GoodGoal",
-            "pos": vector(wall_p.x-wall_s.x/2+1+2*i, 7, wall_p.z),
+            "pos": vector(wall_p.x-wall_s.x/2+1+2*i, ramp_height+1, wall_p.z),
             "size": vector(2,2,2)
         }
         base+=make_obj(**inp)

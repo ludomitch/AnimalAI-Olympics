@@ -51,8 +51,10 @@ def process_pixels(image_bytes: bytes, gray_scale: bool) -> np.ndarray:
         image = Image.open(io.BytesIO(image_bytearray))
         # Normally Image loads lazily, this forces it to do loading in the timer scope.
         image.load()
-    s = np.array(image, dtype=np.float32)# / 255.0
+    s = np.array(image, dtype=np.float32) / 255.0
     if len(s.shape)==2:
+        # cv2.imwrite("/Users/ludo/Desktop/bam.png", res)
+
         s = s.reshape(s.shape[0], s.shape[1], 1)
     # if gray_scale:
     #     s = np.mean(s, axis=2)

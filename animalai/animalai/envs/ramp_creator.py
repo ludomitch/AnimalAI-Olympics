@@ -58,7 +58,7 @@ def run(counter):
         ])
     if counter < 200:
         agent_z = 1
-        agent_x = ramp_p.x + randrange(-5,5)
+        agent_x = ramp_p.x + randrange(-9,9)
         
     agent_rot = round(math.degrees(math.atan2(agent_x -ramp_p.x, agent_z-ramp_p.z)) +180)
     agent_p = vector(agent_x, 0, agent_z)

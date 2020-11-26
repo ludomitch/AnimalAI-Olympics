@@ -493,37 +493,13 @@ class UnityEnvironment(BaseEnv):
             raise UnityCommunicationException("Communicator has stopped.")
 
         rl_output = outputs.rl_output
-        # agent_infos = rl_output.agentInfos
-        # agent_name = 'AnimalAI?team=0'
-        # agent = 0
-        # agent_obs = agent_infos[
-        #     agent_name].value[agent].observations
-        # reward = agent_infos[agent_name].value[agent].reward
-        # print(reward)
-        # # Reward shaping
-        # vector_obs = agent_obs[1]
-        # vel_vector_full = list(vector_obs.float_data.data)
-        # vel_vector_full = [vel_vector_full[0]/5.81, vel_vector_full[1], vel_vector_full[2]/11.6]
-        # print(vel_vector_full[1])
-        # try:
-        #     backwards_punishment = 1
-        #     upwards_reward = 1
-        #     if reward>0.1:
-        #         reward += 0.5
-        #     if vel_vector_full[2]<0: # Punish going backwards
-        #         reward += backwards_punishment*vel_vector_full[2] # vel vector is negative
-        #     if vel_vector_full[1]>0:
-        #         reward += upwards_reward*vel_vector_full[1]
-        #     # rl_output.agentInfos[name].value[0].reward = reward
-        #     agent_infos[agent_name].value[agent].reward = reward
-        #     print(agent_infos[agent_name].value[agent].reward)
-
-        # except IndexError:
-        #     pass
 
         self._update_group_specs(outputs)
         self._update_state(rl_output)
         self._env_actions.clear()
+        # print(self.get_step_result(group_name).done)
+        if self.get_step_result(group_name).done[0]:
+            self.reset()
 
     def get_agent_groups(self) -> List[AgentGroup]:
         return list(self._env_specs.keys())

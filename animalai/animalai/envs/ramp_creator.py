@@ -56,7 +56,7 @@ def run(counter):
         randrange(1,agent_limit_z[0]-1),
         randrange(agent_limit_z[1]+1, 39)
         ])
-    if counter < 200:
+    if counter < 500:
         agent_z = 1
         agent_x = ramp_p.x + randrange(-9,9)
         

@@ -6,7 +6,7 @@ from weak_logic import Logic
 from utils import preprocess, object_types
 
 class Pipeline:
-    def __init__(self, args):
+    def __init__(self, args, test=False):
         self.args = args
         self.ct = None
         self.gg_id = 0
@@ -30,6 +30,7 @@ class Pipeline:
             inference=args.inference
         )
         self.logic = Logic(self.buffer_size)
+        self.test = test
 
     def comp_stats(self):
         pass
@@ -61,6 +62,8 @@ class Pipeline:
         success_count = 0
         choice = 'random'
         traces = [] # list of lists: [actions, observables, success, macro_steps]
+        if self.test:
+            choice = 'test'
         for idx in range(self.args.num_episodes):
             self.env.reset(self.arenas[0])
             # print(f"======Running episode {idx}=====")
@@ -87,6 +90,8 @@ class Pipeline:
                     macro_step,
                     state,
                     choice=choice)
+                if self.test:
+                    print(macro_action)
                 step_results, state, micro_step, success = self.take_macro_step(
                     self.env, state, step_results, macro_action
                 )

@@ -1,3 +1,4 @@
+import operator
 from collections import deque, namedtuple
 import random as rnd
 import subprocess
@@ -8,13 +9,15 @@ from clyngor import ASP
 from utils import get_overlap, get_distance
 
 AnswerSet = namedtuple('AS', ['r', 'p', 'a']) # r for raw, p for parsed, a for arity
-parse_args = lambda x: list(list(ASP(x+'.').parse_args)[0])[0]
+parse_single_args = lambda x: list(list(ASP(x+'.').parse_args)[0])[0]
+parse_args = lambda x: list(list(ASP(x).parse_args)[0])
+
 sample_vars = ["X", "Y", "Z"]
-macro_actions = {
-    "explore":3,
-    "interact":1,
-    "rotate":0
-}
+macro_actions = [
+    "explore",
+    "interact",
+    "rotate"
+]
 valid_observables = {
     'present',
     'visible',
@@ -27,6 +30,48 @@ valid_observables = {
     'red'
 }
 
+main_lp = """
+present(X):-goal(X).
+present(X):- visible(X).
+object(X):- present(X).
+occludes(X,Y) :- present(Y), visible(X), not visible(Y).
+"""
+action_logic = """
+
+:- initiate(X), initiate(Y), X!=Y.
+initiate :- initiate(X).
+:- not initiate.
+
+0{initiate(rotate)}1.
+0{initiate(interact(X))}1:- object(X).
+0{initiate(explore(X,Y))}1:- object(X), object(Y), X!=Y.
+"""
+
+test_lp = main_lp + action_logic + """
+:~ initiate(interact(V1)).[1@2, V1]
+:~ goal(V1), initiate(explore(V1,V2)).[1@1, V1, V2]
+:~ goal(V1), not initiate(interact(V1)), not initiate(rotate).[1@3, V1]
+"""
+
+
+def variabilise(lp):
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    p = parse_args(lp)
+    # Reduce nested functions
+    y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
+    # Create unique var map
+    var_map = {}
+    for lit in y:
+        for arg in lit[1]:
+            if (arg not in var_map)&isinstance(arg, int):
+                var_map[arg] = letters.pop(0)
+    # Sort vars by largest so smaller ones aren't replacing bigger numbers
+    order = sorted(var_map, reverse=True)
+    # Update lp
+    for var in order:
+        lp = lp.replace(str(var), var_map[var])
+
+    return lp
 
 class Grounder:
     def __init__(self):
@@ -86,22 +131,23 @@ class Grounder:
 
 class Clingo:
     def __init__(self):
-        self.macro_actions_learned = []
+        self.learned_lp = None
 
-    def random_action_grounder(self, macro_step, ground_observables):
+    def random_action_grounder(self, ground_observables):
         lp = f"""
             {ground_observables}
             present(X):-goal(X).
             present(X):- visible(X).
-            initiate(explore(X,Y)):- visible(X), present(Y), X!=Y.
-            initiate(interact(X)):-visible(X).
-            initiate(rotate)."""
+            object(X):- present(X).
+            initiate(explore(X,Y)):- object(X), object(Y), X!=Y, visible(X).
+            initiate(interact(X)):-object(X), visible(X).
+            initiate(rotate).
+            """
         res = self.asp(lp)
-        filtered_mas = [i for i in res.r[0] if (
-            'initiate' in i)&(not any(j in i for j in self.macro_actions_learned))]
+        filtered_mas = [i for i in res.r[0] if 'initiate' in i]
         rand_action = rnd.choice(filtered_mas)
         # print([i for i in res.r[0] if 'initiate' in i])
-        return [[rand_action]]
+        return [rand_action]
 
     @staticmethod
     def asp(lp):
@@ -120,60 +166,56 @@ class Clingo:
         }
         if not isinstance(answer_set, list):
             answer_set = answer_set.r
+        # Always only take first optimal answer set
         if len(answer_set)>1:
-            # print("More than 1 answer set so stopping at first initiate")
-            # print(answer_set)
-            _break = True
-        else:
-            _break = False
-        # print(answer_set)
-        for ans_set in answer_set:
-            for literal in ans_set:
-                if 'initiate' in literal:
-                    # From initiate(action(args),ts), select action(args)
-                    res['initiate'].append(parse_args(literal)[1][0])
-                    res['raw'].append(literal)
-                    if _break:
-                        break
+            answer_set = answer_set[0]
+        for literal in answer_set:
+            if 'initiate(' in literal:
+                # print(literal)
+
+                # From initiate(action(args),ts), select action(args)
+                res['initiate'].append(parse_single_args(literal)[1][0])
+                res['raw'].append(literal)
+
+        # print(res['initiate'])
+        # print('------')
 
 
         # No action returned
         if not res['initiate']:
-            # print("NO ACTION")
             return False
 
         # if two actions are returned from program then use random action.
         if len(res['initiate'])>1:
-            # print("More than one action")
-            # print(res['initiate'])
-            res['raw'] = "multi:"+str(res['initiate'])
-            res['initiate'] = [rnd.choice(res['initiate'])]
-            # return False
+            chc = rnd.choice(list(range(len(res['initiate']))))
+            res['raw'] = res['raw'][chc]
+            res['initiate'] = res['initiate'][chc]
 
         # Add checks for chosen action
         checks = list(ASP(f"""            
             {res['raw'][0]}.
-            check(visible, Y):- initiate(explore(X,Y,Z),T).
-            check(time, 250):- initiate(explore(X,Y,Z),T).
-            check(time, 150):- initiate(interact(X),T).
-            check(time, 250):- initiate(avoid_red,T).
-            check(time, 50):- initiate(rotate,T).""").atoms_as_string)
+            check(visible, Y):- initiate(explore(X,Y)).
+            check(time, 250):- initiate(explore(X,Y)).
+            check(time, 150):- initiate(interact(X)).
+            check(time, 250):- initiate(avoid_red).
+            check(time, 50):- initiate(rotate).""").atoms_as_string)
         checks = checks[0]
-        checks = [parse_args(i)[1] for i in list(checks) if 'check' in i]
+        checks = [parse_single_args(i)[1] for i in list(checks) if 'check' in i]
         res['check'] = checks
-        # print(res)
         return res
 
-    def run(self, macro_step, lp, random=False):
+    def run(self, observables, random=False, test=False):
         # Just ground macro actions based on observables
-        if random:
-            res = self.random_action_grounder(macro_step, lp)
-        else: # Run full lp
-            # print(lp)
+        if random|(self.learned_lp is None):
+            res = self.random_action_grounder(observables)
+        elif test:
+            lp = test_lp + observables
             res = self.asp(lp)
-            # print(res)
-            # print(lp)
-                
+
+        else: # Run full lp
+            lp = main_lp + action_logic + self.learned_lp + observables
+            res = self.asp(lp)
+
         return self.macro_processing(res)
 
 class Ilasp:
@@ -181,16 +223,15 @@ class Ilasp:
         # Examples are [int:weight, string:example]
         self.memory_len = memory_len
         self.examples = deque(maxlen=self.memory_len)
-        self.macro_actions_learned = []
 
     def create_mode_bias(self):
         return """
-#modeo(1, rotate).
-#modeo(1, interact(var(X))).
-#modeo(1, explore(var(X), var(Y))).
-#modeo(1, goal(var(X))).
-#modeo(1, visible(var(X))).
-#modeo(1, occludes(var(X),var(Y))).
+#modeo(1, initiate(rotate)).
+#modeo(1, initiate(interact(var(x)))).
+#modeo(1, initiate(explore(var(x), var(y)))).
+#modeo(1, goal(var(x))).
+#modeo(1, visible(var(x))).
+#modeo(1, occludes(var(x),var(y))).
 #weight(1).
 #weight(-1).
 #maxv(4).
@@ -201,67 +242,85 @@ class Ilasp:
         res = action.split('initiate(')
         res = res[0].split('(')[0]
         return res
-    def expand_trace(self, trace, idf):
+    def expand_trace(self, trace):
         discount_factor = 0.9
-        actions, observables, success, len_trace = trace
+        actions, states, success, len_trace = trace
         success = 10 if success else -10
-        examples = []
         values = []
-        # actions = []
         for step in range(len_trace):
-            examples.append(f"#pos(a{idf+step},\n{{}},\n{{}},\n{{{actions[step]}.\n{observables[step]}}}).\n")
             values.append(success*discount_factor**(len_trace-step-1))
-            # actions.apennd(self.extract_action(actions))
-        print(values)
-        return examples, values, len_trace #, actions
+        return actions, states, values
+
     def generate_examples(self, traces):
-        examples = []
+
+        actions = []
+        states = []
         values = []
-        # actions = []
-        count = 0
+        print("Successes:", sum(i[2] for i in traces))
         for trace in traces:
-            e, v, c = self.expand_trace(trace, count)
-            count += c
-            examples += e
+            a, s, v = self.expand_trace(trace)
+            actions += a
+            states += s
             values += v
-            # actions += a
-        
-        # Do ordering
-        # order = [i for (v, i) in sorted(((v, i) for (i, v) in enumerate(values)),reverse=True)]
-        # order = [f"a{i}" for i in order]
-        # pairs = [[order[i], order[i+1]] for i in range(0,len(order)-1)]
-        # pairs = [f"#brave_ordering(b{c}@1, {', '.join([i[0], i[1]])})." for c,i in enumerate(pairs)]
-        # ordering = "\n".join(pairs)
-        # examples = "".join(examples) + ordering
 
-        tracker = 0
-        d = {k: [] for k in np.unique(values)}
-        for c, i in enumerate(values):
-            d[i].append(c)
+        # Variabilise all states
+        states = [variabilise(i) for i in states]
+        # unique_states = {k:[c for c,i in enumerate(states) if i==k] for k in set(states)}
+
+        # Ranking over similar states
+        unique_states = {}
+        unique_id = 0
+        for c, o in enumerate(states):
+            found = False
+
+            for k, v in unique_states.items():
+                if o==v['state']:
+                    unique_states[k]['idx'].append(c)
+                    if actions[c] in unique_states[k]['actions']:
+                        unique_states[k]['actions'][actions[c]].append(values[c])
+                    else:
+                        unique_states[k]['actions'][actions[c]] = [values[c]]
+                    found = True
+                    break
+            if not found:
+                found = False
+                unique_states[unique_id] = {
+                'state': o, 'idx':[c],
+                 'actions':{
+                    actions[c] : [values[c]]
+                 }}
+                unique_id+=1
+
+        examples = ""
         order = ""
-        print(d)
-        for k,v in d.items():
-            if len(v)<2:
+        e_c = 0
+        o_c = 0
+        # Rolling average for each action
+        for s,d in unique_states.items():
+            if len(d['actions'].keys())==1:
                 continue
-            order += "\n".join(f"#brave_ordering(b{tracker+i}@1, a{v[i]}, a{v[i+1]}, =)." for i in range(0, len(v)-1)) + "\n\n"
-            tracker += len(v)-2
-        previous = None
-        for k in sorted(d.keys(), reverse=True):
-            if previous is None:
-                previous =k 
-                continue
-            order += f"#brave_ordering(b{tracker}@1, a{d[previous][0]}, a{d[k][0]}).\n"
-            previous = k
-            tracker +=1
+                examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{list(d['actions'])[0]}.\n{d['state']}}}).\n"
+                e_c +=1
+            else:
+                for a,v in d['actions'].items():
+                    unique_states[s]['actions'][a] = sum(v)/len(v)
 
-        print(order)
-        self.examples = "".join(examples) + order
+                ranking = sorted(unique_states[s]['actions'].items(), key=operator.itemgetter(1), reverse=True)
+                examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{ranking[0][0]}.\n{d['state']}}}).\n"
+                e_c +=1
+                for i in range(0, len(ranking)-1):
+                    examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{ranking[i+1][0]}.\n{d['state']}}}).\n"
+                    order+= f"#brave_ordering(b{o_c}@3, a{e_c-1}, a{e_c}).\n"
+                    e_c +=1
+                    o_c +=1
+
+        self.examples = examples + order
 
 
-    def run(self, lp):        
+    def run(self):        
         # Create text file with lp
         with open("tmp.lp", "w") as text_file:
-            text_file.write(lp+self.create_mode_bias() + self.examples)
+            text_file.write(main_lp + self.create_mode_bias() + self.examples)
         # Start bash process that runs ilasp learning
         bashCommand = "ilasp4 --version=4 tmp.lp -q --clingo clingo5"
         process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
@@ -277,9 +336,6 @@ class Ilasp:
                 print(f"NEW RULES LEARNED: {output}")
             if output=="UNSATISFIABLE\n":
                 return False
-            for ma in macro_actions:
-                if ma in output:
-                    self.macro_actions_learned.append(ma)
             return output
         print("NO RULES LEARNED")
         return False # No learned rules, will choose random macro
@@ -292,56 +348,28 @@ class Logic:
         self.clingo = Clingo()
         self.e = 1
         self.e_discount = 8e-3
-        self.learned_lp = ""
-
-    def macro_kb(self):
-        """This is what we want to learn."""
-        return """
-            0{initiate(explore(X,Y,Z),T)}1:- visible(X,Z,T), occludes(X,Y,T).
-            initiate(interact(X),T):- visible(X, _,T), goal(X).
-            initiate(rotate,T):- not visible(T), timestep(T)."""
-    def main_lp(self):
-        return """
-present(X):-goal(X).
-% Observables rules
-present(X):- visible(X, _).
-occlusion(Y):- visible(X,Y).
-object(X):- visible(X,Y).
-occludes(X,Y) :- present(Y), visible(X, _), not visible(Y, _).
-"""
-
-
-
-    def update_learned_lp(self):
-        rules_learned = self.ilasp.run(self.learned_lp)
-        if rules_learned:
-            self.learned_lp += rules_learned
-            # Sync two lists
-            self.clingo.macro_actions_learned = self.ilasp.macro_actions_learned
 
     def update_examples(self, traces):
         self.ilasp.generate_examples(traces)
 
+    def update_learned_lp(self):
+        rules_learned = self.ilasp.run()
+        if rules_learned:
+            self.clingo.learned_lp = rules_learned
+
     def run(self, macro_step, state, choice='random'):
         # Ground state into high level observable predicates
         observables = self.grounder.run(macro_step, state)
-
-        if not self.learned_lp:
-            self.learned_lp = self.main_lp()
-
-
         if choice == 'ilasp':
-            if self.learned_lp:
-                action = self.clingo.run(macro_step, self.learned_lp +observables, random=False)
-            else:
-                action = self.clingo.run(macro_step, observables, random=True)
-
+            action = self.clingo.run(observables, random=False)
         elif choice == 'random':
-            action = self.clingo.run(macro_step, observables, random=True)
+            action = self.clingo.run(observables, random=True)
+        elif choice == 'test':
+            action = self.clingo.run(observables, random=False, test=True)
+
         else:
             raise Exception("Modality not recognised")
         
         if not action:
-            # print("No action choosing randomly")
-            action = self.clingo.run(macro_step, observables, random=True)
+            action = self.clingo.run(observables, random=True)
         return action, observables

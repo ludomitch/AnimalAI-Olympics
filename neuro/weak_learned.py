@@ -81,7 +81,7 @@ class Pipeline:
                 self.logic.update_learned_lp()
 
             while not self.episode_over(step_results[2]):
-                if global_steps >= 1000:
+                if global_steps >= 250:
                     success = False
                     print("Exceeded max global steps")
                     break

@@ -139,8 +139,8 @@ class Clingo:
             present(X):-goal(X).
             present(X):- visible(X).
             object(X):- present(X).
-            initiate(explore(X,Y)):- object(X), object(Y), X!=Y, visible(X).
-            initiate(interact(X)):-object(X), visible(X).
+            initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
+            initiate(interact(X)):-object(X).
             initiate(rotate).
             """
         res = self.asp(lp)
@@ -263,7 +263,7 @@ class Ilasp:
         actions = []
         states = []
         values = []
-        print("Success num:", sum(i[2] for i in traces[-50:]))
+        print("Success num:", sum(i[2] for i in traces[-30:]))
         for trace in traces:
             a, s, v = self.expand_trace(trace)
             actions += a
@@ -295,11 +295,12 @@ class Ilasp:
                 tree[s][a] = sum(values[i] for i in v)/len(v)
 
             ranking = sorted(tree[s].items(), key=operator.itemgetter(1), reverse=True)
+            top_action = e_c
             for c, i in enumerate(ranking):
                 action, val = i
                 examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[action]}}}).\n%%Value was:{val}\n"
-                if c!=len(ranking)-1:
-                    order+= f"#brave_ordering(b{o_c}@3, a{e_c}, a{e_c+1}).\n"
+                if c!=0:
+                    order+= f"#brave_ordering(b{o_c}@10, a{top_action}, a{e_c}).\n"
                     o_c +=1
                 e_c +=1
 

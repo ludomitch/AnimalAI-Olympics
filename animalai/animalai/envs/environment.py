@@ -495,7 +495,8 @@ class UnityEnvironment(BaseEnv):
         rl_output = outputs.rl_output
         self._update_state(rl_output)
         self._env_actions.clear()
-
+        # if self._env_state[group_name].done[0]:
+        #     self.reset()
 
     def get_agent_groups(self) -> List[AgentGroup]:
         return list(self._env_specs.keys())
@@ -828,8 +829,8 @@ class AnimalAIEnvironment(UnityEnvironment):
         self.ramp_config =rc(self.counter)
         ac = ArenaConfig(self.ramp_config)
         self.counter+=1
-        if self.counter % 500 == 0:
-            print(f"COUNTER: {self.counter}")
+        # if self.counter % 500 == 0:
+        print(f"COUNTER: {self.counter}")
         arenas_configurations_proto = ac.to_proto()
         arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
             deterministic=True

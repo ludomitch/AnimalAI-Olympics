@@ -119,7 +119,7 @@ class ExtractFeatures:
 		features = [item for sublist in features for item in sublist]
 		return masked_img, features
 
-	def run(self, img, mode='g2g'):
+	def run(self, img, mode='normal'):
 		if not self.training:
 			return self.run_test(img)
 		if mode=='dual':
@@ -143,12 +143,12 @@ class ExtractFeatures:
 				features.append(i)
 
 		# Flatten list
-		if mode=='gtg':
+		if mode=='normal':
 			idx = 1
-		elif mode == 'octx':
-			idx = 2
-		else:
-			idx = 5
+		# elif mode == 'octx':
+		# 	idx = 2
+		# else:
+		# 	idx = 5
 		features = features[:idx]
 		features = [item for sublist in features for item in sublist]
 		return features

@@ -1,6 +1,11 @@
 from animalai.envs.arena_config import ArenaConfig
 from animalai.envs.cvis_img import ExtractFeatures
 from animalai.envs.ramp_creator import run as rc
+from animalai.envs.red_maze_creator import run as rmc
+from animalai.envs.interact_creator import run as ic
+from animalai.envs.slack_creator import run as slc
+
+
 import atexit
 import glob
 import uuid

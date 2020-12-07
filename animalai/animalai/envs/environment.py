@@ -321,7 +321,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=True):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='normal', with_up=False):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -831,7 +831,7 @@ class AnimalAIEnvironment(UnityEnvironment):
     #             raise timeoutException
     def reset(self, arenas_configurations: ArenaConfig = None) -> None:
 
-        self.ramp_config =rc(self.counter)
+        self.ramp_config =ic(self.counter)
         ac = ArenaConfig(self.ramp_config)
         self.counter+=1
         if self.counter % 100 == 0:

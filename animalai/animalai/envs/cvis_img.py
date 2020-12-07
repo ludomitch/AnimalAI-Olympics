@@ -24,14 +24,18 @@ class HSV:
 
 hsv_cls = HSV()
 objects = OD()
-# objects['goal'] =  hsv_cls.green
 # objects['danger_zone'] = hsv_cls.red
 # objects['wall'] = hsv_cls.grey
 # objects['goal1'] = hsv_cls.orange
-objects['platform'] = hsv_cls.blue
 
+objects['platform'] = hsv_cls.blue
 mask_clr = 'platform'
 box_clr = "platform"
+
+objects['danger_zone'] = hsv_cls.red
+objects['goal'] =  hsv_cls.green
+mask_clr = 'danger_zone'
+box_clr = "goal"
 
 class ExtractFeatures:
 	
@@ -98,7 +102,7 @@ class ExtractFeatures:
 		setattr(self, 'img_dim', img.shape)
 
 		masked_img = self.mask_img(objects[mask_clr]).astype(np.float64)
-		# cv2.imwrite("/Users/ludo/Desktop/bam.png", masked_img)
+		# cv2.imwrite("/Users/ludo/Desktop/bam.png", masked_img*255)
 		# plt.imshow(masked_img)
 		# plt.savefig("/Users/ludo/Desktop/bam.png",bbox_inches='tight',transparent=True, pad_inches=0)
 		ctr, hier = self.get_contour(objects[box_clr])

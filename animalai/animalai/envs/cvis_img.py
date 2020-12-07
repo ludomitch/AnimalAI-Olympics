@@ -119,7 +119,7 @@ class ExtractFeatures:
 		features = [item for sublist in features for item in sublist]
 		return masked_img, features
 
-	def run(self, img, mode='octx'):
+	def run(self, img, mode='g2g'):
 		if not self.training:
 			return self.run_test(img)
 		if mode=='dual':

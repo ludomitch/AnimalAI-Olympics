@@ -32,11 +32,11 @@ def make_obj(pos=False, size=False, name=False, rot=False):
 
 def run(counter):
     wall_p = vector(choice([10,30]), 0, 20)
-    if counter < 5:
+    if counter < 20:
         num_turns = 0
         wall_width = 8
         wall_len = randrange(8,15)
-    elif counter < 15:
+    elif counter < 100:
         num_turns = 1
         wall_width = randrange(5,10)
         wall_len = randrange(8,25)

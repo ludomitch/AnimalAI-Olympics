@@ -28,14 +28,14 @@ objects = OD()
 # objects['wall'] = hsv_cls.grey
 # objects['goal1'] = hsv_cls.orange
 
-# objects['platform'] = hsv_cls.blue
+objects['platform'] = hsv_cls.blue
 mask_clr = 'platform'
-box_clr = "platform"
+box_clr = "goal"
 
 # objects['danger_zone'] = hsv_cls.red
-objects['goal'] =  hsv_cls.green
-mask_clr = 'danger_zone'
-box_clr = "goal"
+# objects['goal'] =  hsv_cls.green
+# mask_clr = 'danger_zone'
+# box_clr = "goal"
 
 class ExtractFeatures:
 	

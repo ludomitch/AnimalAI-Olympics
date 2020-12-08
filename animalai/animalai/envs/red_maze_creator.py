@@ -65,7 +65,7 @@ def run(counter):
 !ArenaConfig
 arenas:
   -1: !Arena
-    pass_mark: 2
+    pass_mark: 1
     t: 250
     items:"""
     for obj in ['Agent', 'GoodGoal']:

@@ -33,7 +33,7 @@ mask_clr = 'platform'
 box_clr = "goal"
 
 # objects['danger_zone'] = hsv_cls.red
-# objects['goal'] =  hsv_cls.green
+objects['goal'] =  hsv_cls.green
 # mask_clr = 'danger_zone'
 # box_clr = "goal"
 

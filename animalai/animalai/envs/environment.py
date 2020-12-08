@@ -834,7 +834,7 @@ class AnimalAIEnvironment(UnityEnvironment):
         self.ramp_config =slc(self.counter)
         ac = ArenaConfig(self.ramp_config)
         self.counter+=1
-        if self.counter % 100 == 0:
+        if self.counter % 50 == 0:
             print(f"COUNTER: {self.counter}")
         arenas_configurations_proto = ac.to_proto()
         arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(

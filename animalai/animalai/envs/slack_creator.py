@@ -32,11 +32,11 @@ def make_obj(pos=False, size=False, name=False, rot=False):
 
 def run(counter):
     wall_p = vector(choice([10,30]), 0, 20)
-    if counter < 20:
+    if counter < 5:
         num_turns = 0
         wall_width = 8
         wall_len = randrange(8,15)
-    elif counter < 100:
+    elif counter < 50:
         num_turns = 1
         wall_width = randrange(5,10)
         wall_len = randrange(8,25)
@@ -49,14 +49,14 @@ def run(counter):
     wall_s = vector(wall_width, 5, wall_len)
 
     deathzone_p = vector(20,0,20)
-    deathzone_s = vector(40,0,40)
+    deathzone_s = vector(35,0,35)
 
     base = """
 !ArenaConfig
 arenas:
   -1: !Arena
-    pass_mark: 2
-    t: 50
+    pass_mark: 1
+    t: 250
     items:"""
     pos = wall_p
     goal_x = pos.x
@@ -104,7 +104,7 @@ arenas:
     goodgoal_s = vector(goal_s,goal_s,goal_s)     
     agent_p = vector(wall_p.x,5, wall_p.z)
     agent_rot = round(math.degrees(math.atan2(agent_p.x - goal_x, agent_p.z-goal_z)) +180)
-    for obj in ['Agent', 'Wall', "GoodGoal"]:
+    for obj in ['Agent', 'Wall', "GoodGoal", "DeathZone"]:
         inp = {"name":obj}
         if obj.lower()+'_p' in locals():
             inp['pos'] = locals()[obj.lower()+'_p']

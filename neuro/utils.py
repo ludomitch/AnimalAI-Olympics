@@ -1,15 +1,15 @@
 import numpy as np
 
-from animalai.envs.cvis_test import ExtractFeatures
+from animalai.envs.cvis import ExtractFeatures
 from mlagents.tf_utils import tf
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 object_types = {
-    'goal':0, 'goal1':30, 'wall':10, 'platform':20, 'red':40
+    'goal':0, 'wall':10, 'platform':20, 'goal1':30,'lava':40, 'ramp':50
 }
 
-ef = ExtractFeatures(display=True, training=False)
+ef = ExtractFeatures(display=False, training=False)
 
 def load_pb(path_to_pb):
     with tf.gfile.GFile(path_to_pb, "rb") as f:
@@ -22,12 +22,10 @@ def load_pb(path_to_pb):
 convert = lambda x: [x[0]*84, x[1]*84, (x[0]+x[2])*84, (x[1]+x[3])*84]
 
 
-def dual_process(visual_obs):
-    res = ef.run_dual(visual_obs)
-    return res
+def process_image(visual_obs:np.array, **args:dict):
+    return ef.run(visual_obs, **args)
 
 def preprocess(ct, step_results, step, reward, macro_action=None):
-    # print(macro_action)
     visual_obs = step_results[3]["batched_step_result"].obs[0][0] # last 0 idx bc batched
     vector_obs = step_results[3]["batched_step_result"].obs[1][0]
     vector_obs = [vector_obs[0]/5.81, vector_obs[2]/11.6]
@@ -39,7 +37,6 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
         for _id in ct_i.objects:
             if ct_i.disappeared[_id] == 0:
                 ids[ot].append(_id + object_types[ot]) # second term is additional 10 to contrast object types
-
 
     obj = []
     for k in ids:

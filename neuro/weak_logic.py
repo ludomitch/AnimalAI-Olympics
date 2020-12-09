@@ -12,22 +12,29 @@ AnswerSet = namedtuple('AS', ['r', 'p', 'a', 'o']) # r for raw, p for parsed, a 
 parse_single_args = lambda x: list(list(ASP(x+'.').parse_args)[0])[0]
 parse_args = lambda x: list(list(ASP(x).sorted)[0])
 
-sample_vars = ["X", "Y", "Z"]
-macro_actions = [
-    "explore",
-    "interact",
-    "rotate"
-]
+
+macro_actions = {
+    "rotate":0, # _
+    "observe":0, # _
+    "interact":1, # x
+    "collect":1, # mask_x
+    "explore":2, # x,y
+    "climb":1, # x
+    "balance":2, # mask_x, y
+    "avoid":2 # mask_x, y
+}
 valid_observables = {
-    'present',
-    'visible',
-    'on',
-    'adjacent',
-    'goal',
-    'goal1',
-    'wall',
-    'platform',
-    'red'
+    'present':1,
+    'visible':1,
+    'on':2,
+    'adjacent':2,
+    'moving':1,
+    'goal':1,
+    'goals':0,
+    'wall':1,
+    'platform':1,
+    'lava':0,
+    'ramp':1
 }
 
 main_lp = """
@@ -37,7 +44,6 @@ object(X):- present(X).
 occludes(X,Y) :- present(Y), visible(X), not visible(Y).
 """
 action_logic = """
-
 :- initiate(X), initiate(Y), X!=Y.
 initiate :- initiate(X).
 :- not initiate.
@@ -85,19 +91,16 @@ class Grounder:
     #             if (_id1!=_id)&(dist<0.02):
     #                 in_front += f"adjacent({_id},{_id1}, {macro_step}).\n"
     #     return in_front
-    # @staticmethod
-    # def adjacent(macro_step,state):
-    #     adjacent = ""
-    #     for bbox, _, _, _id in state['obj']:
-    #         for bbox1, _, _, _id1 in state['obj']:
-    #             dist = get_distance(bbox, bbox1)
-    #             if (_id1!=_id)&(dist<0.01):
-    #                 adjacent += f"adjacent({_id},{_id1}).\n"
-    #     return adjacent
-    # @staticmethod
-    # def timestep(macro_step,_):
-    #     timestep = f"timestep({macro_step}).\n"
-    #     return timestep
+    @staticmethod
+    def adjacent(macro_step,state):
+        adjacent = ""
+        for bbox, _, _, _id in state['obj']:
+            for bbox1, _, _, _id1 in state['obj']:
+                dist = get_distance(bbox, bbox1)
+                if (_id1!=_id)&(dist<0.01):
+                    adjacent += f"adjacent({_id},{_id1}).\n"
+        return adjacent
+
     @staticmethod
     def on(macro_step,state):
         on = ""
@@ -139,9 +142,15 @@ class Clingo:
             present(X):-goal(X).
             present(X):- visible(X).
             object(X):- present(X).
-            initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
-            initiate(interact(X)):-object(X).
             initiate(rotate).
+            initiate(observe).
+            initiate(interact(X)):-object(X).
+            initiate(collect(X)):-object(X).
+            initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
+            initiate(climb(X)):-object(X).
+            initiate(balance(X,Y)):-object(X), object(Y).
+            initiate(avoid(X,Y)):-object(X), object(Y).
+
             """
         res = self.asp(lp)
         filtered_mas = [i for i in res.r[0] if 'initiate' in i]
@@ -200,11 +209,17 @@ class Clingo:
         # Add checks for chosen action
         checks = list(ASP(f"""            
             {res['raw'][0]}.
+            check(time, 50):- initiate(rotate).
+            check(time, 20):- initiate(observe).
+            check(time, 150):- initiate(interact(X)).
+            check(time, 150):- initiate(collect(X)).
             check(visible, Y):- initiate(explore(X,Y)).
             check(time, 250):- initiate(explore(X,Y)).
-            check(time, 150):- initiate(interact(X)).
-            check(time, 250):- initiate(avoid_red).
-            check(time, 50):- initiate(rotate).""").atoms_as_string)
+            check(time, 250):- initiate(climb(X)).
+            check(time, 150):- initiate(balance(X,Y)).
+            check(time, 250):- initiate(avoid(X,Y)).
+
+            """).atoms_as_string)
         checks = checks[0]
         checks = [parse_single_args(i)[1] for i in list(checks) if 'check' in i]
         res['check'] = checks
@@ -232,18 +247,41 @@ class Ilasp:
         self.first = None
 
     def create_mode_bias(self):
-        return """
-#modeo(1, initiate(rotate)).
-#modeo(1, initiate(interact(var(x)))).
-#modeo(1, initiate(explore(var(x), var(y)))).
-#modeo(1, goal(var(x))).
-#modeo(1, visible(var(x))).
-#modeo(1, occludes(var(x),var(y))).
+        tmp = ["x", "y", "z"]
+        res = ""
+        for k,v in macro_actions.items():
+            if v:
+                variables = ",".join([f"var({tmp[i]})" for i in range(v)])
+                res+= f"#modeo(1, initiate({k},{variables}))).\n"
+            else:
+                res+= f"#modeo(1, initiate({k})).\n"
+
+        for k,v in valid_observables.items():
+            if v:
+                variables = ",".join([f"var({tmp[i]})" for i in range(v)])
+                res+= f"#modeo(1, initiate({k},{variables}))).\n"
+            else:
+                res+= f"#modeo(1, initiate({k})).\n"
+
+        res += f"""
 #weight(1).
 #weight(-1).
 #maxv(4).
-#maxp(3).
+#maxp({len(macro_actions)}).
 """
+        return res
+# """
+# #modeo(1, initiate(rotate)).
+# #modeo(1, initiate(interact(var(x)))).
+# #modeo(1, initiate(explore(var(x), var(y)))).
+# #modeo(1, goal(var(x))).
+# #modeo(1, visible(var(x))).
+# #modeo(1, occludes(var(x),var(y))).
+# #weight(1).
+# #weight(-1).
+# #maxv(4).
+# #maxp(3).
+# """
 
     def extract_action(self, action):
         res = action.split('initiate(')
@@ -303,62 +341,6 @@ class Ilasp:
                     order+= f"#brave_ordering(b{o_c}@10, a{top_action}, a{e_c}).\n"
                     o_c +=1
                 e_c +=1
-
-
-            # examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[ranking[0][0]]}}}).\n"
-            # e_c +=1
-            # for i in range(0, len(ranking)-1):
-            #     examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[ranking[i+1][0]]}}}).\n"
-            #     order+= f"#brave_ordering(b{o_c}@3, a{e_c-1}, a{e_c}).\n"
-            #     e_c +=1
-
-
-        # # Ranking over similar states
-        # unique_states = {}
-        # unique_id = 0
-        # for c, o in enumerate(states):
-        #     found = False
-
-        #     for k, v in unique_states.items():
-        #         if o==v['state']:
-        #             unique_states[k]['idx'].append(c)
-        #             if actions[c] in unique_states[k]['actions']:
-        #                 unique_states[k]['actions'][actions[c]].append(values[c])
-        #             else:
-        #                 unique_states[k]['actions'][actions[c]] = [values[c]]
-        #             found = True
-        #             break
-        #     if not found:
-        #         found = False
-        #         unique_states[unique_id] = {
-        #         'state': o, 'idx':[c],
-        #          'actions':{
-        #             actions[c] : [values[c]]
-        #          }}
-        #         unique_id+=1
-
-        # examples = ""
-        # order = ""
-        # e_c = 0
-        # o_c = 0
-        # # Rolling average for each action
-        # for s,d in unique_states.items():
-        #     if len(d['actions'].keys())==1:
-        #         continue
-        #         examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{list(d['actions'])[0]}.\n{d['state']}}}).\n"
-        #         e_c +=1
-        #     else:
-        #         for a,v in d['actions'].items():
-        #             unique_states[s]['actions'][a] = sum(v)/len(v)
-
-        #         ranking = sorted(unique_states[s]['actions'].items(), key=operator.itemgetter(1), reverse=True)
-        #         examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{ranking[0][0]}.\n{d['state']}}}).\n"
-        #         e_c +=1
-        #         for i in range(0, len(ranking)-1):
-        #             examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{ranking[i+1][0]}.\n{d['state']}}}).\n"
-        #             order+= f"#brave_ordering(b{o_c}@3, a{e_c-1}, a{e_c}).\n"
-        #             e_c +=1
-        #             o_c +=1
 
         self.examples = examples + order
 

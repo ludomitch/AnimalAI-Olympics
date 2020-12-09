@@ -41,13 +41,20 @@ def run(counter):
         red_end = goal_z + 30
         red_wide = 5
         num_red = 3
-    elif counter < 80:
+    elif counter < 150:
         goal_z = randrange(15,20)
         goal_x = randrange(2,38)
         red_start = agent_p.z + 6
         red_end = goal_z - 6
-        red_wide = 10
+        red_wide = 8
         num_red = 3
+    elif counter < 250:
+        goal_z = randrange(25,30)
+        goal_x = randrange(2,38)
+        red_start = agent_p.z + 8
+        red_end = goal_z - 8
+        red_wide = 11
+        num_red = 4
     else:
         goal_z = randrange(35,36)
         goal_x = randrange(2,38)

@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -O3 -DNDEBUG  -shared  -o ../../bin/python/clingo.so CMakeFiles/pyclingo.dir/main.cc.o -Wl,-rpath,/media/home/ludovico/aai/neuro/clingo_test/clingo-5.4.1/bin: ../../lib/libpyclingom.a ../../bin/libclingo.so.3.0 -lpython2.7 

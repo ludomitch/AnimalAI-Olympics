@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG  -rdynamic CMakeFiles/reify.dir/main.cc.o  -o ../../bin/reify -Wl,-rpath,:::::::::::::: ../../lib/libreify.a ../../lib/libpotassco.a 

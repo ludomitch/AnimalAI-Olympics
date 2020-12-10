@@ -1,0 +1,2 @@
+/usr/bin/ar qc ../lib/libpyclingom.a  CMakeFiles/libpyclingom.dir/pyclingo.cc.o
+/usr/bin/ranlib ../lib/libpyclingom.a

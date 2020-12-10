@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG  -rdynamic CMakeFiles/gringo.dir/main.cc.o  -o ../../bin/gringo -Wl,-rpath,/media/home/ludovico/aai/neuro/clingo_test/clingo-5.4.1/bin: ../../lib/libpyclingo.a ../../bin/libclingo.so.3.0 -lpython2.7 

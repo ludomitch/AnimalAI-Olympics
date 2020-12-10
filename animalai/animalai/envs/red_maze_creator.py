@@ -41,14 +41,14 @@ def run(counter):
         red_end = goal_z + 30
         red_wide = 5
         num_red = 3
-    elif counter < 150:
+    elif counter < 100:
         goal_z = randrange(15,20)
         goal_x = randrange(2,38)
         red_start = agent_p.z + 6
         red_end = goal_z - 6
         red_wide = 8
         num_red = 3
-    elif counter < 250:
+    elif counter < 200:
         goal_z = randrange(25,30)
         goal_x = randrange(2,38)
         red_start = agent_p.z + 8
@@ -73,7 +73,7 @@ def run(counter):
 arenas:
   -1: !Arena
     pass_mark: 1
-    t: 250
+    t: 200
     items:"""
     for obj in ['Agent', 'GoodGoal']:
         inp = {"name":obj}
@@ -88,7 +88,7 @@ arenas:
     for _ in range(num_red):
         inp = {
             "name": choice(["DeathZone","BadGoal"]),
-            "pos": vector(randrange(10, 30), 0, randrange(red_start, red_end)),
+            "pos": vector(randrange(5, 35), 0, randrange(red_start, red_end)),
         }
         if inp['name'] == "DeathZone":
             inp['size'] = vector(red_wide,0, randrange(2,4))

@@ -47,6 +47,37 @@ def run(counter):
         wall_width = randrange(1,5)
         wall_len = randrange(8,min(30, ((wall_p.z-2)*2)))
 
+
+    if choices([True, False], weights=[0.1,0.9])[0]: # Do different
+        goal_s = randrange(1, 5)
+        goodgoal_s = vector(goal_s,goal_s,goal_s)
+        goodgoal_p = vector(randrange(1,39),2, randrange(1,39))
+        agent_p = vector(randrange(1,39),2, randrange(1,39))
+        agent_rot = round(math.degrees(math.atan2(agent_p.x - goodgoal_p.x, agent_p.z-goodgoal_p.z)) +180)
+        agent_rot += randrange(-20,20)
+        wall_p = vector(20,0,20)
+        wall_s = vector(40,2,40)
+        base = """
+!ArenaConfig
+arenas:
+  -1: !Arena
+    pass_mark: 1
+    t: 50 
+    items:"""
+
+        for obj in ['Agent', 'Wall', "GoodGoal"]:
+            inp = {"name":obj}
+            if obj.lower()+'_p' in locals():
+                inp['pos'] = locals()[obj.lower()+'_p']
+            if obj.lower()+'_s' in locals():
+                inp['size'] = locals()[obj.lower()+'_s']
+            if obj in ['Agent']:
+                inp['rot'] = agent_rot
+            if obj in ['Wall']:
+                inp['rot'] = 0
+            base+=make_obj(**inp)
+        return [base]
+
     height = randrange(2,6)
     wall_s = vector(wall_width, height, wall_len)
 

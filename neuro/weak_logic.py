@@ -1,4 +1,5 @@
 import operator
+import time
 from collections import deque, namedtuple
 import random as rnd
 import subprocess
@@ -6,36 +7,15 @@ import numpy as np
 
 from clyngor import ASP
 
-from utils import get_overlap, get_distance
+from utils import get_overlap, get_distance, macro_actions, valid_observables
 
 AnswerSet = namedtuple('AS', ['r', 'p', 'a', 'o']) # r for raw, p for parsed, a for arity
 parse_single_args = lambda x: list(list(ASP(x+'.').parse_args)[0])[0]
-parse_args = lambda x: list(list(ASP(x).sorted)[0])
+# parse_args = lambda x: list(list(ASP(x).sorted)[0])
 
-
-macro_actions = {
-    "rotate":0, # _
-    "observe":0, # _
-    "interact":1, # x
-    "collect":1, # mask_x
-    "explore":2, # x,y
-    "climb":1, # x
-    "balance":2, # mask_x, y
-    "avoid":2 # mask_x, y
-}
-valid_observables = {
-    'present':1,
-    'visible':1,
-    'on':2,
-    'adjacent':2,
-    'moving':1,
-    'goal':1,
-    'goals':0,
-    'wall':1,
-    'platform':1,
-    'lava':0,
-    'ramp':1
-}
+def parse_args(x):
+    x = list(ASP(x).sorted)
+    return list(x[0])
 
 main_lp = """
 present(X):-goal(X).
@@ -143,19 +123,26 @@ class Clingo:
             present(X):- visible(X).
             object(X):- present(X).
             initiate(rotate).
-            initiate(observe).
             initiate(interact(X)):-object(X).
-            initiate(collect(X)):-object(X).
-            initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
-            initiate(climb(X)):-object(X).
-            initiate(balance(X,Y)):-object(X), object(Y).
-            initiate(avoid(X,Y)):-object(X), object(Y).
-
+            initiate(avoid(X,Y)):-lava(X), goal(Y), X!=Y.
             """
+        # lp = f"""
+        #     {ground_observables}
+        #     present(X):-goal(X).
+        #     present(X):- visible(X).
+        #     object(X):- present(X).
+        #     initiate(rotate).
+        #     initiate(observe).
+        #     initiate(interact(X)):-object(X).
+        #     initiate(collect(X)):-object(X).
+        #     initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
+        #     initiate(climb(X)):-object(X).
+        #     initiate(balance(X,Y)):-object(X), object(Y).
+        #     initiate(avoid(X,Y)):-object(X), object(Y).
+        #     """
         res = self.asp(lp)
         filtered_mas = [i for i in res.r[0] if 'initiate' in i]
         rand_action = rnd.choice(filtered_mas)
-        # print([i for i in res.r[0] if 'initiate' in i])
         return [rand_action]
 
     @staticmethod
@@ -244,7 +231,6 @@ class Ilasp:
         # Examples are [int:weight, string:example]
         self.memory_len = memory_len
         self.examples = deque(maxlen=self.memory_len)
-        self.first = None
 
     def create_mode_bias(self):
         tmp = ["x", "y", "z"]
@@ -252,16 +238,16 @@ class Ilasp:
         for k,v in macro_actions.items():
             if v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
-                res+= f"#modeo(1, initiate({k},{variables}))).\n"
+                res+= f"#modeo(1, initiate({k}({variables}))).\n"
             else:
                 res+= f"#modeo(1, initiate({k})).\n"
 
         for k,v in valid_observables.items():
             if v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
-                res+= f"#modeo(1, initiate({k},{variables}))).\n"
+                res+= f"#modeo(1, {k}({variables})).\n"
             else:
-                res+= f"#modeo(1, initiate({k})).\n"
+                res+= f"#modeo(1, {k}).\n"
 
         res += f"""
 #weight(1).
@@ -270,18 +256,6 @@ class Ilasp:
 #maxp({len(macro_actions)}).
 """
         return res
-# """
-# #modeo(1, initiate(rotate)).
-# #modeo(1, initiate(interact(var(x)))).
-# #modeo(1, initiate(explore(var(x), var(y)))).
-# #modeo(1, goal(var(x))).
-# #modeo(1, visible(var(x))).
-# #modeo(1, occludes(var(x),var(y))).
-# #weight(1).
-# #weight(-1).
-# #maxv(4).
-# #maxp(3).
-# """
 
     def extract_action(self, action):
         res = action.split('initiate(')
@@ -301,13 +275,11 @@ class Ilasp:
         actions = []
         states = []
         values = []
-        print("Success num:", sum(i[2] for i in traces[-30:]))
         for trace in traces:
             a, s, v = self.expand_trace(trace)
             actions += a
             states += s
             values += v
-
         pairs = [variabilise(s+f"{a}.") for s,a in zip(states,actions)]
         unique_pairs = list(set(pairs))
         var_states = [variabilise(s) for s in states]
@@ -349,14 +321,15 @@ class Ilasp:
         # Create text file with lp
         with open("tmp.lp", "w") as text_file:
             text_file.write(main_lp + self.create_mode_bias() + self.examples)
-        if self.first is None:
-            with open("first.lp", "w") as text_file:
-                text_file.write(main_lp + self.create_mode_bias() + self.examples)
-                first = 1
+
         # Start bash process that runs ilasp learning
         bashCommand = "ilasp4 --version=4 tmp.lp -q --clingo clingo5"
+        start = time.time()
+        print("Running ILASP]")
         process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
         output, error = process.communicate()
+        end = time.time()
+        print(f"ILASP took {end-start}s to run")
         if error:
             raise Exception(f"ILASP error: {error.decode('utf-8')}")
         
@@ -371,8 +344,7 @@ class Ilasp:
             return output
         print("NO RULES LEARNED")
         return False # No learned rules, will choose random macro
-        
-        
+
 class Logic:
     def __init__(self, buffer_size = 40):
         self.grounder = Grounder()

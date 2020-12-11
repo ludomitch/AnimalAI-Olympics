@@ -9,6 +9,32 @@ object_types = {
     'goal':0, 'wall':10, 'platform':20, 'goal1':30,'lava':40, 'ramp':50
 }
 
+macro_actions = {
+    "rotate":0, # _
+    # "observe":0, # _
+    "interact":1, # x
+    # "collect":1, # mask_x
+    # "explore":2, # x,y
+    # "climb":1, # x
+    # "balance":2, # mask_x, y
+    "avoid":2 # mask_x, y
+}
+
+valid_observables = {
+    # 'present':1,
+    'visible':1,
+    # 'on':2,
+    # 'adjacent':2,
+    # 'moving':1,
+    'goal':1,
+    # 'goals':0,
+    # 'wall':1,
+    # 'platform':1,
+    'lava':1,
+    # 'ramp':1,
+    # 'agent':0,
+}
+
 ef = ExtractFeatures(display=False, training=False)
 
 def load_pb(path_to_pb):
@@ -21,6 +47,10 @@ def load_pb(path_to_pb):
 
 convert = lambda x: [x[0]*84, x[1]*84, (x[0]+x[2])*84, (x[1]+x[3])*84]
 
+def filter_observables(observables:str):
+    obs = observables.split('\n')
+    res = "\n".join([i for i in obs if any(j in i for j in valid_observables)&bool(i)])
+    return res+'\n'
 
 def process_image(visual_obs:np.array, **args:dict):
     return ef.run(visual_obs, **args)
@@ -28,8 +58,8 @@ def process_image(visual_obs:np.array, **args:dict):
 def preprocess(ct, step_results, step, reward, macro_action=None):
     visual_obs = step_results[3]["batched_step_result"].obs[0][0] # last 0 idx bc batched
     vector_obs = step_results[3]["batched_step_result"].obs[1][0]
-    vector_obs = [vector_obs[0]/5.81, vector_obs[2]/11.6]
-    bboxes = ef.run(visual_obs, step, macro_action=macro_action)
+    vector_obs = [vector_obs[0]/5.81, vector_obs[1], vector_obs[2]/11.6]
+    bboxes = ef.run(visual_obs)
     ids = {k:[] for k in object_types}
     for ot,  ct_i in ct.items():
         converted_boxes = [convert(i[0]) for i in bboxes[ot]]

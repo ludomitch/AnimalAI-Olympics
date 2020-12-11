@@ -3,10 +3,10 @@ from mlagents.tf_utils import tf
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-from utils import load_pb, preprocess, process_image, get_distance
+from utils import load_pb, preprocess, process_image#, get_distance
 from logic import Grounder
-from collections import deque
-import time
+# from collections import deque
+# import time
 import cv2
 
 def choose_action_probability(predictions_exp):
@@ -31,23 +31,52 @@ class RollingChecks:
 
 
 class Action:
-    def __init__(self, env, ct, state, step_results, action):
+    def __init__(self, env, ct, state, step_results, args, checks):
         self.env = env
         self.ct = ct
         self.state = state
         self.step_results = step_results
-        if isinstance(action['initiate'][0],str):
-            self.action = action['initiate'][0]
-            self.action_args = None
-        else:
-            self.action = action["initiate"][0][0]
-            self.action_args = action["initiate"][0][1]
-        self.checks = action["check"]
-        model_path = f"macro_actions/v2/{self.action}"
-        self.graph = load_pb(model_path)
+        self.args = args
+        self.checks = checks
         self.reward = 0
         self.micro_step = 0
-        self.mode = None
+        self.config = {}
+        self.with_up = None
+        self.action_args = {}
+        self.graph = None
+
+    @property
+    def name(self):
+        return self.__class__.__name__.lower()
+
+    def load_graph(self):
+        model_path = f"macro_actions/v3/{self.name}.pb"
+        self.graph = load_pb(model_path)
+
+    def process_state(self):
+        obs_size = 4 if self.config['mode'] in ['dual', 'box'] else 0
+        if self.with_up:
+            vel_size = 3
+            vel = self.state['velocity']
+
+        else:
+            vel_size = 2
+            vel = [self.state['velocity'][0], self.state['velocity'][2]]
+
+        res = np.zeros(obs_size+vel_size)
+        res[:vel_size] = vel
+
+        if self.config['mode'] in ["dual", "box"]:
+            try:
+                res[vel_size:] = next(i[0] for i in self.state['obj'] if i[1]=="goal")
+            except StopIteration:
+                pass # Not visible. res is already all zeros
+
+        if self.config['mode'] in ['dual', 'mask']:
+            masked_img, _ = process_image(self.state['visual_obs'], **self.config)
+            return masked_img, res
+        return res
+
 
     def macro_stats(self, checks=None):
         success = self.state['reward'] > self.reward
@@ -93,8 +122,6 @@ class Action:
             action = [choose_action_probability(prediction[:3]), choose_action_probability(prediction[3:])]
         return np.array(action).reshape((1, 2))
 
-    def process_state(self, state, args):
-        pass
     def checks_clean(self):
         if self.state['done']:
             return False, self.macro_stats(None)
@@ -110,12 +137,16 @@ class Action:
                 return False, self.macro_stats(check_stats)
         return True, self.macro_stats("GREEN")
     def run(self, pass_mark):
+
+        self.load_graph()
+
         go = True
         while go:
-            vector_obs = self.state_parser(self.state, self.action_args)
+            vector_obs = self.process_state()
             action = self.get_action(vector_obs)
             self.step_results = self.env.step(action)
-            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'], self.action)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step,
+                self.state['reward'], self.name)
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             go, stats = self.checks_clean()
@@ -125,37 +156,22 @@ class Action:
         return self.step_results, self.state, stats, self.micro_step
 
 class Interact(Action):
-    def __init__(self, env, ct, state, step_results, action):
-        super().__init__(
-            env=env, ct=ct, state=state, step_results=step_results, action=action
-        )
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
         self.config = {
             "mode":"box",
-            "box": "green",
+            "box": "goal",
             "mask": None
         }
         self.with_up = False
+        self.action_args = {"box_id": args[0]}
 
-
-    @staticmethod
-    def process_state(state, x):
-        """Go to object x. x is an id."""
-        x = x[0]
-        res = np.zeros(6)
-        res[:2] = state['velocity']
-        obj = state['obj']
-        try:
-            res[2:] = next(i[0] for i in obj if i[3]==x)
-        except StopIteration:
-            res[2:] = [0,0,0,0]
-
-        return res
 
 class Explore(Action):
-    def __init__(self, env, ct, state, step_results, action):
-        super().__init__(
-            env=env, ct=ct, state=state, step_results=step_results, action=action
-        )
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
 
         self.config = {
             "mode":"box",
@@ -163,64 +179,42 @@ class Explore(Action):
             "mask": None
         }
         self.with_up = False
+        self.action_args = {"box_id": args[0]}
 
-    @staticmethod
-    def process_state(state, x):
-        """Go behind object x. x is an id. x comes in as "x,y"""
-        x = x[0]
-        res = np.zeros(6)
-        res[:2] = state['velocity']
-        try:
-            res[2:] = next(i[0] for i in state['obj'] if i[3]==x)
-        except StopIteration:
-            res[2:] = [0,0,0,0]
-        return res
+    def load_graph(self):
+        bbox = self.process_state()[2:]
+        model_path = f"macro_actions/v3/explore"
+        if (bbox[0]+bbox[2]/2)>0.5: # If obj is on right, go around left side
+            model_path+= "_right.pb"
+        else:
+            model_path+= "_left.pb"
+        self.graph = load_pb(model_path)
 
-class AvoidRed(Action):
-    def __init__(self, env, ct, state, step_results, action):
-        super().__init__(
-            env=env, ct=ct, state=state, step_results=step_results, action=action
-        )
+class Avoid(Action):
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
 
         self.config = {
             "mode":"dual",
-            "box": "green",
-            "mask": "red"
+            "box": "goal",
+            "mask": "lava"
         }
         self.with_up = False
+        self.action_args = {"box_id": args[1],"box_type": "goal"}
 
 
-    @staticmethod
-    def process_state(state, x):
-        """Go to object x while avoiding red. x is an id."""
-        res = np.zeros(6)
-        res[:2] = state['velocity']
-        img, _ = process_image(state['visual_obs'], **self.config)
-
-        try:
-            res[2:] = next(i[0] for i in state['obj'] if i[1]=='goal')
-        except StopIteration:
-
-            if any(i[1]=="goal1" for i in state['obj']):
-                    res[2:] = state['obj'][0][0]
-            else:
-                res[2:] = [0,0,0,0]
-
-        return img, res
 
 class Rotate(Action):
-    def __init__(self, env, ct, state, step_results, action):
-        super().__init__(
-            env=env, ct=ct, state=state, step_results=step_results, action=action
-        )
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
 
 
-    @staticmethod
-    def process_state(state):
+    def run(self, pass_mark):
         """Rotate to first visible object"""
-        tracker_onset = None
-        tracker_offset = 0
-        for c in range(50):
+
+        for _ in range(50):
             self.step_results = self.env.step([[0, 1]])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
             self.state['micro_step'] = self.micro_step

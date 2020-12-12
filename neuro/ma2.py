@@ -5,6 +5,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 from utils import load_pb, preprocess, process_image#, get_distance
 from logic import Grounder
+import checks as ck
 # from collections import deque
 # import time
 import cv2
@@ -14,20 +15,6 @@ def choose_action_probability(predictions_exp):
 
 goal_visible = Grounder().goal_visible # Func
 test=False
-
-class RollingChecks:
-    @staticmethod
-    def visible(state, obj_id):
-        if any(i[1]in['goal','goal1'] for i in state['obj']):
-            return True, f"Success: Object {obj_id} now visible"
-        return False, f"Object {obj_id} still not visible"
-
-    @staticmethod
-    def time(state, limit=250):
-        t = state["micro_step"]
-        if t >= limit:
-            return True, f"Failure: Time out, timestep {t}/{limit}"
-        return False, f"Timestep {t}/{limit}"
 
 
 class Action:
@@ -40,10 +27,11 @@ class Action:
         self.checks = checks
         self.reward = 0
         self.micro_step = 0
-        self.config = {}
+        self.config = {} # Default behaviour
         self.with_up = None
-        self.action_args = {}
         self.graph = None
+        self.always_visible = None
+        self.rcs = None
 
     @property
     def name(self):
@@ -66,14 +54,19 @@ class Action:
         res = np.zeros(obs_size+vel_size)
         res[:vel_size] = vel
 
-        if self.config['mode'] in ["dual", "box"]:
-            try:
-                res[vel_size:] = next(i[0] for i in self.state['obj'] if i[1]=="goal")
+        if not self.config['mode'] == "mask":
+            obj = self.config['box']
+            try: # Look for id first, then obj type
+                res[vel_size:] = next(i[0] for i in self.state['obj'] if i[3]==obj[0])
             except StopIteration:
-                pass # Not visible. res is already all zeros
+                if not self.always_visible:
+                    try:
+                        res[vel_size:] = next(i[0] for i in self.state['obj'] if i[1]==obj[1])
+                    except StopIteration:
+                        pass
 
         if self.config['mode'] in ['dual', 'mask']:
-            masked_img, _ = process_image(self.state['visual_obs'], **self.config)
+            masked_img = process_image(self.state['visual_obs'], **self.config)
             return masked_img, res
         return res
 
@@ -126,24 +119,43 @@ class Action:
         if self.state['done']:
             return False, self.macro_stats(None)
         for check in self.checks:
-            if check[1] != "-":
-                check_bool, check_stats = getattr(RollingChecks, check[0])(
-                    self.state, check[1]
-                )
-            else:
-                check_bool, check_stats = getattr(RollingChecks, check[0])(self.state)
-
+            check.state = self.state
+            check_bool, check_info = check.run()
             if check_bool:
-                return False, self.macro_stats(check_stats)
+                return False, self.macro_stats(check_info)
         return True, self.macro_stats("GREEN")
-    def run(self, pass_mark):
 
+    def identify_action_args(self):
+        res = []
+        for arg in self.args:
+            if arg == 42:
+                typ = "goal"
+            else:
+                try:
+                    typ = next(i[1] for i in self.state['obj'] if i[3]==arg)
+                except StopIteration:
+                    typ = None
+            res.append([arg, typ]) # ID and object type
+        
+        for k,v in self.config.items():
+            if isinstance(v, int):
+                if k=="mask":
+                    self.config[k] = res[v][1]
+                else: #box
+                    self.config[k] = res[v]
+
+    def instantiate_checks(self):
+        self.checks = [getattr(ck, i[0].title())(self.state, i[1]) for i in self.checks]
+
+    def run(self, pass_mark):
+        self.identify_action_args()
         self.load_graph()
+        self.instantiate_checks()
 
         go = True
         while go:
-            vector_obs = self.process_state()
-            action = self.get_action(vector_obs)
+            obs = self.process_state()
+            action = self.get_action(obs)
             self.step_results = self.env.step(action)
             self.state = preprocess(self.ct, self.step_results, self.micro_step,
                 self.state['reward'], self.name)
@@ -161,12 +173,11 @@ class Interact(Action):
          step_results=step_results, args=args, checks=checks)
         self.config = {
             "mode":"box",
-            "box": "goal",
+            "box": 0,
             "mask": None
         }
         self.with_up = False
-        self.action_args = {"box_id": args[0]}
-
+        self.always_visible = True
 
 class Explore(Action):
     def __init__(self, env, ct, state, step_results, args, checks):
@@ -175,11 +186,11 @@ class Explore(Action):
 
         self.config = {
             "mode":"box",
-            "box": "wall",
+            "box": 0,
             "mask": None
         }
         self.with_up = False
-        self.action_args = {"box_id": args[0]}
+        self.always_visible = True # The wall is
 
     def load_graph(self):
         bbox = self.process_state()[2:]
@@ -197,20 +208,47 @@ class Avoid(Action):
 
         self.config = {
             "mode":"dual",
-            "box": "goal",
-            "mask": "lava"
+            "box": 1,
+            "mask": 0
         }
         self.with_up = False
-        self.action_args = {"box_id": args[1],"box_type": "goal"}
+        self.always_visible = False
 
+class Climb(Action):
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
 
+        self.config = {
+            "mode":"mask",
+            "box": None,
+            "mask": 0
+        }
+        self.with_up = True
+        self.always_visible = True
+
+class Balance(Action):
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
+
+        self.config = {
+            "mode":"dual",
+            "box": 1,
+            "mask": 0
+        }
+        self.with_up = True
+        self.always_visible = False
 
 class Rotate(Action):
     def __init__(self, env, ct, state, step_results, args, checks):
         super().__init__(env=env, ct=ct, state=state,
          step_results=step_results, args=args, checks=checks)
 
-
+    def check_done(self):
+        if self.state['done']:
+            return True
+        return False
     def run(self, pass_mark):
         """Rotate to first visible object"""
 
@@ -223,12 +261,16 @@ class Rotate(Action):
             # Rotate
             if self.state['obj']: #0 is placeholder macro step, has no effect
                 break # and run a few more rotations to point to it
+            if self.check_done():
+                return self.step_results, self.state, self.macro_stats(None), self.micro_step
         for _ in range(3): # add extra 3 rotations to be looking straight at object
             self.step_results = self.env.step([[0, 1]])
             self.reward = self.step_results[1]
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
+            if self.check_done():
+                return self.step_results, self.state, self.macro_stats(None), self.micro_step
         return self.step_results, self.state, self.macro_stats(
             "Object visible, rotating to it"), self.micro_step
 

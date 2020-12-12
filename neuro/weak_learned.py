@@ -5,6 +5,7 @@ import ma2 as macro
 from weak_logic import Logic
 from utils import preprocess, object_types, filter_observables
 import random as rnd
+import time
 
 class Pipeline:
     def __init__(self, args, test=False):
@@ -65,58 +66,64 @@ class Pipeline:
         self.env.reset(ac)
 
     def learn_run(self):
-        success_count = 0
-        choice = 'random'
-        traces = [] # list of lists: [actions, observables, success, macro_steps]
-        if self.test:
-            choice = 'test'
-        for idx in range(self.args.num_episodes):
-            self.reset()
-            step_results = self.env.step([[0, 0]])  # Take 0,0 step
-            global_steps = 0
-            macro_step = 0
-            reward = 0
+        try:
+            start = time.time()
+            success_count = 0
+            choice = 'random'
+            traces = [] # list of lists: [actions, observables, success, macro_steps]
+            if self.test:
+                choice = 'test'
+            for idx in range(self.args.num_episodes):
+                self.reset()
+                step_results = self.env.step([[0, 0]])  # Take 0,0 step
+                global_steps = 0
+                macro_step = 0
+                reward = 0
+                self.ct = {ot: CentroidTracker() for ot in object_types} # Initialise tracker
+                actions_buffer = []
+                observables_buffer = []
+                if (idx%self.buffer_size==0)&(idx!=0):
+                    choice = 'ilasp'
+                    self.logic.ilasp.generate_examples(traces)
+                    self.logic.update_learned_lp()
 
-            self.ct = {ot: CentroidTracker() for ot in object_types} # Initialise tracker
-            actions_buffer = []
-            observables_buffer = []
-            if (idx%self.buffer_size==0)&(idx!=0):
-                choice = 'ilasp'
-                self.logic.ilasp.generate_examples(traces)
-                self.logic.update_learned_lp()
-
-            while not self.episode_over(step_results[2]):
-                if global_steps >= 250:
-                    success = False
-                    print("Exceeded max global steps")
-                    break
-                state = preprocess(self.ct, step_results, global_steps, reward)
-                macro_action, observables = self.logic.run(
-                    macro_step,
-                    state,
-                    choice=choice)
-                print(macro_action)
-                if self.test:
+                while not self.episode_over(step_results[2]):
+                    if global_steps >= 500:
+                        success = False
+                        print("Exceeded max global steps")
+                        break
+                    state = preprocess(self.ct, step_results, global_steps, reward)
+                    macro_action, observables = self.logic.run(
+                        macro_step,
+                        state,
+                        choice=choice)
                     print(macro_action)
-                step_results, state, micro_step, success = self.take_macro_step(
-                    self.env, state, step_results, macro_action
-                )
+                    step_results, state, micro_step, success = self.take_macro_step(
+                        self.env, state, step_results, macro_action
+                    )
 
-                global_steps += micro_step
-                macro_step +=1
-                actions_buffer.append(macro_action['raw'][0])
-                observables_buffer.append(filter_observables(observables))
-                if state['reward']>self.arenas[0].arenas[0].pass_mark:
-                    success = True
-                    break
-                else:
-                    success = False
-            traces.append([actions_buffer, observables_buffer, success, macro_step])
-            # nl_success = "Success" if success else "Failure"
-            # print(f"Episode was a {nl_success}")
-            success_count += success
+                    global_steps += micro_step
+                    macro_step +=1
+                    actions_buffer.append(macro_action['raw'][0])
+                    observables_buffer.append(filter_observables(observables))
+                    if state['reward']>self.arenas[0].arenas[0].pass_mark:
+                        success = True
+                        print(success)
+                        break
+                    else:
+                        success = False
+                traces.append([actions_buffer, observables_buffer, success, macro_step])
+                # nl_success = "Success" if success else "Failure"
+                # print(f"Episode was a {nl_success}")
+                success_count += success
 
-        print(
-            f"Final results: {success_count}/{self.args.num_episodes} episodes were completed successfully"
-        )
-        self.env.close()
+            print(
+                f"Final results: {success_count}/{self.args.num_episodes} episodes were completed successfully"
+            )
+            end = time.time()
+            print(f"The full run took {end-start}s")
+            self.env.close()
+        except Exception as e:
+            print(e)
+            self.env.close()
+

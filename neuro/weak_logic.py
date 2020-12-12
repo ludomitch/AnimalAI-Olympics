@@ -31,13 +31,20 @@ initiate :- initiate(X).
 0{initiate(rotate)}1.
 0{initiate(interact(X))}1:- object(X).
 0{initiate(explore(X,Y))}1:- object(X), object(Y), X!=Y.
+0{initiate(climb(X))}1:-object(X).
+0{initiate(balance(X,Y))}1:-object(X), object(Y).
 """
 
 test_lp = main_lp + action_logic + """
-:~ initiate(interact(V1)).[1@2, V1]
-:~ goal(V1), initiate(explore(V1,V2)).[1@1, V1, V2]
-:~ goal(V1), not initiate(interact(V1)), not initiate(rotate).[1@3, V1]
+:~ initiate(balance(V1,V2)),on(agent, V1), platform(V1), goal(V2).[-1@3, V1,V2]
+:~ ramp(V1), initiate(climb(V1)).[-1@2, V1]
 """
+
+# """
+# :~ initiate(interact(V1)).[1@2, V1]
+# :~ goal(V1), initiate(explore(V1,V2)).[1@1, V1, V2]
+# :~ goal(V1), not initiate(interact(V1)), not initiate(rotate).[1@3, V1]
+# """
 
 
 def variabilise(lp):
@@ -85,9 +92,9 @@ class Grounder:
     def on(macro_step,state):
         on = ""
         bottom_rect = [0, 0.75, 1, 0.25]
-        for bbox, _, _, _id in state['obj']:
+        for bbox, typ, _, _ in state['obj']:
             if get_overlap(bbox, bottom_rect)>0.5:
-                on += f"on(agent,{_id}).\n"
+                on += f"on(agent,{typ}).\n"
         return on
 
     @staticmethod
@@ -95,7 +102,9 @@ class Grounder:
         visible = ""
         for box, obj_type, _occ_area, _id in state['obj']:
             visible += f"visible({_id}).\n"
-            if obj_type!="goal":
+            if obj_type in ['platform', 'ramp']:
+                visible+= f"{obj_type}.\n"
+            elif obj_type!="goal":
                 visible +=f"{obj_type}({_id}).\n"
         return visible
     @staticmethod
@@ -123,8 +132,9 @@ class Clingo:
             present(X):- visible(X).
             object(X):- present(X).
             initiate(rotate).
-            initiate(interact(X)):-object(X).
-            initiate(avoid(X,Y)):-lava(X), goal(Y), X!=Y.
+            initiate(climb(X)):-object(X).
+            initiate(balance(X,Y)):-object(X), object(Y), X!=Y.
+
             """
         # lp = f"""
         #     {ground_observables}
@@ -203,7 +213,9 @@ class Clingo:
             check(visible, Y):- initiate(explore(X,Y)).
             check(time, 250):- initiate(explore(X,Y)).
             check(time, 250):- initiate(climb(X)).
+            check(peaked, 0):- initiate(climb(X)).
             check(time, 150):- initiate(balance(X,Y)).
+            check(fallen, 0):- initiate(balance(X,Y)).
             check(time, 250):- initiate(avoid(X,Y)).
 
             """).atoms_as_string)
@@ -214,11 +226,12 @@ class Clingo:
 
     def run(self, observables, random=False, test=False):
         # Just ground macro actions based on observables
-        if random|(self.learned_lp is None):
-            res = self.random_action_grounder(observables)
-        elif test:
+
+        if test:
             lp = test_lp + observables
             res = self.asp(lp)
+        elif random|(self.learned_lp is None):
+            res = self.random_action_grounder(observables)
 
         else: # Run full lp
             lp = main_lp + action_logic + self.learned_lp + observables
@@ -325,7 +338,7 @@ class Ilasp:
         # Start bash process that runs ilasp learning
         bashCommand = "ilasp4 --version=4 tmp.lp -q --clingo clingo5"
         start = time.time()
-        print("Running ILASP]")
+        print("Running ILASP")
         process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
         output, error = process.communicate()
         end = time.time()

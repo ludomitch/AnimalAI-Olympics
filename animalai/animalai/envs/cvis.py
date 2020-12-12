@@ -19,6 +19,7 @@ class HSV:
     orange = [[20,121,158], [23,255,255]]
     brown = [[7,53,40], [18,87,121]]
     blue = [[119, 255, 106], [120, 255, 255]]
+    pink = [[145, 206, 140], [156, 255, 255]]
 
 hsv_cls = HSV()
 objects = OD()
@@ -27,9 +28,7 @@ objects['goal1'] = hsv_cls.orange
 objects['lava'] = hsv_cls.red
 objects['wall'] = hsv_cls.grey
 objects['platform'] = hsv_cls.blue
-objects['ramp'] = hsv_cls.orange # TODO change to pink
-
-
+objects['ramp'] = hsv_cls.pink # TODO change to pink
 
 
 class ExtractFeatures:
@@ -44,6 +43,7 @@ class ExtractFeatures:
     def mask_img(self, hsv):
         mask = cv2.inRange(self.hsv_img, hsv[0], hsv[1])
         res = cv2.bitwise_and(self.hsv_img, self.hsv_img, mask=mask)[:,:,2]
+        res = res/255
         return res
 
     def get_contour(self, hsv):
@@ -61,9 +61,9 @@ class ExtractFeatures:
         res = []
         for c in ctr:
             x,y,w,h = cv2.boundingRect(c)
-            if self.display:
-                cv2.rectangle(self.img,(x,y),(x+w,y+h),(0,255,0),2)
-                cv2.imwrite("/Users/ludo/Desktop/bam.png", self.img)
+            # if self.display:
+            #     cv2.rectangle(self.img,(x,y),(x+w,y+h),(0,255,0),2)
+            #     cv2.imwrite("/Users/ludo/Desktop/bam.png", self.img)
             # Normalize bbox to be between 0 and 1
             res.append([
                 x/self.img_dim[0], y/self.img_dim[1],
@@ -117,13 +117,16 @@ class ExtractFeatures:
         else:
             img = (img*255)[:,:,::-1].astype(np.uint8)
 
+        if self.display:
+            cv2.imwrite("/Users/ludo/Desktop/bam.png", img)
+
         setattr(self, 'img', img)
         setattr(self, 'hsv_img', cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV))
         setattr(self, 'img_dim', img.shape)
         if mode=="dual":
-            return self.run_dual(**args)
+            return self.run_mask(args['mask'])
         elif mode=="mask":
-            return self.run_mask(**args)
+            return self.run_mask(args['mask'])
         elif mode=="box":
             return self.run_objects()
         else:

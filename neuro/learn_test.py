@@ -10,7 +10,6 @@ import config as cfg
 if __name__=="__main__":
 	margs = namedtuple('args', 'env seed arenas num_episodes inference')
 	env_path = 'linux_builds/aai'
-	competition_configurations
 	arenas = [
 		f"../competition_configurations/{i}.yml" for i in list(cfg.COMPETITION_CONFIGS['Ramp Usage'])
 	]

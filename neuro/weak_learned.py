@@ -83,6 +83,9 @@ class Pipeline:
                 actions_buffer = []
                 observables_buffer = []
                 if (idx%self.buffer_size==0)&(idx!=0):
+                    end = time.time()
+                    print(f"The full run without ILASP {end-start}s")
+                    break
                     choice = 'ilasp'
                     self.logic.ilasp.generate_examples(traces)
                     self.logic.update_learned_lp()
@@ -117,9 +120,9 @@ class Pipeline:
                 # print(f"Episode was a {nl_success}")
                 success_count += success
 
-            print(
-                f"Final results: {success_count}/{self.args.num_episodes} episodes were completed successfully"
-            )
+                print(
+                    f"{success_count}/{self.args.num_episodes}y"
+                )
             end = time.time()
             print(f"The full run took {end-start}s")
             self.env.close()

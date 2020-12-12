@@ -12,7 +12,7 @@ object_types = {
 macro_actions = {
     "rotate":0, # _
     # "observe":0, # _
-    "interact":1, # x
+    # "interact":1, # x
     # "collect":1, # mask_x
     # "explore":2, # x,y
     "climb":1, # x
@@ -29,9 +29,9 @@ valid_observables = {
     'goal':1,
     # 'goals':0,
     # 'wall':1,
-    'platform':0,
+    'platform':1,
     # 'lava':0,
-    'ramp':0,
+    'ramp':1,
     'agent':0,
 }
 

@@ -123,7 +123,6 @@ class Pipeline:
             end = time.time()
             print(f"The full run took {end-start}s")
             self.env.close()
-        except Exception as e:
-            print(e)
+        except KeyboardInterrupt:
             self.env.close()
 

@@ -40,6 +40,8 @@ test_lp = main_lp + action_logic + """
 :~ ramp(V1), initiate(climb(V1)).[-1@2, V1]
 """
 
+# /media/home/ludovico/aai/neuro/clingo_test/clingo-5.4.1/bin:/media/home/ludovico/venv/bin:/media/home/ludovico/bin:/media/home/ludovico/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
 # """
 # :~ initiate(interact(V1)).[1@2, V1]
 # :~ goal(V1), initiate(explore(V1,V2)).[1@1, V1, V2]
@@ -50,11 +52,19 @@ test_lp = main_lp + action_logic + """
 def variabilise(lp):
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     p = parse_args(lp)
-    # Reduce nested functions
-    y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
+    ftd = []
+    for i in p:
+        if i[1]: # If there are args
+            if isinstance(i[1][0], tuple): # if it's a nested func
+                ftd.append(i[1][0])
+            else:
+                ftd.append(i)
+        else:
+            ftd.append(i)
+         # = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
     # Create unique var map
     var_map = {}
-    for lit in y:
+    for lit in ftd:
         for arg in lit[1]:
             if (arg not in var_map)&isinstance(arg, int):
                 var_map[arg] = letters.pop(0)
@@ -102,9 +112,9 @@ class Grounder:
         visible = ""
         for box, obj_type, _occ_area, _id in state['obj']:
             visible += f"visible({_id}).\n"
-            if obj_type in ['platform', 'ramp']:
-                visible+= f"{obj_type}.\n"
-            elif obj_type!="goal":
+            # if obj_type in ['platform', 'ramp']:
+            #     visible+= f"{obj_type}.\n"
+            if obj_type!="goal":
                 visible +=f"{obj_type}({_id}).\n"
         return visible
     @staticmethod
@@ -211,8 +221,8 @@ class Clingo:
             check(time, 150):- initiate(interact(X)).
             check(time, 150):- initiate(collect(X)).
             check(visible, Y):- initiate(explore(X,Y)).
-            check(time, 250):- initiate(explore(X,Y)).
-            check(time, 250):- initiate(climb(X)).
+            check(time, 150):- initiate(explore(X,Y)).
+            check(time, 150):- initiate(climb(X)).
             check(peaked, 0):- initiate(climb(X)).
             check(time, 150):- initiate(balance(X,Y)).
             check(fallen, 0):- initiate(balance(X,Y)).

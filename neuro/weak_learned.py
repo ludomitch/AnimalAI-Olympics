@@ -100,7 +100,7 @@ class Pipeline:
                         macro_step,
                         state,
                         choice=choice)
-                    print(macro_action)
+                    # print(macro_action)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
                     )

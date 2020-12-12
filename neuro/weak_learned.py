@@ -85,7 +85,6 @@ class Pipeline:
                 if (idx%self.buffer_size==0)&(idx!=0):
                     end = time.time()
                     print(f"The full run without ILASP {end-start}s")
-                    break
                     choice = 'ilasp'
                     self.logic.ilasp.generate_examples(traces)
                     self.logic.update_learned_lp()
@@ -121,7 +120,7 @@ class Pipeline:
                 success_count += success
 
                 print(
-                    f"{success_count}/{self.args.num_episodes}y"
+                    f"{success_count}/{idx+1}"
                 )
             end = time.time()
             print(f"The full run took {end-start}s")

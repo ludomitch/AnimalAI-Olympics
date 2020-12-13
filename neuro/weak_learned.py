@@ -113,7 +113,6 @@ class Pipeline:
                     observables_buffer.append(filter_observables(observables))
                     if state['reward']>self.arenas[0].arenas[0].pass_mark:
                         success = True
-                        print(success)
                         break
                     else:
                         success = False

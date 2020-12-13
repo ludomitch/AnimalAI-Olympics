@@ -13,7 +13,6 @@ import cv2
 def choose_action_probability(predictions_exp):
     return np.random.choice(list(range(3)), 1, p=predictions_exp)[0]
 
-goal_visible = Grounder().goal_visible # Func
 test=False
 
 
@@ -128,15 +127,18 @@ class Action:
     def identify_action_args(self):
         res = []
         for arg in self.args:
-            if arg == 42:
-                typ = "goal"
+            if isinstance(arg, int):
+                if arg == 42:
+                    typ = "goal"
+                else:
+                    try:
+                        typ = next(i[1] for i in self.state['obj'] if i[3]==arg)
+                    except StopIteration:
+                        typ = None
             else:
-                try:
-                    typ = next(i[1] for i in self.state['obj'] if i[3]==arg)
-                except StopIteration:
-                    typ = None
+                typ = arg
+                arg = next(i[3] for i in self.state['obj'] if i[1]==arg)
             res.append([arg, typ]) # ID and object type
-        
         for k,v in self.config.items():
             if isinstance(v, int):
                 if k=="mask":

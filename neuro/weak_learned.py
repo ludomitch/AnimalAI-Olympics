@@ -16,6 +16,7 @@ class Pipeline:
         worker_id = 1
         seed = args.seed
         self.arenas = [ArenaConfig(i) for i in args.arenas]
+        self.arena_successes = {k:[0,0] for k in range(len(self.arenas))}
         self.buffer_size = 30
         self.logic = Logic(self.buffer_size)
         self.test = test
@@ -62,8 +63,9 @@ class Pipeline:
         return False
 
     def reset(self):
-        ac = rnd.choice(self.arenas)
-        self.env.reset(ac)
+        idx = rnd.choice(list(range(len(self.arenas))))
+        self.env.reset(self.arenas[idx])
+        return idx
 
     def learn_run(self):
         try:
@@ -74,7 +76,7 @@ class Pipeline:
             if self.test:
                 choice = 'test'
             for idx in range(self.args.num_episodes):
-                self.reset()
+                arena_idx = self.reset()
                 step_results = self.env.step([[0, 0]])  # Take 0,0 step
                 global_steps = 0
                 macro_step = 0
@@ -84,7 +86,7 @@ class Pipeline:
                 observables_buffer = []
                 if (idx%self.buffer_size==0)&(idx!=0):
                     end = time.time()
-                    print(f"The full run without ILASP {end-start}s")
+                    print(f"The full run without ILASP: {end-start}s")
                     choice = 'ilasp'
                     self.logic.ilasp.generate_examples(traces)
                     self.logic.update_learned_lp()
@@ -99,6 +101,7 @@ class Pipeline:
                         macro_step,
                         state,
                         choice=choice)
+                    # if self.test:
                     # print(macro_action)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
@@ -118,6 +121,8 @@ class Pipeline:
                 # nl_success = "Success" if success else "Failure"
                 # print(f"Episode was a {nl_success}")
                 success_count += success
+                self.arena_successes[arena_idx][0]+=int(success)
+                self.arena_successes[arena_idx][1]+=1
 
                 print(
                     f"{success_count}/{idx+1}"

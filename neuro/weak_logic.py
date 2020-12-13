@@ -65,7 +65,7 @@ test_lp = main_lp + action_logic + """
     #         ftd.append(i)
 
 def variabilise(lp):
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t']
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']
     p = parse_args(lp)
     y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
     # Create unique var map
@@ -73,7 +73,12 @@ def variabilise(lp):
     for lit in y:
         for arg in lit[1]:
             if (arg not in var_map)&isinstance(arg, int):
-                var_map[arg] = letters.pop(0)
+                try:
+                    var_map[arg] = letters.pop(0)
+                except IndexError:
+                    print(y)
+                    print(var_map)
+                    break
     # Sort vars by largest so smaller ones aren't replacing bigger numbers
     order = sorted(var_map, reverse=True)
     # Update lp

@@ -69,12 +69,10 @@ def variabilise(lp):
     p = parse_args(lp)
     y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
     # Create unique var map
-    print(y)
     var_map = {}
     for lit in y:
         for arg in lit[1]:
             if (arg not in var_map)&isinstance(arg, int):
-                print(letters)
                 var_map[arg] = letters.pop(0)
     # Sort vars by largest so smaller ones aren't replacing bigger numbers
     order = sorted(var_map, reverse=True)

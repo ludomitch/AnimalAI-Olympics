@@ -52,19 +52,19 @@ test_lp = main_lp + action_logic + """
 def variabilise(lp):
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
     p = parse_args(lp)
-    ftd = []
-    for i in p:
-        if i[1]: # If there are args
-            if isinstance(i[1][0], tuple): # if it's a nested func
-                ftd.append(i[1][0])
-            else:
-                ftd.append(i)
-        else:
-            ftd.append(i)
-         # = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
+    # ftd = []
+    # for i in p:
+    #     if i[1]: # If there are args
+    #         if isinstance(i[1][0], tuple): # if it's a nested func
+    #             ftd.append(i[1][0])
+    #         else:
+    #             ftd.append(i)
+    #     else:
+    #         ftd.append(i)
+    y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
     # Create unique var map
     var_map = {}
-    for lit in ftd:
+    for lit in y:
         for arg in lit[1]:
             if (arg not in var_map)&isinstance(arg, int):
                 var_map[arg] = letters.pop(0)

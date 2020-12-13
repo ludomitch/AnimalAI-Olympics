@@ -65,7 +65,7 @@ test_lp = main_lp + action_logic + """
     #         ftd.append(i)
 
 def variabilise(lp):
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm']
     p = parse_args(lp)
     y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
     # Create unique var map

@@ -128,6 +128,7 @@ class Pipeline:
                 )
             end = time.time()
             print(f"The full run took {end-start}s")
+            print(self.arena_successes)
             self.env.close()
         except KeyboardInterrupt:
             self.env.close()

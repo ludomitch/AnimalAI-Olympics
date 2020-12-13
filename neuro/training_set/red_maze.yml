@@ -7,41 +7,18 @@ arenas:
     - !Item
       name: Agent
       positions:
-      - !Vector3 {x: 3 , y: 0, z: 2}
-      rotations: [55]
+      - !Vector3 {x: 20 , y: 0, z: 5}
+      rotations: [0]
     - !Item
       name: GoodGoal
       positions:
-      - !Vector3 {x: 37 , y: 0, z: 35}
+      - !Vector3 {x: 20 , y: 0, z: 35}
       sizes:
       - !Vector3 {x: 2, y: 2, z: 2}
     - !Item
-      name: BadGoal
-      positions:
-      - !Vector3 {x: 20 , y: 0, z: 13}
-      sizes:
-      - !Vector3 {x: 3, y: 3, z: 3}
-    - !Item
       name: DeathZone
       positions:
-      - !Vector3 {x: 31 , y: 0, z: 22}
+      - !Vector3 {x: 20 , y: 0, z: 20}
       sizes:
-      - !Vector3 {x: 15, y: 0, z: 3}
-    - !Item
-      name: BadGoal
-      positions:
-      - !Vector3 {x: 19 , y: 0, z: 12}
-      sizes:
-      - !Vector3 {x: 2, y: 2, z: 2}
-    - !Item
-      name: BadGoal
-      positions:
-      - !Vector3 {x: 24 , y: 0, z: 11}
-      sizes:
-      - !Vector3 {x: 3, y: 3, z: 3}
-    - !Item
-      name: DeathZone
-      positions:
-      - !Vector3 {x: 18 , y: 0, z: 14}
-      sizes:
-      - !Vector3 {x: 15, y: 0, z: 2}
+      - !Vector3 {x: 15, y: 0, z: 10}
+      rotations: [0]

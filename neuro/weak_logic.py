@@ -154,11 +154,12 @@ class Clingo:
             {ground_observables}
             present(X):-goal(X).
             present(X):- visible(X).
-            object(X):- present(X).
             initiate(rotate).
+            initiate(interact(X)):-goal(X).
+            initiate(explore(X,Y)):- wall(X), goal(Y), X!=Y.
             initiate(climb(X)):-visible(X).
-            initiate(balance(X,Y)):-visible(X), object(Y), X!=Y.
-            initiate(avoid(X,Y)):-visible(X), object(Y), X!=Y.
+            initiate(balance(X,Y)):-platform(X), goal(Y), X!=Y.
+            initiate(avoid(X,Y)):-lava(X), goal(Y), X!=Y.
 
             """
         # lp = f"""

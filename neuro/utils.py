@@ -86,10 +86,10 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
         # "step": step_results[-1],
     }
 
-    # if bboxes['lava']:
-    #     print(bboxes['lava'])
-    #     plt.imshow(visual_obs)
-    #     plt.savefig(f"fake_test/{step}.png")
+    if len(bboxes['ramp'])>1:
+        print("TWO RAMPS")
+        plt.imshow(visual_obs)
+        plt.savefig(f"fake_test/{step}.png")
 
     return res
 

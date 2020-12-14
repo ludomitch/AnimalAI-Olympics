@@ -15,7 +15,7 @@ macro_actions = {
     # "observe":0, # _
     "interact":1, # x
     # "collect":1, # mask_x
-    "explore":2, # x,y
+    # "explore":2, # x,y
     "climb":1, # x
     "balance":2, # mask_x, y
     "avoid":2 # mask_x, y
@@ -86,8 +86,7 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
         # "step": step_results[-1],
     }
 
-    if any(len(bboxes[i])>1 for i in bboxes):
-        print("TWO RAMPS", step)
+    if len(bboxes['ramp'])>1:
         plt.imshow(visual_obs)
         plt.savefig(f"fake_test/{step}.png")
 

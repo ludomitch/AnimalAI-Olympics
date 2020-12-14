@@ -13,7 +13,7 @@ object_types = {
 macro_actions = {
     "rotate":0, # _
     # "observe":0, # _
-    "interact":1, # x
+    # "interact":1, # x
     # "collect":1, # mask_x
     # "explore":2, # x,y
     "climb":1, # x

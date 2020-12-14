@@ -2,6 +2,7 @@ import numpy as np
 
 from animalai.envs.cvis import ExtractFeatures
 from mlagents.tf_utils import tf
+import matplotlib.pyplot as plt
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
@@ -84,6 +85,11 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
         "visual_obs": visual_obs
         # "step": step_results[-1],
     }
+
+    if bboxes['lava']:
+        print(bboxes['lava'])
+        plt.imshow(visual_obs)
+        plt.savefig(f"fake_test/{step}.png")
 
     return res
 

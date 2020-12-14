@@ -15,8 +15,8 @@ if __name__=="__main__":
 	# ]
 	arenas = [
 	    "training_set/ramp.yml",
-	    "training_set/red_maze.yml",
-	    "training_set/wall.yml"
+	    # "training_set/red_maze.yml",
+	    # "training_set/wall.yml"
 	]
 	num = len(arenas)*20
 	args = margs(env=env_path, seed=1, arenas=arenas, num_episodes=num+1, inference=False)

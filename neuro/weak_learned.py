@@ -77,7 +77,7 @@ class Pipeline:
                 choice = 'test'
             for idx in range(self.args.num_episodes):
                 arena_idx = self.reset()
-                print("IDX", arena_idx)
+                #print("IDX", arena_idx)
                 step_results = self.env.step([[0, 0]])  # Take 0,0 step
                 global_steps = 0
                 macro_step = 0

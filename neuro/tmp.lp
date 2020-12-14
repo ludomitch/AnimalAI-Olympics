@@ -24,280 +24,301 @@ occludes(X,Y) :- present(Y), visible(X), not visible(Y).
 {},
 {},
 {ramp(b).
-ramp(c).
 goal(a).
 initiate(climb(b)).}).
-%%Value was:-8.100000000000001
+%%Value was:-6.354006197394736
 #pos(a1,
 {},
 {},
 {ramp(b).
-ramp(c).
 goal(a).
-initiate(balance(b,c)).}).
-%%Value was:-9.05
+initiate(rotate).}).
+%%Value was:-6.620451644190333
 #pos(a2,
 {},
 {},
-{on(agent,b).
-platform(c).
-ramp(b).
+{ramp(b).
 goal(a).
-initiate(balance(c,b)).}).
-%%Value was:-8.100000000000001
+initiate(balance(a,b)).}).
+%%Value was:-7.290000000000001
 #pos(a3,
 {},
 {},
-{on(agent,b).
-platform(c).
-ramp(b).
+{ramp(b).
 goal(a).
-initiate(climb(b)).}).
-%%Value was:-10.0
+initiate(balance(b,a)).}).
+%%Value was:-8.160103353214286
 #pos(a4,
 {},
 {},
 {on(agent,b).
-platform(c).
-ramp(b).
-goal(a).
-initiate(balance(c,a)).}).
-%%Value was:-10.0
-#pos(a5,
-{},
-{},
-{platform(b).
-ramp(c).
-goal(a).
-initiate(climb(c)).}).
-%%Value was:-3.5147682292653846
-#pos(a6,
-{},
-{},
-{platform(b).
-ramp(c).
-goal(a).
-initiate(climb(a)).}).
-%%Value was:-4.082535000000001
-#pos(a7,
-{},
-{},
-{platform(b).
+platform(b).
 ramp(c).
 goal(a).
 initiate(balance(a,c)).}).
-%%Value was:-5.585129287621579
+%%Value was:-3.874204890000001
+#pos(a5,
+{},
+{},
+{on(agent,b).
+platform(b).
+ramp(c).
+goal(a).
+initiate(climb(c)).}).
+%%Value was:-7.290000000000001
+#pos(a6,
+{},
+{},
+{on(agent,b).
+platform(b).
+ramp(c).
+goal(a).
+initiate(balance(b,c)).}).
+%%Value was:-9.0
+#pos(a7,
+{},
+{},
+{on(agent,b).
+platform(b).
+ramp(c).
+goal(a).
+initiate(climb(b)).}).
+%%Value was:-10.0
 #pos(a8,
 {},
 {},
-{platform(b).
-ramp(c).
+{on(agent,b).
+platform(b).
 goal(a).
-initiate(balance(a,b)).}).
-%%Value was:-6.035160792857143
+initiate(balance(b,a)).}).
+%%Value was:-1.499668900000001
 #pos(a9,
 {},
 {},
-{platform(b).
-ramp(c).
+{on(agent,b).
+platform(b).
 goal(a).
-initiate(balance(b,a)).}).
-%%Value was:-6.123128280476191
+initiate(rotate).}).
+%%Value was:-4.689244996445455
 #pos(a10,
 {},
 {},
-{platform(b).
-ramp(c).
+{on(agent,b).
+platform(b).
 goal(a).
-initiate(rotate).}).
-%%Value was:-6.355167070875001
+initiate(climb(b)).}).
+%%Value was:-6.3467631715
 #pos(a11,
 {},
 {},
-{platform(b).
-ramp(c).
+{on(agent,b).
+platform(b).
 goal(a).
-initiate(balance(c,a)).}).
-%%Value was:-6.701003577096777
+initiate(balance(a,b)).}).
+%%Value was:-7.166475000000001
 #pos(a12,
 {},
 {},
-{platform(b).
-ramp(c).
+{on(agent,b).
+platform(b).
 goal(a).
-initiate(balance(c,b)).}).
-%%Value was:-6.8471726749999995
+initiate(climb(a)).}).
+%%Value was:-8.734428571428571
 #pos(a13,
 {},
 {},
 {platform(b).
 ramp(c).
 goal(a).
-initiate(balance(b,c)).}).
-%%Value was:-7.202471754166667
+initiate(climb(c)).}).
+%%Value was:-6.0633931863435375
 #pos(a14,
 {},
 {},
 {platform(b).
 ramp(c).
 goal(a).
-initiate(climb(b)).}).
-%%Value was:-7.62054857938387
+initiate(rotate).}).
+%%Value was:-6.079412519054164
 #pos(a15,
 {},
 {},
-{ramp(b).
+{platform(b).
+ramp(c).
 goal(a).
-initiate(rotate).}).
-%%Value was:-4.812328117190324
+initiate(balance(b,c)).}).
+%%Value was:-6.474914982885714
 #pos(a16,
 {},
 {},
-{ramp(b).
+{platform(b).
+ramp(c).
 goal(a).
-initiate(climb(b)).}).
-%%Value was:-5.679535860636364
+initiate(climb(a)).}).
+%%Value was:-6.561
 #pos(a17,
 {},
 {},
-{ramp(b).
+{platform(b).
+ramp(c).
 goal(a).
-initiate(balance(b,a)).}).
-%%Value was:-7.216487419354839
+initiate(balance(c,a)).}).
+%%Value was:-6.7286680599999995
 #pos(a18,
 {},
 {},
-{on(agent,b).
-platform(b).
+{platform(b).
 ramp(c).
-ramp(d).
 goal(a).
-initiate(balance(c,d)).}).
-%%Value was:-5.9049000000000005
+initiate(climb(b)).}).
+%%Value was:-6.9290808194850415
 #pos(a19,
 {},
 {},
-{on(agent,b).
-platform(b).
+{platform(b).
 ramp(c).
-ramp(d).
 goal(a).
-initiate(balance(d,a)).}).
-%%Value was:-6.561
+initiate(balance(b,a)).}).
+%%Value was:-7.269910243243243
 #pos(a20,
 {},
 {},
 {platform(b).
 ramp(c).
-ramp(d).
 goal(a).
-initiate(climb(c)).}).
-%%Value was:-5.3144100000000005
+initiate(balance(c,b)).}).
+%%Value was:-7.73906393939394
 #pos(a21,
+{},
+{},
+{platform(b).
+ramp(c).
+goal(a).
+initiate(balance(a,c)).}).
+%%Value was:-7.952450000000001
+#pos(a22,
 {},
 {},
 {platform(b).
 ramp(c).
 ramp(d).
 goal(a).
-initiate(balance(c,a)).}).
-%%Value was:-10.0
-#pos(a22,
-{},
-{},
-{on(agent,b).
-platform(b).
-goal(a).
-initiate(balance(b,a)).}).
-%%Value was:1.7650000000000001
+initiate(balance(d,a)).}).
+%%Value was:-7.290000000000001
 #pos(a23,
 {},
 {},
-{on(agent,b).
-platform(b).
+{platform(b).
+ramp(c).
+ramp(d).
 goal(a).
-initiate(climb(b)).}).
-%%Value was:-4.2
+initiate(balance(b,d)).}).
+%%Value was:-7.7805
 #pos(a24,
 {},
 {},
-{on(agent,b).
-platform(b).
+{platform(b).
+ramp(c).
+ramp(d).
 goal(a).
-initiate(rotate).}).
-%%Value was:-4.613767500000001
+initiate(balance(c,d)).}).
+%%Value was:-8.100000000000001
 #pos(a25,
 {},
 {},
-{on(agent,b).
-platform(b).
+{platform(b).
+ramp(c).
+ramp(d).
 goal(a).
-initiate(balance(a,b)).}).
-%%Value was:-7.710428571428571
+initiate(climb(b)).}).
+%%Value was:-8.645
 #pos(a26,
 {},
 {},
-{on(agent,b).
-platform(b).
+{platform(b).
+ramp(c).
+ramp(d).
 goal(a).
-initiate(climb(a)).}).
-%%Value was:-8.21275
+initiate(balance(d,c)).}).
+%%Value was:-10.0
 #pos(a27,
 {},
 {},
 {platform(b).
+ramp(c).
+ramp(d).
 goal(a).
-initiate(rotate).}).
-%%Value was:-7.517482169491527
+initiate(balance(b,c)).}).
+%%Value was:-10.0
 #pos(a28,
 {},
 {},
 {platform(b).
+ramp(c).
+ramp(d).
 goal(a).
-initiate(climb(b)).}).
-%%Value was:-8.241378791044777
+initiate(balance(d,b)).}).
+%%Value was:-10.0
 #pos(a29,
 {},
 {},
 {platform(b).
 goal(a).
-initiate(climb(a)).}).
-%%Value was:-8.5322
+initiate(rotate).}).
+%%Value was:-7.49109546
 #pos(a30,
 {},
 {},
 {platform(b).
 goal(a).
-initiate(balance(b,a)).}).
-%%Value was:-8.545627580000003
+initiate(balance(a,b)).}).
+%%Value was:-7.738500000000001
 #pos(a31,
 {},
 {},
 {platform(b).
 goal(a).
-initiate(balance(a,b)).}).
-%%Value was:-8.689285714285715
+initiate(climb(b)).}).
+%%Value was:-8.367609979166668
+#pos(a32,
+{},
+{},
+{platform(b).
+goal(a).
+initiate(balance(b,a)).}).
+%%Value was:-8.516482758620693
+#pos(a33,
+{},
+{},
+{platform(b).
+goal(a).
+initiate(climb(a)).}).
+%%Value was:-9.42
 #brave_ordering(b0@10, a0, a1).
-#brave_ordering(b1@10, a2, a3).
-#brave_ordering(b2@10, a2, a4).
-#brave_ordering(b3@10, a5, a6).
-#brave_ordering(b4@10, a5, a7).
-#brave_ordering(b5@10, a5, a8).
-#brave_ordering(b6@10, a5, a9).
-#brave_ordering(b7@10, a5, a10).
-#brave_ordering(b8@10, a5, a11).
-#brave_ordering(b9@10, a5, a12).
-#brave_ordering(b10@10, a5, a13).
-#brave_ordering(b11@10, a5, a14).
-#brave_ordering(b12@10, a15, a16).
-#brave_ordering(b13@10, a15, a17).
-#brave_ordering(b14@10, a18, a19).
-#brave_ordering(b15@10, a20, a21).
-#brave_ordering(b16@10, a22, a23).
-#brave_ordering(b17@10, a22, a24).
-#brave_ordering(b18@10, a22, a25).
-#brave_ordering(b19@10, a22, a26).
-#brave_ordering(b20@10, a27, a28).
-#brave_ordering(b21@10, a27, a29).
-#brave_ordering(b22@10, a27, a30).
-#brave_ordering(b23@10, a27, a31).
+#brave_ordering(b1@10, a0, a2).
+#brave_ordering(b2@10, a0, a3).
+#brave_ordering(b3@10, a4, a5).
+#brave_ordering(b4@10, a4, a6).
+#brave_ordering(b5@10, a4, a7).
+#brave_ordering(b6@10, a8, a9).
+#brave_ordering(b7@10, a8, a10).
+#brave_ordering(b8@10, a8, a11).
+#brave_ordering(b9@10, a8, a12).
+#brave_ordering(b10@10, a13, a14).
+#brave_ordering(b11@10, a13, a15).
+#brave_ordering(b12@10, a13, a16).
+#brave_ordering(b13@10, a13, a17).
+#brave_ordering(b14@10, a13, a18).
+#brave_ordering(b15@10, a13, a19).
+#brave_ordering(b16@10, a13, a20).
+#brave_ordering(b17@10, a13, a21).
+#brave_ordering(b18@10, a22, a23).
+#brave_ordering(b19@10, a22, a24).
+#brave_ordering(b20@10, a22, a25).
+#brave_ordering(b21@10, a22, a26).
+#brave_ordering(b22@10, a22, a27).
+#brave_ordering(b23@10, a22, a28).
+#brave_ordering(b24@10, a29, a30).
+#brave_ordering(b25@10, a29, a31).
+#brave_ordering(b26@10, a29, a32).
+#brave_ordering(b27@10, a29, a33).

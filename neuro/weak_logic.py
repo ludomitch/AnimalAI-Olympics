@@ -67,6 +67,7 @@ test_lp = main_lp + action_logic + """
 def variabilise(lp):
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']
     p = parse_args(lp)
+    print('lp1', lp)
     y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
     # Create unique var map
     var_map = {}
@@ -84,6 +85,8 @@ def variabilise(lp):
     # Update lp
     for var in order:
         lp = lp.replace(str(var), var_map[var])
+    print('lp2',lp)
+    print('-----')
     return lp
 
 class Grounder:

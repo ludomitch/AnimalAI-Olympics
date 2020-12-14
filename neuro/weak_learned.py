@@ -102,7 +102,8 @@ class Pipeline:
                         state,
                         choice=choice)
                     # if self.test:
-                    # print(macro_action)
+                    print(macro_action)
+                    print(observables)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
                     )

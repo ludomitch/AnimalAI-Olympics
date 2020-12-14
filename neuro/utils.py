@@ -23,10 +23,10 @@ macro_actions = {
 
 valid_observables = {
     # 'present':1,
-    # 'visible':1,
     # 'adjacent':2,
     # 'moving':1,
     # 'goals':0,
+    'visible':1,
     'on':2,
     "occludes":2,
     'goal':1,
@@ -86,7 +86,7 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
         # "step": step_results[-1],
     }
 
-    if len(bboxes['ramp'])>1:
+    if len(bboxes['wall'])>1:
         plt.imshow(visual_obs)
         plt.savefig(f"fake_test/{step}.png")
 

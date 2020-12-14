@@ -19,7 +19,7 @@ class HSV:
     orange = [[20,121,158], [23,255,255]]
     brown = [[7,53,40], [18,87,121]]
     blue = [[119, 255, 106], [120, 255, 255]]
-    pink = [[149, 167, 188], [156, 255, 255]]
+    pink = [[149, 167, 182], [156, 255, 255]]
 
 hsv_cls = HSV()
 objects = OD()
@@ -61,8 +61,8 @@ class ExtractFeatures:
         res = []
         for c in ctr:
             x,y,w,h = cv2.boundingRect(c)
-            # if self.display:
-            #     cv2.rectangle(self.img,(x,y),(x+w,y+h),(0,255,0),2)
+            if self.display:
+                cv2.rectangle(self.img,(x,y),(x+w,y+h),(0,255,0),2)
             #     cv2.imwrite("/Users/ludo/Desktop/bam.png", self.img)
             # Normalize bbox to be between 0 and 1
             res.append([
@@ -105,7 +105,7 @@ class ExtractFeatures:
             coords = self.process_contour(ctr)
             for box in coords:
                 occluding_area = round(box[2]*box[3]*1000)
-                if (obj_type=='wall')&(occluding_area<0.05):#|(box[2]<0.05):
+                if (occluding_area<0.05):#|(box[2]<0.05):
                     continue
                 features[obj_type] += [(box, obj_type, occluding_area)]
         return features

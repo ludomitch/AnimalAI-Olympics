@@ -87,7 +87,7 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
     }
 
     if any(len(bboxes[i])>1 for i in bboxes):
-        print("TWO RAMPS", i)
+        print("TWO RAMPS", step)
         plt.imshow(visual_obs)
         plt.savefig(f"fake_test/{step}.png")
 

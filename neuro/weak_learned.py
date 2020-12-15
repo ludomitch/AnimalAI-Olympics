@@ -119,7 +119,7 @@ class Pipeline:
                         break
                     else:
                         success = False
-                print(arena_name, success)
+                # print(arena_name, success)
                 traces.append([actions_buffer, observables_buffer, success, macro_step])
                 # nl_success = "Success" if success else "Failure"
                 # print(f"Episode was a {nl_success}")

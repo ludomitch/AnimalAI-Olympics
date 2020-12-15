@@ -15,8 +15,8 @@ class Pipeline:
         env_path = args.env
         worker_id = 1
         seed = args.seed
-        self.arenas = [ArenaConfig(i) for i in args.arenas]
-        self.arena_successes = {k:[0,0] for k in range(len(self.arenas))}
+        self.arenas = args.arenas
+        self.arena_successes = {k:[0,0] for k in self.arenas}
         self.buffer_size = 30
         self.logic = Logic(self.buffer_size)
         self.test = test
@@ -63,9 +63,9 @@ class Pipeline:
         return False
 
     def reset(self):
-        idx = rnd.choice(list(range(len(self.arenas))))
-        self.env.reset(self.arenas[idx])
-        return idx
+        name = rnd.choice(self.arenas)
+        self.env.reset(ArenaConfig(name))
+        return name
 
     def learn_run(self):
         try:
@@ -76,7 +76,7 @@ class Pipeline:
             if self.test:
                 choice = 'test'
             for idx in range(self.args.num_episodes):
-                arena_idx = self.reset()
+                arena_name = self.reset()
                 #print("IDX", arena_idx)
                 step_results = self.env.step([[0, 0]])  # Take 0,0 step
                 global_steps = 0
@@ -118,12 +118,13 @@ class Pipeline:
                         break
                     else:
                         success = False
+                print(arena_name, success)
                 traces.append([actions_buffer, observables_buffer, success, macro_step])
                 # nl_success = "Success" if success else "Failure"
                 # print(f"Episode was a {nl_success}")
                 success_count += success
-                self.arena_successes[arena_idx][0]+=int(success)
-                self.arena_successes[arena_idx][1]+=1
+                self.arena_successes[arena_name][0]+=int(success)
+                self.arena_successes[arena_name][1]+=1
 
                 print(
                     f"{success_count}/{idx+1}"

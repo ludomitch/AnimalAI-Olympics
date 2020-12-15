@@ -157,10 +157,10 @@ class Clingo:
             object(X):- present(X).
             initiate(rotate).
             initiate(interact(X)):-object(X).
-            initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
+            initiate(explore(X,Y)):- visible(X), object(Y), X!=Y.
             initiate(climb(X)):-visible(X).
             initiate(balance(X,Y)):-visible(X), object(Y).
-            initiate(avoid(X,Y)):-object(X), object(Y).
+            initiate(avoid(X,Y)):-visible(X), object(Y).
 
             """
         # lp = f"""

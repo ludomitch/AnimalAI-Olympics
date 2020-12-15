@@ -130,9 +130,9 @@ class Pipeline:
                 self.arena_successes[arena_name][0]+=int(success)
                 self.arena_successes[arena_name][1]+=1
 
-                print(
-                    f"{success_count}/{idx+1}"
-                )
+                # print(
+                #     f"{success_count}/{idx+1}"
+                # )
             end = time.time()
             print(f"The full run took {end-start}s")
             print(self.arena_successes)

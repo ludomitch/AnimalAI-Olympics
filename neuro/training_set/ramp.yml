@@ -2,13 +2,13 @@
 arenas:
   0: !Arena
     pass_mark: 1
-    t: 500
+    t: 250
     items:
     - !Item
       name: Agent
       positions:
-      - !Vector3 {x: 1, y: 0, z: 1}
-      rotations: [35]
+      - !Vector3 {x: 20, y: 0, z: 5}
+      rotations: [0]
     - !Item
       name: Wall
       positions:

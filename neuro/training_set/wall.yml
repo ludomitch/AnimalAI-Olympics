@@ -13,6 +13,6 @@ arenas:
       colors: 
       - !RGB {r: 153, g: 153, b: 153}
       sizes:
-      - !Vector3 {x: 15, y: 2, z: 2}
+      - !Vector3 {x: 15, y: 10, z: 2}
     pass_mark: 0
     t: 250

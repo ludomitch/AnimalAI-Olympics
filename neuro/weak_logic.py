@@ -154,12 +154,13 @@ class Clingo:
             {ground_observables}
             present(X):-goal(X).
             present(X):- visible(X).
+            object(X):- present(X).
             initiate(rotate).
-            initiate(interact(X)):-goal(X).
-            initiate(explore(X,Y)):- wall(X), goal(Y), X!=Y.
-            initiate(climb(X)):-ramp(X).
-            initiate(balance(X,Y)):-platform(X), goal(Y), X!=Y.
-            initiate(avoid(X,Y)):-lava(X), goal(Y), X!=Y.
+            initiate(interact(X)):-object(X).
+            initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
+            initiate(climb(X)):-object(X).
+            initiate(balance(X,Y)):-object(X), object(Y).
+            initiate(avoid(X,Y)):-object(X), object(Y).
 
             """
         # lp = f"""
@@ -176,6 +177,14 @@ class Clingo:
         #     initiate(balance(X,Y)):-object(X), object(Y).
         #     initiate(avoid(X,Y)):-object(X), object(Y).
         #     """
+            # present(X):-goal(X).
+            # present(X):- visible(X).
+            # initiate(rotate).
+            # initiate(interact(X)):-goal(X).
+            # initiate(explore(X,Y)):- wall(X), goal(Y), X!=Y.
+            # initiate(climb(X)):-ramp(X).
+            # initiate(balance(X,Y)):-platform(X), goal(Y), X!=Y.
+            # initiate(avoid(X,Y)):-lava(X), goal(Y), X!=Y.
         res = self.asp(lp)
         filtered_mas = [i for i in res.r[0] if 'initiate' in i]
         rand_action = rnd.choice(filtered_mas)
@@ -304,7 +313,7 @@ class Ilasp:
     def expand_trace(self, trace):
         discount_factor = 0.9
         actions, states, success, len_trace = trace
-        success = 10 if success else -10
+        success = 100 if success else -10
         values = []
         for step in range(len_trace):
             values.append(success*discount_factor**(len_trace-step-1))
@@ -363,7 +372,7 @@ class Ilasp:
             text_file.write(main_lp + self.create_mode_bias() + self.examples)
 
         # Start bash process that runs ilasp learning
-        bashCommand = "ilasp4 --version=4 tmp.lp -q --clingo clingo5"
+        bashCommand = "ilasp --version=4 tmp.lp --simple -d"
         start = time.time()
         print("Running ILASP")
         process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
@@ -376,7 +385,8 @@ class Ilasp:
         # Return new lp with learned rules
         if bool(output): #learned rules
             output = output.decode("utf-8")
-
+            with open("output.txt", "w") as text_file:
+                text_file.write(output)
             if output:
                 print(f"NEW RULES LEARNED: {output}")
             if output=="UNSATISFIABLE\n":

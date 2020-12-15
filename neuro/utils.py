@@ -15,10 +15,10 @@ macro_actions = {
     # "observe":0, # _
     "interact":1, # x
     # "collect":1, # mask_x
-    "explore":2, # x,y
-    "climb":1, # x
-    "balance":2, # mask_x, y
-    "avoid":2 # mask_x, y
+    # "explore":2, # x,y
+    # "climb":1, # x
+    # "balance":2, # mask_x, y
+    # "avoid":2 # mask_x, y
 }
 
 valid_observables = {
@@ -26,13 +26,13 @@ valid_observables = {
     # 'adjacent':2,
     # 'moving':1,
     # 'goals':0,
-    'visible':1,
-    'on':2,
-    "occludes":2,
-    'goal':1,
-    'wall':1,
-    'platform':1,
-    'lava':1,
+    # 'visible':1,
+    # 'on':2,
+    # "occludes":2,
+    # 'goal':1,
+    # 'wall':1,
+    # 'platform':1,
+    # 'lava':1,
     'ramp':1,
     # 'agent':0,
 }

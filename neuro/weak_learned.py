@@ -89,6 +89,8 @@ class Pipeline:
                 if (idx%self.buffer_size==0)&(idx!=0):
                     end = time.time()
                     print(f"The full run without ILASP: {end-start}s")
+                    print(self.arena_successes)
+
                     choice = 'ilasp'
                     self.logic.ilasp.generate_examples(traces)
                     self.logic.update_learned_lp()

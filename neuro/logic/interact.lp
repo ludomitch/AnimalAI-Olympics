@@ -9,12 +9,12 @@ occludes(X,Y,T) :- present(Y, T), visible(X, _, T), not visible(Y, _, T), not se
 % Observables - > actions: this is what we need to learn
 initiate(rotate,T):- not visible(T), timestep(T).
 % Mode bias
-#modeh(1, initiate(explore(var(X),var(Y),var(Z)),var(T))).
-#modeh(1, initiate(interact(var(X)),var(T))).
+#modeh(1, initiate(explore(var(x),var(y),var(z)),var(t))).
+#modeh(1, initiate(interact(var(x)),var(t))).
 #maxv(4).
-#modeb(1, goal(var(X))).
-#modeb(1, visible(var(X), var(Z), var(T))).
-#modeb(1, occludes(var(X),var(Y), var(T))).
+#modeb(1, goal(var(x))).
+#modeb(1, visible(var(x), var(z), var(t))).
+#modeb(1, occludes(var(x),var(y), var(t))).
 
 #pos(a0@1,
 {},

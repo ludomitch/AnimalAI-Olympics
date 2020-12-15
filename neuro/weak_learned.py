@@ -64,7 +64,8 @@ class Pipeline:
 
     def reset(self):
         name = rnd.choice(self.arenas)
-        self.env.reset(ArenaConfig(name))
+        self.ac = ArenaConfig(name)
+        self.env.reset(self.ac)
         return name
 
     def learn_run(self):
@@ -113,7 +114,7 @@ class Pipeline:
                     macro_step +=1
                     actions_buffer.append(macro_action['raw'][0])
                     observables_buffer.append(filter_observables(observables))
-                    if state['reward']>self.arenas[0].arenas[0].pass_mark:
+                    if state['reward']>self.ac.arenas[0].pass_mark:
                         success = True
                         break
                     else:

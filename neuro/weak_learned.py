@@ -63,7 +63,7 @@ class Pipeline:
         return False
 
     def reset(self):
-        name = rnd.choice(self.arenas)
+        name = rnd.choices(self.arenas,[0.6, 0.1, 0.3])[0]
         self.ac = ArenaConfig(name)
         self.env.reset(self.ac)
         return name
@@ -90,13 +90,14 @@ class Pipeline:
                     end = time.time()
                     print(f"The full run without ILASP: {end-start}s")
                     print(self.arena_successes)
-
+                    with open("success_ratio.txt", "w") as text_file:
+                        text_file.write(str(self.arena_successes))
                     choice = 'ilasp'
                     self.logic.ilasp.generate_examples(traces)
                     self.logic.update_learned_lp()
 
                 while not self.episode_over(step_results[2]):
-                    if (global_steps >= 500):#|(macro_step)>2:
+                    if (global_steps >= 500)|(macro_step)>3:
                         success = False
                         # print("Exceeded max global steps")
                         break

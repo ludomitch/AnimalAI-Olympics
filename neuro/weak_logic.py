@@ -158,8 +158,8 @@ class Clingo:
             initiate(rotate).
             initiate(interact(X)):-object(X).
             initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
-            initiate(climb(X)):-object(X).
-            initiate(balance(X,Y)):-object(X), object(Y).
+            initiate(climb(X)):-visible(X).
+            initiate(balance(X,Y)):-visible(X), object(Y).
             initiate(avoid(X,Y)):-object(X), object(Y).
 
             """
@@ -245,12 +245,12 @@ class Clingo:
             check(time, 150):- initiate(interact(X)).
             check(time, 150):- initiate(collect(X)).
             check(visible, Y):- initiate(explore(X,Y)).
-            check(time, 150):- initiate(explore(X,Y)).
-            check(time, 150):- initiate(climb(X)).
+            check(time, 100):- initiate(explore(X,Y)).
+            check(time, 100):- initiate(climb(X)).
             check(peaked, 0):- initiate(climb(X)).
-            check(time, 150):- initiate(balance(X,Y)).
+            check(time, 100):- initiate(balance(X,Y)).
             check(fallen, 0):- initiate(balance(X,Y)).
-            check(time, 250):- initiate(avoid(X,Y)).
+            check(time, 100):- initiate(avoid(X,Y)).
 
             """).atoms_as_string)
         checks = checks[0]

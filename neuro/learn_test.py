@@ -14,11 +14,11 @@ if __name__=="__main__":
 	# 	f"../competition_configurations/{i}.yml" for i in list(cfg.COMPETITION_CONFIGS['Ramp Usage'])
 	# ]
 	arenas = [
-	    "training_set/ramp.yml",
-	    "training_set/red_maze.yml",
+	    #"training_set/ramp.yml",
+	    #"training_set/red_maze.yml",
 	    "training_set/wall.yml"
 	]
-	num = len(arenas)*200
+	num = len(arenas)*50
 	args = margs(env=env_path, seed=1, arenas=arenas, num_episodes=num+1, inference=False)
 	pipe = Pipeline(args)
 	pipe.buffer_size = num

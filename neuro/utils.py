@@ -11,7 +11,7 @@ object_types = {
 }
 
 macro_actions = {
-    "rotate":0, # _
+    # "rotate":0, # _
     # "observe":0, # _
     "interact":1, # x
     # "collect":1, # mask_x
@@ -26,11 +26,11 @@ bias_observables = {
     # 'adjacent':2,
     # 'moving':1,
     # 'goals':0,
-    'visible':1,
+    # 'visible':1,
     'on':2,
     "occludes":3,
     "occludes_more":2,
-    'wall':1,
+    # 'wall':1,
     'platform':1,
     'lava':1,
     'ramp':1,
@@ -39,16 +39,16 @@ bias_observables = {
 }
 
 ctx_observables = [
-    'visible',
+    # 'visible',
     'on',
     "occludes",
     'occludes_more',
-    'wall',
+    # 'wall',
     'platform',
     'lava',
     'ramp',
     'goal',
-    'adjacent'
+    # 'adjacent'
 ]
 
 ef = ExtractFeatures(display=False, training=False)

@@ -297,6 +297,8 @@ class Ilasp:
                 res += f"#modeo(1, on(agent, var(x))).\n"
             elif k=='visible':
                 res += f"#modeo(1, visible(var(x), var(o))).\n"
+            elif k=='occludes':
+                res += f"#modeo(1, occludes(var(x), var(y), var(o))).\n"
             elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
                 res+= f"#modeo(1, {k}({variables})).\n"

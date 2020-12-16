@@ -89,6 +89,11 @@ class Pipeline:
                 self.ct = {ot: CentroidTracker() for ot in object_types} # Initialise tracker
                 actions_buffer = []
                 observables_buffer = []
+
+                if (idx%1000==0)&(idx!=0):
+                    print(f"{idx}/{self.args.num_episodes} completed")
+                    print(self.arena_successes)
+
                 if (idx%self.buffer_size==0)&(idx!=0):
                     end = time.time()
                     print(f"The full run without ILASP: {end-start}s")
@@ -110,8 +115,8 @@ class Pipeline:
                         state,
                         choice=choice)
                     # if self.test:
-                    print(macro_action)
-                    print(observables)
+                    # print(macro_action)
+                    # print(observables)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
                     )

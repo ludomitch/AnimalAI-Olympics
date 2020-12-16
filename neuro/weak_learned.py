@@ -63,7 +63,7 @@ class Pipeline:
         return False
 
     def reset(self):
-        name = rnd.choices(self.arenas,[0.6, 0.1, 0.3])[0]
+        name = rnd.choices(list(self.arenas),[0.6, 0.1, 0.3])[0]
         self.ac = ArenaConfig(name)
         self.env.reset(self.ac)
         return name
@@ -78,7 +78,7 @@ class Pipeline:
                 choice = 'test'
             for idx in range(self.args.num_episodes):
                 arena_name = self.reset()
-                #print("IDX", arena_idx)
+                macro_limit = self.arenas[arena_name]
                 step_results = self.env.step([[0, 0]])  # Take 0,0 step
                 global_steps = 0
                 macro_step = 0
@@ -97,7 +97,7 @@ class Pipeline:
                     self.logic.update_learned_lp()
 
                 while not self.episode_over(step_results[2]):
-                    if (global_steps >= 500)|(macro_step)>3:
+                    if (global_steps >= 500)|(macro_step)>macro_limit:
                         success = False
                         # print("Exceeded max global steps")
                         break

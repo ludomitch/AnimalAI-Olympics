@@ -159,9 +159,8 @@ class Clingo:
             initiate(interact(X)):-object(X).
             initiate(explore(X,Y)):- visible(X), object(Y), X!=Y.
             initiate(climb(X)):-visible(X).
-            initiate(balance(X,Y)):-visible(X), object(Y).
-            initiate(avoid(X,Y)):-visible(X), object(Y).
-
+            initiate(balance(X,Y)):-visible(X), object(Y), X!=Y.
+            initiate(avoid(X,Y)):-visible(X), object(Y), X!=Y.
             """
         # lp = f"""
         #     {ground_observables}

@@ -1,1 +1,1 @@
-{'training_set/ramp.yml': [12, 1785], 'training_set/red_maze.yml': [6, 308], 'training_set/wall.yml': [288, 907]}The full run without ILASP: 13165.299255609512s
+{'training_set/ramp.yml': [11, 1823], 'training_set/red_maze.yml': [8, 310], 'training_set/wall.yml': [337, 867]}The full run without ILASP: 10732.805879116058s

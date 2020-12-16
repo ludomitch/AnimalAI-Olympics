@@ -21,21 +21,35 @@ macro_actions = {
     "avoid":2 # mask_x, y
 }
 
-valid_observables = {
+bias_observables = {
     # 'present':1,
     # 'adjacent':2,
     # 'moving':1,
     # 'goals':0,
     'visible':1,
     'on':2,
-    "occludes":2,
-    'goal':1,
+    "occludes":3,
+    "occludes_more":2,
     'wall':1,
     'platform':1,
     'lava':1,
     'ramp':1,
-    'agent':0,
+    'goal':1
+
 }
+
+ctx_observables = [
+    'visible',
+    'on',
+    "occludes",
+    'occludes_more',
+    'wall',
+    'platform',
+    'lava',
+    'ramp',
+    'goal',
+    'adjacent'
+]
 
 ef = ExtractFeatures(display=False, training=False)
 
@@ -51,7 +65,7 @@ convert = lambda x: [x[0]*84, x[1]*84, (x[0]+x[2])*84, (x[1]+x[3])*84]
 
 def filter_observables(observables:str):
     obs = observables.split('\n')
-    res = "\n".join([i for i in obs if any(j in i for j in valid_observables)&bool(i)])
+    res = "\n".join([i for i in obs if any(j in i for j in ctx_observables)&bool(i)])
     return res+'\n'
 
 def process_image(visual_obs:np.array, **args:dict):
@@ -86,9 +100,9 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
         # "step": step_results[-1],
     }
 
-    if len(bboxes['wall'])>1:
-        plt.imshow(visual_obs)
-        plt.savefig(f"fake_test/{step}.png")
+    # if len(bboxes['wall'])>1:
+    #     plt.imshow(visual_obs)
+    #     plt.savefig(f"fake_test/{step}.png")
 
     return res
 

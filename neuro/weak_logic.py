@@ -7,7 +7,7 @@ import numpy as np
 
 from clyngor import ASP
 
-from utils import get_overlap, get_distance, macro_actions, valid_observables
+from utils import get_overlap, get_distance, macro_actions, ctx_observables, bias_observables
 
 AnswerSet = namedtuple('AS', ['r', 'p', 'a', 'o']) # r for raw, p for parsed, a for arity
 parse_single_args = lambda x: list(list(ASP(x+'.').parse_args)[0])[0]
@@ -19,8 +19,11 @@ def parse_args(x):
 
 main_lp = """
 present(X):-goal(X).
-present(X):- visible(X).
-occludes(X,Y) :- present(Y), visible(X), not visible(Y).
+present(X):- visible(X,_).
+separator(Y):-on(agent, X), adjacent(X, Y), platform(X).
+can_occlude(X):-wall(X), not separator(X).
+occludes(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X).
+occludes_more(X, Y) :- occludes(X,Z,O1), occludes(Y,Z,O2), O1 > O2.
 """
 action_logic = """
 :- initiate(X), initiate(Y), X!=Y.
@@ -38,12 +41,13 @@ object(X):- present(X).
 """
 
 test_lp = main_lp + action_logic + """
-:~ initiate(balance(V1,V2)),on(agent, V1), goal(V2), platform(V1).[-1@2,V1, V2]
-:~ initiate(climb(V1)), ramp(V1).[-1@2, V1]
-:~ initiate(avoid(V1, V2)), goal(V2), lava(V1).[-1@3, V1, V2]
+:~ initiate(explore(V1,V2)),occludes_more(V1,V3),goal(V2).[-1@2,V1, V2,V3]
+:~ initiate(interact(V1)),visible(V1),goal(V1).[-1@3,V1]
 
 """
-
+# :~ initiate(balance(V1,V2)),on(agent, V1), goal(V2), platform(V1).[-1@2,V1, V2]
+# :~ initiate(climb(V1)), ramp(V1).[-1@2, V1]
+# :~ initiate(avoid(V1, V2)), goal(V2), lava(V1).[-1@3, V1, V2]
 # /media/home/ludovico/aai/neuro/clingo_test/clingo-5.4.1/bin:/media/home/ludovico/venv/bin:/media/home/ludovico/bin:/media/home/ludovico/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 
 # :~ initiate(balance(plaftform,V2)),on(agent, platform), goal(V2).[-1@3,V2]
@@ -101,15 +105,15 @@ class Grounder:
     #             if (_id1!=_id)&(dist<0.02):
     #                 in_front += f"adjacent({_id},{_id1}, {macro_step}).\n"
     #     return in_front
-    # @staticmethod
-    # def adjacent(macro_step,state):
-    #     adjacent = ""
-    #     for bbox, _, _, _id in state['obj']:
-    #         for bbox1, _, _, _id1 in state['obj']:
-    #             dist = get_distance(bbox, bbox1)
-    #             if (_id1!=_id)&(dist<0.01):
-    #                 adjacent += f"adjacent({_id},{_id1}).\n"
-    #     return adjacent
+    @staticmethod
+    def adjacent(macro_step,state):
+        adjacent = ""
+        for bbox, _, _, _id in state['obj']:
+            for bbox1, _, _, _id1 in state['obj']:
+                dist = get_distance(bbox, bbox1)
+                if (_id1!=_id)&(dist<0.01):
+                    adjacent += f"adjacent({_id},{_id1}).\n"
+        return adjacent
 
     @staticmethod
     def on(macro_step,state):
@@ -125,7 +129,7 @@ class Grounder:
         visible = ""
         for box, obj_type, _occ_area, _id in state['obj']:
             # if valid_observables[obj_type]: # The obj type has arguments
-            visible += f"visible({_id}).\n"
+            visible += f"visible({_id}, {_occ_area}).\n"
             if obj_type!="goal":
                 visible +=f"{obj_type}({_id}).\n"
             # else:
@@ -153,14 +157,14 @@ class Clingo:
         lp = f"""
             {ground_observables}
             present(X):-goal(X).
-            present(X):- visible(X).
+            present(X):- visible(X,_).
             object(X):- present(X).
             initiate(rotate).
             initiate(interact(X)):-object(X).
-            initiate(explore(X,Y)):- visible(X), object(Y), X!=Y.
-            initiate(climb(X)):-visible(X).
-            initiate(balance(X,Y)):-visible(X), object(Y), X!=Y.
-            initiate(avoid(X,Y)):-visible(X), object(Y), X!=Y.
+            initiate(climb(X)):-visible(X,_).
+            initiate(explore(X,Y)):- visible(X,_), goal(Y), X!=Y.
+            initiate(balance(X,Y)):-visible(X,_), goal(Y), X!=Y.
+            initiate(avoid(X,Y)):-visible(X,_), goal(Y), X!=Y.
             """
         # lp = f"""
         #     {ground_observables}
@@ -279,7 +283,7 @@ class Ilasp:
         self.examples = deque(maxlen=self.memory_len)
 
     def create_mode_bias(self):
-        tmp = ["x", "y", "z"]
+        tmp = ["x", "y", "z", "o"]
         res = ""
         for k,v in macro_actions.items():
             if v:
@@ -288,15 +292,16 @@ class Ilasp:
             else:
                 res+= f"#modeo(1, initiate({k})).\n"
 
-        for k,v in valid_observables.items():
+        for k,v in bias_observables.items():
             if k=='on':
                 res += f"#modeo(1, on(agent, var(x))).\n"
+            elif k=='visible':
+                res += f"#modeo(1, visible(var(x), var(o))).\n"
             elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
                 res+= f"#modeo(1, {k}({variables})).\n"
             else:
                 res+= f"#modeo(1, {k}).\n"
-
         res += f"""
 #weight(1).
 #weight(-1).
@@ -312,7 +317,7 @@ class Ilasp:
     def expand_trace(self, trace):
         discount_factor = 0.9
         actions, states, success, len_trace = trace
-        success = 100 if success else -10
+        success = 200 if success else -10
         values = []
         for step in range(len_trace):
             values.append(success*discount_factor**(len_trace-step-1))
@@ -354,6 +359,8 @@ class Ilasp:
 
             ranking = sorted(tree[s].items(), key=operator.itemgetter(1), reverse=True)
             top_action = e_c
+            if ranking[0][1]<0: # Don't add examples or ordering when the best action didn't lead to positive episodes
+                continue
             for c, i in enumerate(ranking):
                 action, val = i
                 examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[action]}}}).\n%%Value was:{val}\n"

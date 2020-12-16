@@ -16,6 +16,8 @@ class Pipeline:
         worker_id = 1
         seed = args.seed
         self.arenas = args.arenas
+        self.arena_distribution = args.distribution
+        self.max_steps = args.max_steps
         self.arena_successes = {k:[0,0] for k in self.arenas}
         self.buffer_size = 30
         self.logic = Logic(self.buffer_size)
@@ -63,7 +65,8 @@ class Pipeline:
         return False
 
     def reset(self):
-        name = rnd.choices(list(self.arenas),[0.6, 0.1, 0.3])[0]
+
+        name = rnd.choices(self.arenas, self.arena_distribution)[0]
         self.ac = ArenaConfig(name)
         self.env.reset(self.ac)
         return name
@@ -78,7 +81,7 @@ class Pipeline:
                 choice = 'test'
             for idx in range(self.args.num_episodes):
                 arena_name = self.reset()
-                macro_limit = self.arenas[arena_name]
+                macro_limit = self.max_steps[arena_name]
                 step_results = self.env.step([[0, 0]])  # Take 0,0 step
                 global_steps = 0
                 macro_step = 0
@@ -107,8 +110,8 @@ class Pipeline:
                         state,
                         choice=choice)
                     # if self.test:
-                    # print(macro_action)
-                    # print(observables)
+                    print(macro_action)
+                    print(observables)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
                     )

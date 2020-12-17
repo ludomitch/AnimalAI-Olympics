@@ -3,7 +3,7 @@ from animalai.envs.arena_config import ArenaConfig
 from centroidtracker import CentroidTracker
 import ma2 as macro
 from weak_logic import Logic
-from utils import preprocess, object_types, filter_observables
+from utils import preprocess, object_types
 import random as rnd
 import time
 
@@ -99,6 +99,16 @@ class Pipeline:
                     print(f"{idx}/{self.args.num_episodes} completed")
                     print(self.arena_successes)
 
+                if (idx%self.buffer_size==0)&(idx!=0):
+                    end = time.time()
+                    print(f"The full run without ILASP: {end-start}s")
+                    print(self.arena_successes)
+                    with open("success_ratio.txt", "w") as text_file:
+                        text_file.write(str(self.arena_successes)+f"The full run without ILASP: {end-start}s")
+                    choice = 'ilasp'
+                    self.logic.ilasp.generate_examples(traces)
+                    self.logic.update_learned_lp()
+
                 while not self.episode_over(step_results[2]):
                     if (global_steps >= 500)|(macro_step)>macro_limit:
                         success = False
@@ -117,7 +127,7 @@ class Pipeline:
                     global_steps += micro_step
                     macro_step +=1
                     actions_buffer.append(macro_action['raw'][0])
-                    observables_buffer.append(filter_observables(observables))
+                    observables_buffer.append(observables)
                     if state['reward']>self.ac.arenas[0].pass_mark:
                         success = True
                         break

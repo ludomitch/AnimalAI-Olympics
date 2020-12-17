@@ -20,11 +20,15 @@ def parse_args(x):
 main_lp = """
 present(X):-goal(X).
 present(X):- visible(X,_).
+gvis(X):- goal(X),visible(X,_).
 separator(Y):-on(agent, X), adjacent(X, Y), platform(X).
 can_occlude(X):-wall(X), not separator(X).
-occludes(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X).
-occludes_more(X, Y) :- occludes(X,Z,O1), occludes(Y,Z,O2), O1 > O2.
+occluding(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X).
+occludes(X,Y):-occluding(X,Y,_).
+occludes_more(X, Y) :- occluding(X,Z,O1), occluding(Y,Z,O2), O1 > O2.
+in_sight(X):-visible(X,_).
 """
+
 action_logic = """
 :- initiate(X), initiate(Y), X!=Y.
 initiate :- initiate(X).
@@ -47,28 +51,24 @@ test_lp = main_lp + action_logic + """
 """
 
 def variabilise(lp):
-    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']
-    p = parse_args(lp)
-    # print('lp1', lp)
-    y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
-    # Create unique var map
-    var_map = {}
-    for lit in y:
-        for arg in lit[1]:
-            if (arg not in var_map)&isinstance(arg, int):
-                try:
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    lp = ".\n".join(i for i in next(ASP(lp+main_lp).atoms_as_string.sorted) if any(j in i for j in ctx_observables))
+    if lp:
+        lp+= '.'
+        p = next(ASP(lp).parse_args.sorted)
+        y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
+        # Create unique var map
+        var_map = {}
+        for lit in y:
+            for arg in lit[1]:
+                if (arg not in var_map)&isinstance(arg, int):
                     var_map[arg] = letters.pop(0)
-                except IndexError:
-                    print(y)
-                    print(var_map)
-                    break
-    # Sort vars by largest so smaller ones aren't replacing bigger numbers
-    order = sorted(var_map, reverse=True)
-    # Update lp
-    for var in order:
-        lp = lp.replace(str(var), var_map[var])
-    # print('lp2',lp)
-    # print('-----')
+
+        # Sort vars by largest so smaller ones aren't replacing bigger numbers
+        order = sorted(var_map, reverse=True)
+        # Update lp
+        for var in order:
+            lp = lp.replace(str(var), var_map[var])
     return lp
 
 class Grounder:
@@ -107,7 +107,7 @@ class Grounder:
         visible = ""
         for box, obj_type, _occ_area, _id in state['obj']:
             # if valid_observables[obj_type]: # The obj type has arguments
-            visible += f"visible({_id}, {_occ_area}).\n"
+            visible += f"visible({_id}, {_occ_area*100}).\n"
             if obj_type!="goal":
                 visible +=f"{obj_type}({_id}).\n"
             # else:
@@ -158,14 +158,7 @@ class Clingo:
         #     initiate(balance(X,Y)):-object(X), object(Y).
         #     initiate(avoid(X,Y)):-object(X), object(Y).
         #     """
-            # present(X):-goal(X).
-            # present(X):- visible(X).
-            # initiate(rotate).
-            # initiate(interact(X)):-goal(X).
-            # initiate(explore(X,Y)):- wall(X), goal(Y), X!=Y.
-            # initiate(climb(X)):-ramp(X).
-            # initiate(balance(X,Y)):-platform(X), goal(Y), X!=Y.
-            # initiate(avoid(X,Y)):-lava(X), goal(Y), X!=Y.
+
         res = self.asp(lp)
         filtered_mas = [i for i in res.r[0] if 'initiate' in i]
         rand_action = rnd.choice(filtered_mas)
@@ -270,10 +263,10 @@ class Ilasp:
         for k,v in bias_observables.items():
             if k=='on':
                 res += f"#modeo(1, on(agent, var(x))).\n"
-            elif k=='visible':
-                res += f"#modeo(1, visible(var(x), var(o))).\n"
-            elif k=='occludes':
-                res += f"#modeo(1, occludes(var(x), var(y), var(o))).\n"
+            # elif k=='visible':
+            #     res += f"#modeo(1, visible(var(x), var(o))).\n"
+            # elif k=='occludes':
+            #     res += f"#modeo(1, occludes(var(x), var(y), var(o))).\n"
             elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
                 res+= f"#modeo(1, {k}({variables})).\n"
@@ -352,7 +345,7 @@ class Ilasp:
     def run(self):        
         # Create text file with lp
         with open("tmp.lp", "w") as text_file:
-            text_file.write(main_lp + self.create_mode_bias() + self.examples)
+            text_file.write(self.create_mode_bias() + self.examples)
 
         # Start bash process that runs ilasp learning
         bashCommand = "ilasp --version=4 tmp.lp --simple -d"

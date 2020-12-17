@@ -139,7 +139,7 @@ class Clingo:
             object(X):- present(X).
             initiate(rotate).
             initiate(interact(X)):-goal(X).
-            initiate(climb(X)):-ramp(X,_).
+            initiate(climb(X)):-ramp(X).
             initiate(explore(X,Y)):- wall(X), goal(Y).
             initiate(balance(X,Y)):-platform(X), goal(Y).
             initiate(avoid(X,Y)):-lava(X), goal(Y).

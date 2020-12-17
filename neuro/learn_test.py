@@ -13,7 +13,7 @@ if __name__=="__main__":
 	# arenas = [
 	# 	f"../competition_configurations/{i}.yml" for i in list(cfg.COMPETITION_CONFIGS['Ramp Usage'])
 	# ]
-	arena_names = [
+	arenas = [
 		"training_set/ramp.yml",
 		"training_set/red_maze.yml",
 		"training_set/wall.yml",

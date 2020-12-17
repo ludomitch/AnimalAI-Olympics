@@ -4,7 +4,6 @@ from mlagents.tf_utils import tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 from utils import load_pb, preprocess, process_image#, get_distance
-from logic import Grounder
 import checks as ck
 # from collections import deque
 # import time

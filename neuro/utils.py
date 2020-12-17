@@ -39,16 +39,16 @@ bias_observables = {
 }
 
 ctx_observables = [
-    # 'visible',
+    'visible',
     'on',
     "occludes",
     'occludes_more',
-    # 'wall',
+    'wall',
     'platform',
     'lava',
     'ramp',
     'goal',
-    # 'adjacent'
+    'adjacent'
 ]
 
 ef = ExtractFeatures(display=False, training=False)

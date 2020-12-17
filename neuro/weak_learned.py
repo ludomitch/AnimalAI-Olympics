@@ -11,9 +11,8 @@ class Pipeline:
     def __init__(self, args, test=False):
         self.args = args
         self.ct = None
-        self.gg_id = 0
         env_path = args.env
-        worker_id = 1
+        worker_id = rnd.randint(1,20)
         seed = args.seed
         self.arenas = args.arenas
         self.arena_distribution = args.distribution
@@ -22,6 +21,8 @@ class Pipeline:
         self.buffer_size = 30
         self.logic = Logic(self.buffer_size)
         self.test = test
+        self.mode = args.mode
+        self.save_path = args.save_path
         self.env = AnimalAIGym(
             environment_filename=env_path,
             worker_id=worker_id,
@@ -54,9 +55,7 @@ class Pipeline:
         checks = macro_action['check']
         ma = getattr(macro, action.title())(
             env, self.ct, state, step_results, action_args, checks)
-        # print(f"Initiating macro_action: {action}")
         step_results, state, macro_stats, micro_step = ma.run(pass_mark)
-        # print(f"Results: {self.format_macro_results(macro_stats)}")
         return step_results, state, micro_step, macro_stats["success"]
 
     def episode_over(self, done):
@@ -66,7 +65,10 @@ class Pipeline:
 
     def reset(self):
 
-        name = rnd.choices(self.arenas, self.arena_distribution)[0]
+        if self.mode=='collect':
+            name = self.arenas[0]
+        else:
+            name = rnd.choices(self.arenas, self.arena_distribution)[0]
         self.ac = ArenaConfig(name)
         self.env.reset(self.ac)
         return name
@@ -79,7 +81,7 @@ class Pipeline:
             traces = [] # list of lists: [actions, observables, success, macro_steps]
             if self.test:
                 choice = 'test'
-            for idx in range(self.args.num_episodes):
+            for idx in range(self.args.num_episodes+1):
                 arena_name = self.reset()
                 macro_limit = self.max_steps[arena_name]
                 step_results = self.env.step([[0, 0]])  # Take 0,0 step
@@ -90,7 +92,11 @@ class Pipeline:
                 actions_buffer = []
                 observables_buffer = []
 
-                if (idx%1000==0)&(idx!=0):
+                if (self.mode=='collect')&(idx%self.args.num_episodes==0)&(idx!=0):
+                    with open(self.save_path, "w") as text_file:
+                        text_file.write(str(traces))
+                    break
+                if (idx%500==0)&(idx!=0):
                     print(f"{idx}/{self.args.num_episodes} completed")
                     print(self.arena_successes)
 
@@ -107,14 +113,12 @@ class Pipeline:
                 while not self.episode_over(step_results[2]):
                     if (global_steps >= 500)|(macro_step)>macro_limit:
                         success = False
-                        # print("Exceeded max global steps")
                         break
                     state = preprocess(self.ct, step_results, global_steps, reward)
                     macro_action, observables = self.logic.run(
                         macro_step,
                         state,
                         choice=choice)
-                    # if self.test:
                     # print(macro_action)
                     # print(observables)
                     step_results, state, micro_step, success = self.take_macro_step(
@@ -130,17 +134,11 @@ class Pipeline:
                         break
                     else:
                         success = False
-                # print(arena_name, success)
                 traces.append([actions_buffer, observables_buffer, success, macro_step])
-                # nl_success = "Success" if success else "Failure"
-                # print(f"Episode was a {nl_success}")
                 success_count += success
                 self.arena_successes[arena_name][0]+=int(success)
                 self.arena_successes[arena_name][1]+=1
 
-                # print(
-                #     f"{success_count}/{idx+1}"
-                # )
             end = time.time()
             print(f"The full run took {end-start}s")
             print(self.arena_successes)

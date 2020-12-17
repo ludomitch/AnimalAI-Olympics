@@ -321,7 +321,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual', with_up=True):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=True):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -723,9 +723,9 @@ class AnimalAIEnvironment(UnityEnvironment):
     # Default values for configuration parameters of the environment, can be changed if needed
     # Increasing the timescale value for training might speed up the process on powefull machines
     # but take care as the higher the timescale the more likely the physics might break
-    WINDOW_WIDTH = PlayTrain(play=300, train=1)
-    WINDOW_HEIGHT = PlayTrain(play=300, train=1)
-    QUALITY_LEVEL = PlayTrain(play=5, train=100)
+    WINDOW_WIDTH = PlayTrain(play=300, train=300)
+    WINDOW_HEIGHT = PlayTrain(play=300, train=300)
+    QUALITY_LEVEL = PlayTrain(play=5, train=1)
     TIMESCALE = PlayTrain(play=1, train=300)
     TARGET_FRAME_RATE = PlayTrain(play=60, train=-1)
     ARENA_CONFIG_SC_UUID = "9c36c837-cad5-498a-b675-bc19c9370072"

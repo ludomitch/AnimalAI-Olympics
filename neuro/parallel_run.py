@@ -55,7 +55,6 @@ def run(opt):
 		inference=False, distribution=distribution,
 		max_steps=max_steps, mode='collect', save_path=f"biased_traces/{opt.arena}.txt")
 	pipe = Pipeline(args)
-	pipe.buffer_size = num
 	res = pipe.learn_run()
 
 if __name__ == '__main__':

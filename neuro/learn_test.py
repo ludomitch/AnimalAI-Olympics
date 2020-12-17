@@ -8,7 +8,7 @@ from animalai.envs.arena_config import ArenaConfig
 import config as cfg
 
 if __name__=="__main__":
-	margs = namedtuple('args', 'env seed arenas num_episodes inference distribution max_steps')
+	margs = namedtuple('args', 'env seed arenas num_episodes inference distribution max_steps mode')
 	env_path = 'linux_builds/aai'
 	# arenas = [
 	# 	f"../competition_configurations/{i}.yml" for i in list(cfg.COMPETITION_CONFIGS['Ramp Usage'])
@@ -31,7 +31,7 @@ if __name__=="__main__":
 		env=env_path, seed=1,
 		arenas=arenas, num_episodes=num+1,
 		inference=False, distribution=distribution,
-		max_steps=max_steps)
+		max_steps=max_steps, mode='full')
 	pipe = Pipeline(args)
 	pipe.buffer_size = num
 	res = pipe.learn_run()

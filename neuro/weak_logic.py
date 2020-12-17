@@ -45,28 +45,6 @@ test_lp = main_lp + action_logic + """
 :~ initiate(interact(V1)),visible(V1),goal(V1).[-1@3,V1]
 
 """
-# :~ initiate(balance(V1,V2)),on(agent, V1), goal(V2), platform(V1).[-1@2,V1, V2]
-# :~ initiate(climb(V1)), ramp(V1).[-1@2, V1]
-# :~ initiate(avoid(V1, V2)), goal(V2), lava(V1).[-1@3, V1, V2]
-# /media/home/ludovico/aai/neuro/clingo_test/clingo-5.4.1/bin:/media/home/ludovico/venv/bin:/media/home/ludovico/bin:/media/home/ludovico/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-
-# :~ initiate(balance(plaftform,V2)),on(agent, platform), goal(V2).[-1@3,V2]
-# :~ initiate(climb(ramp)), visible(ramp).[-1@2, V1]
-# :~ initiate(avoid(lava, V2)), goal(V2), visible(lava).[-1@6, V1, V2]
-# """
-# :~ initiate(interact(V1)).[1@2, V1]
-# :~ goal(V1), initiate(explore(V1,V2)).[1@1, V1, V2]
-# :~ goal(V1), not initiate(interact(V1)), not initiate(rotate).[1@3, V1]
-# """
-    # ftd = []
-    # for i in p:
-    #     if i[1]: # If there are args
-    #         if isinstance(i[1][0], tuple): # if it's a nested func
-    #             ftd.append(i[1][0])
-    #         else:
-    #             ftd.append(i)
-    #     else:
-    #         ftd.append(i)
 
 def variabilise(lp):
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']
@@ -160,11 +138,11 @@ class Clingo:
             present(X):- visible(X,_).
             object(X):- present(X).
             initiate(rotate).
-            initiate(interact(X)):-object(X).
-            initiate(climb(X)):-visible(X,_).
-            initiate(explore(X,Y)):- visible(X,_), goal(Y), X!=Y.
-            initiate(balance(X,Y)):-visible(X,_), goal(Y), X!=Y.
-            initiate(avoid(X,Y)):-visible(X,_), goal(Y), X!=Y.
+            initiate(interact(X)):-goal(X).
+            initiate(climb(X)):-ramp(X,_).
+            initiate(explore(X,Y)):- wall(X), goal(Y).
+            initiate(balance(X,Y)):-platform(X), goal(Y).
+            initiate(avoid(X,Y)):-lava(X), goal(Y).
             """
         # lp = f"""
         #     {ground_observables}
@@ -277,11 +255,8 @@ class Clingo:
         return self.macro_processing(res)
 
 class Ilasp:
-    def __init__(self, memory_len=40):
-        # Examples are [int:weight, string:example]
-        self.memory_len = memory_len
-        self.examples = deque(maxlen=self.memory_len)
-
+    def __init__(self):
+        pass
     def create_mode_bias(self):
         tmp = ["x", "y", "z", "o"]
         res = ""
@@ -404,9 +379,9 @@ class Ilasp:
         return False # No learned rules, will choose random macro
 
 class Logic:
-    def __init__(self, buffer_size = 40):
+    def __init__(self):
         self.grounder = Grounder()
-        self.ilasp = Ilasp(buffer_size)
+        self.ilasp = Ilasp()
         self.clingo = Clingo()
         self.e = 1
         self.e_discount = 8e-3

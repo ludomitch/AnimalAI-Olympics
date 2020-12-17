@@ -18,8 +18,7 @@ class Pipeline:
         self.arena_distribution = args.distribution
         self.max_steps = args.max_steps
         self.arena_successes = {k:[0,0] for k in self.arenas}
-        self.buffer_size = 30
-        self.logic = Logic(self.buffer_size)
+        self.logic = Logic()
         self.test = test
         self.mode = args.mode
         self.save_path = args.save_path
@@ -99,16 +98,6 @@ class Pipeline:
                 if (idx%500==0)&(idx!=0):
                     print(f"{idx}/{self.args.num_episodes} completed")
                     print(self.arena_successes)
-
-                if (idx%self.buffer_size==0)&(idx!=0):
-                    end = time.time()
-                    print(f"The full run without ILASP: {end-start}s")
-                    print(self.arena_successes)
-                    with open("success_ratio.txt", "w") as text_file:
-                        text_file.write(str(self.arena_successes)+f"The full run without ILASP: {end-start}s")
-                    choice = 'ilasp'
-                    self.logic.ilasp.generate_examples(traces)
-                    self.logic.update_learned_lp()
 
                 while not self.episode_over(step_results[2]):
                     if (global_steps >= 500)|(macro_step)>macro_limit:

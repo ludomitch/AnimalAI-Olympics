@@ -6,6 +6,8 @@ envs/*
 # examples/models/*
 *timers.json
 neuro/tmp/
+neuro/linux_builds/
+
 logs/
 # summaries/
 !examples/models/self_control_curriculum_pre_trained/

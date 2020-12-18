@@ -4,11 +4,6 @@
 #modeo(1, initiate(climb(var(x)))).
 #modeo(1, initiate(balance(var(x),var(y)))).
 #modeo(1, initiate(avoid(var(x),var(y)))).
-#modeo(1, on(agent, var(x))).
-#modeo(1, occludes(var(x),var(y))).
-#modeo(1, occludes_more(var(x),var(y))).
-#modeo(1, gvis(var(x))).
-
 #weight(1).
 #weight(-1).
 #maxv(4).

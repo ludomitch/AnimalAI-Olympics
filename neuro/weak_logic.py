@@ -26,7 +26,7 @@ can_occlude(X):-wall(X), not separator(X).
 occluding(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X).
 occludes(X,Y):-occluding(X,Y,_).
 occludes_more(X, Y) :- occluding(X,Z,O1), occluding(Y,Z,O2), O1 > O2.
-in_sight(X):-visible(X,_).
+bigger(X,Y):- goal(X), goal(Y), visible(X,O1), visible(Y,O2), O1>O2.
 """
 
 action_logic = """
@@ -149,13 +149,14 @@ class Clingo:
             present(X):-goal(X).
             present(X):- visible(X,_).
             object(X):- present(X).
-            initiate(rotate).
-            initiate(interact(X)):-goal(X).
+            direction(left).
+            direction(right).
             initiate(collect(X)):-goal1(X).
             initiate(climb(X)):-ramp(X).
             initiate(explore(X,Y)):- wall(X), goal(Y).
             initiate(balance(X,Y)):-platform(X), goal(Y).
             initiate(avoid(X,Y)):-lava(X), goal(Y).
+            initiate(drop(X)):-direction(X),on(agent, Y).
             """
         # lp = f"""
         #     {ground_observables}

@@ -43,7 +43,7 @@ class Pipeline:
         )
         return res
 
-    def take_macro_step(self, env, state, step_results, macro_action, pass_mark=0):
+    def take_macro_step(self, env, state, step_results, macro_action):
         if isinstance(macro_action['initiate'][0],str):
             action = macro_action['initiate'][0]
             action_args = None
@@ -54,7 +54,7 @@ class Pipeline:
         checks = macro_action['check']
         ma = getattr(macro, action.title())(
             env, self.ct, state, step_results, action_args, checks)
-        step_results, state, macro_stats, micro_step = ma.run(pass_mark)
+        step_results, state, macro_stats, micro_step = ma.run(self.ac.arenas[0].pass_mark)
         return step_results, state, micro_step, macro_stats["success"]
 
     def episode_over(self, done):

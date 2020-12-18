@@ -18,7 +18,8 @@ macro_actions = {
     "explore":2, # x,y
     "climb":1, # x
     "balance":2, # mask_x, y
-    "avoid":2 # mask_x, y
+    "avoid":2, # mask_x, y
+    "drop":1
 }
 
 bias_observables = {
@@ -27,14 +28,16 @@ bias_observables = {
     # 'moving':1,
     # 'goals':0,
     # 'visible':1,
-    'on':2,
-    "occludes":2,
-    "occludes_more":2,
     # 'wall':1,
     # 'platform':1,
     # 'lava':1,
     # 'ramp':1,
-    'gvis':1
+    'gvis':1,
+    'on':2,
+    "occludes":2,
+    "occludes_more":2,
+    "bigger":2,
+    "more_goals":1
 
 }
 
@@ -42,20 +45,20 @@ ctx_observables = [
     'on',
     'occludes',
     'occludes_more',
-    'platform',
-    'lava',
-    'ramp',
+    'bigger',
+    'more_goals',
     'gvis',
-    
     'climb',
     'balance',
     'avoid',
     'explore',
     'interact',
     'rotate',
-#     'goal',
-
+    'collect',
+    'drop'
+    # 'observe'
 ]
+
 
 ef = ExtractFeatures(display=False, training=False)
 

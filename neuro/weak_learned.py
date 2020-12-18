@@ -99,15 +99,15 @@ class Pipeline:
                     print(f"{idx}/{self.args.num_episodes} completed")
                     print(self.arena_successes)
 
-                if (idx%self.buffer_size==0)&(idx!=0):
-                    end = time.time()
-                    print(f"The full run without ILASP: {end-start}s")
-                    print(self.arena_successes)
-                    with open("success_ratio.txt", "w") as text_file:
-                        text_file.write(str(self.arena_successes)+f"The full run without ILASP: {end-start}s")
-                    choice = 'ilasp'
-                    self.logic.ilasp.generate_examples(traces)
-                    self.logic.update_learned_lp()
+                # if (idx%self.buffer_size==0)&(idx!=0):
+                #     end = time.time()
+                #     print(f"The full run without ILASP: {end-start}s")
+                #     print(self.arena_successes)
+                #     with open("success_ratio.txt", "w") as text_file:
+                #         text_file.write(str(self.arena_successes)+f"The full run without ILASP: {end-start}s")
+                #     choice = 'ilasp'
+                #     self.logic.ilasp.generate_examples(traces)
+                #     self.logic.update_learned_lp()
 
                 while not self.episode_over(step_results[2]):
                     if (global_steps >= 500)|(macro_step)>macro_limit:

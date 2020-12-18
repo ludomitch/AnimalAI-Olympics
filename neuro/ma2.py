@@ -124,6 +124,9 @@ class Action:
         return True, self.macro_stats("GREEN")
 
     def identify_action_args(self):
+        if self.args is None:
+            return
+
         res = []
         for arg in self.args:
             if isinstance(arg, int):
@@ -249,7 +252,7 @@ class Collect(Action):
         self.config = {
             "mode":"mask",
             "box": None,
-            "mask": 0
+            "mask": 'goal1'
         }
         self.with_up = False
         self.always_visible = False

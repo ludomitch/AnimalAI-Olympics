@@ -112,7 +112,7 @@ class Grounder:
             left = [i for i in count if i[0][0]<0.5]
             right = [i for i in count if i[0][0]>0.5]
             direction = "left" if len(left)>len(right) else 'right'
-            mg += f"more_goals({direction})."
+            mg += f"more_goals({direction}).\n"
         return mg
 
     @staticmethod
@@ -129,7 +129,7 @@ class Grounder:
     @staticmethod
     def goal_visible(_,state):
         try:
-            gg_id = next(i[3] for i in state['obj'] if i[1] in ['goal', 'goal1'])
+            gg_id = next(i[3] for i in state['obj'] if i[1] in ['goal'])
         except StopIteration:
             gg_id = 42
         return f"goal({gg_id}).\n"
@@ -154,7 +154,7 @@ class Clingo:
             direction(right).
             initiate(rotate).
             initiate(interact(X)):-goal(X).
-            initiate(collect(X)):-goal1(X), not on(agent, X).
+            initiate(collect):-goal1(X).
             initiate(climb(X)):-ramp(X).
             initiate(explore(X,Y)):- wall(X), goal(Y).
             initiate(balance(X,Y)):-platform(X), goal(Y).

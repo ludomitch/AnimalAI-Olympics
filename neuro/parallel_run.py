@@ -47,7 +47,8 @@ def run(opt):
 		"training_set/ramp.yml":2,
 		"training_set/red_maze.yml":1,
 		"training_set/wall.yml":3,
-		"training_set/choice.yml":2
+		"training_set/choice.yml":2,
+		"training_set/numerosity.yml": 2
 	}
 	args = margs(
 		env=env_path, seed=1,

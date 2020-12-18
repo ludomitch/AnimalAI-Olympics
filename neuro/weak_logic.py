@@ -103,6 +103,18 @@ class Grounder:
         return on
 
     @staticmethod
+    def more_goals(macro_step,state):
+        mg = ""
+        goals = [i for i in state['obj'] if i[1]=='goal1']
+        if goals:
+            count = [i for i in state['obj'] if i[1]]
+            left = [i for i in count if i[0][0]<0.5]
+            right = [i for i in count if i[0][0]>0.5]
+            direction = "left" if len(left)>len(right) else 'right'
+            mg += f"more_goals({direction})."
+        return mg
+
+    @staticmethod
     def visible(macro_step,state):
         visible = ""
         for box, obj_type, _occ_area, _id in state['obj']:
@@ -139,6 +151,7 @@ class Clingo:
             object(X):- present(X).
             initiate(rotate).
             initiate(interact(X)):-goal(X).
+            initiate(collect(X)):-goal1(X).
             initiate(climb(X)):-ramp(X).
             initiate(explore(X,Y)):- wall(X), goal(Y).
             initiate(balance(X,Y)):-platform(X), goal(Y).

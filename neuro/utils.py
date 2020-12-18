@@ -14,7 +14,7 @@ macro_actions = {
     "rotate":0, # _
     # "observe":0, # _
     "interact":1, # x
-    # "collect":1, # mask_x
+    "collect":1, # mask_x
     "explore":2, # x,y
     "climb":1, # x
     "balance":2, # mask_x, y
@@ -46,7 +46,7 @@ ctx_observables = [
     'lava',
     'ramp',
     'gvis',
-
+    
     'climb',
     'balance',
     'avoid',

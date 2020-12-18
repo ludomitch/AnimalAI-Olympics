@@ -40,10 +40,12 @@ class ExtractFeatures:
         self.display = display
         self.training = training
 
-    def mask_img(self, hsv):
+    def mask_img(self, hsv, binary=False):
         mask = cv2.inRange(self.hsv_img, hsv[0], hsv[1])
         res = cv2.bitwise_and(self.hsv_img, self.hsv_img, mask=mask)[:,:,2]
         res = res/255
+        if binary:
+            res[res>0] = 1
         return res
 
     def get_contour(self, hsv):
@@ -73,7 +75,8 @@ class ExtractFeatures:
 
 
     def run_mask(self, mask:str):
-        masked_img = self.mask_img(objects[mask]).astype(np.float64)
+        binary = True if mask=='goal1' else False
+        masked_img = self.mask_img(objects[mask], binary=binary).astype(np.float64)
         return masked_img
 
     def run_dual(self, box:str, mask:str):

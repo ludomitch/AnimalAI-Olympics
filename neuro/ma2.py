@@ -241,6 +241,19 @@ class Balance(Action):
         self.with_up = True
         self.always_visible = False
 
+class Collect(Action):
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
+
+        self.config = {
+            "mode":"mask",
+            "box": None,
+            "mask": 0
+        }
+        self.with_up = False
+        self.always_visible = False
+
 class Rotate(Action):
     def __init__(self, env, ct, state, step_results, args, checks):
         super().__init__(env=env, ct=ct, state=state,
@@ -275,4 +288,32 @@ class Rotate(Action):
         return self.step_results, self.state, self.macro_stats(
             "Object visible, rotating to it"), self.micro_step
 
+class Drop(Action):
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
+        self.direction = 2 if args[0]=='left' else 1
+
+    def check_done(self):
+        if self.state['done']:
+            return True
+        return False
+    def run(self, pass_mark):
+        """Rotate to first visible object"""
+
+        for i in range(15):
+            action = [1, self.direction] if i<10 else [1, 0]
+            self.step_results = self.env.step([action])
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+            self.state['micro_step'] = self.micro_step
+            self.micro_step += 1
+            self.reward = self.step_results[1]
+            # Rotate
+            if self.state['velocity'][1]<-2: #0 is placeholder macro step, has no effect
+                break # and run a few more rotations to point to it
+            if self.check_done():
+                return self.step_results, self.state, self.macro_stats(None), self.micro_step
+
+        return self.step_results, self.state, self.macro_stats(
+            "Object visible, rotating to it"), self.micro_step
 

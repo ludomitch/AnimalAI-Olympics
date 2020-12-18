@@ -107,7 +107,7 @@ class Grounder:
     def more_goals(macro_step,state):
         mg = ""
         goals = [i for i in state['obj'] if i[1]=='goal1']
-        if goals:
+        if len(goals)>1:
             count = [i for i in state['obj'] if i[1]]
             left = [i for i in count if i[0][0]<0.5]
             right = [i for i in count if i[0][0]>0.5]
@@ -154,7 +154,7 @@ class Clingo:
             direction(right).
             initiate(rotate).
             initiate(interact(X)):-goal(X).
-            initiate(collect(X)):-goal1(X).
+            initiate(collect(X)):-goal1(X), not on(agent, X).
             initiate(climb(X)):-ramp(X).
             initiate(explore(X,Y)):- wall(X), goal(Y).
             initiate(balance(X,Y)):-platform(X), goal(Y).

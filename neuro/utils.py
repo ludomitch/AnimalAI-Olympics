@@ -37,7 +37,8 @@ bias_observables = {
     "occludes":2,
     "occludes_more":2,
     "bigger":2,
-    "more_goals":1
+    "more_goals":1,
+    # "moving":0
 
 }
 
@@ -48,6 +49,8 @@ ctx_observables = [
     'bigger',
     'more_goals',
     'gvis',
+    # 'moving',
+
     'climb',
     'balance',
     'avoid',
@@ -61,6 +64,24 @@ ctx_observables = [
 
 
 ef = ExtractFeatures(display=False, training=False)
+
+def first_steps(env):
+    moving = False
+    obj = ef.run(env.render())
+    for i in range(5):
+        res = env.step([0,0])
+        obj_1 = ef.run(env.render())
+        for v,v1 in zip(obj.values(), obj_1.values()):
+            if v:
+                o = v[0][0][0]* v[0][0][1]
+                o1 = v1[0][0][0]* v1[0][0][1]
+                if o1!=o:
+                    move_count+=1
+        obj = obj_1
+        if move_count>3:
+            moving = True
+            break
+    return res, moving
 
 def load_pb(path_to_pb):
     with tf.gfile.GFile(path_to_pb, "rb") as f:

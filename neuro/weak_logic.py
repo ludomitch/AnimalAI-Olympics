@@ -114,7 +114,12 @@ class Grounder:
             direction = "left" if len(left)>len(right) else 'right'
             mg += f"more_goals({direction}).\n"
         return mg
-
+    @staticmethod
+    def moving(macro_step,state):
+        mv = ""
+        if state['moving']:
+            mv += "moving.\n"
+        return mv
     @staticmethod
     def visible(macro_step,state):
         visible = ""

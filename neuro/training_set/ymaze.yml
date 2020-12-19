@@ -7,7 +7,7 @@ arenas:
     - !Item
       name: Agent
       positions:
-      - !Vector3 {x: 20, y: 1, z: 1}
+      - !Vector3 {x: 20, y: 0, z: 1}
       rotations: [0]
     - !Item
       name: GoodGoal

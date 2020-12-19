@@ -121,18 +121,18 @@ class Grounder:
         for box, obj_type, _occ_area, _id in state['obj']:
             # if valid_observables[obj_type]: # The obj type has arguments
             visible += f"visible({_id}, {_occ_area*100}).\n"
-            if obj_type!="goal":
-                visible +=f"{obj_type}({_id}).\n"
+            visible +=f"{obj_type}({_id}).\n"
             # else:
             #     visible += f"visible({obj_type}).\n"
         return visible
     @staticmethod
     def goal_visible(_,state):
         try:
-            gg_id = next(i[3] for i in state['obj'] if i[1] in ['goal'])
+            next(i[3] for i in state['obj'] if i[1] in ['goal'])
+            return ""
         except StopIteration:
             gg_id = 42
-        return f"goal({gg_id}).\n"
+            return f"goal({gg_id}).\n"
     def run(self, macro_step, state):
         res = ""
         for k,v in vars(Grounder).items():
@@ -242,6 +242,7 @@ class Clingo:
             check(time, 100):- initiate(balance(X,Y)).
             check(fallen, 0):- initiate(balance(X,Y)).
             check(time, 100):- initiate(avoid(X,Y)).
+            check(time, 20):- initiate(drop(X)).
 
             """).atoms_as_string)
         checks = checks[0]

@@ -286,3 +286,40 @@ ramp(c).}).
 #brave_ordering(b20@10, a28, a29).
 #brave_ordering(b21@10, a28, a30).
 #brave_ordering(b22@10, a28, a31).
+
+% Macro-Actions
+rotate
+observe
+drop(X)
+interact(X)
+collect(X)
+climb(X)
+explore(X,Y)
+balance(X,Y)
+avoid(X,Y)
+
+% Observables
+present(ID)
+visible(ID, OCC)
+goal(ID)
+multi_goal(ID)
+wall(ID)
+lava(ID)
+platform(ID)
+ramp(ID)
+moving(ID)
+adjacent(ID1, ID2)
+occludes(ID1, ID2)
+occludes_more(ID1, ID2)
+bigger(ID1, ID2)
+more_goals(SIDE)
+
+present(X):-goal(X).
+present(X):- visible(X,_).
+gvis(X):- goal(X),visible(X,_).
+separator(Y):-on(agent, X), adjacent(X, Y), platform(X).
+can_occlude(X):-wall(X), not separator(X).
+occluding(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X).
+occludes(X,Y):-occluding(X,Y,_).
+occludes_more(X, Y) :- occluding(X,Z,O1), occluding(Y,Z,O2), O1 > O2.
+bigger(X,Y):- goal(X), goal(Y), visible(X,O1), visible(Y,O2), O1>O2.

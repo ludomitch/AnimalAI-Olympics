@@ -159,7 +159,7 @@ class Clingo:
             initiate(explore(X,Y)):- wall(X), goal(Y).
             initiate(balance(X,Y)):-platform(X), goal(Y).
             initiate(avoid(X,Y)):-lava(X), goal(Y).
-            initiate(drop(X)):-direction(X), on(agent, X).
+            initiate(drop(X)):-direction(X), on(agent, Y).
             """
         # lp = f"""
         #     {ground_observables}

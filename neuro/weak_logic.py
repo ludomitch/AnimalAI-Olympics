@@ -52,14 +52,24 @@ test_lp = main_lp + action_logic + """
 :~ initiate(observe),moving.[-1@3]
 
 """
-
+def flatten_macros(p):
+    res = []
+    for i in p:
+        if i[1]:
+            if isinstance(i[1][0],  tuple):
+                res.append(i[1][0])
+            else:
+                res.append(i)
+        else:
+            res.append(i)
+    return res
 def variabilise(lp):
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z']
     lp = ".\n".join(i for i in next(ASP(lp+main_lp).atoms_as_string.sorted) if any(j in i for j in ctx_observables))
     if lp:
         lp+= '.'
         p = next(ASP(lp).parse_args.sorted)
-        y = [i[1][0]  if (isinstance(i[1][0], tuple)) else i for i in p]
+        y = flatten_macros(p)
         # Create unique var map
         var_map = {}
         for lit in y:

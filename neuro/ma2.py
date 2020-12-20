@@ -318,5 +318,39 @@ class Drop(Action):
                 return self.step_results, self.state, self.macro_stats(None), self.micro_step
 
         return self.step_results, self.state, self.macro_stats(
-            "Object visible, rotating to it"), self.micro_step
+            "Dropped"), self.micro_step
 
+class Observe(Action):
+    def __init__(self, env, ct, state, step_results, args, checks):
+        super().__init__(env=env, ct=ct, state=state,
+         step_results=step_results, args=args, checks=checks)
+
+    def check_done(self):
+        if self.state['done']:
+            return True
+        return False
+    def run(self, pass_mark):
+        """Observe"""
+        stop = False
+        for _ in range(20):
+            self.step_results = self.env.step([0,0])
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+            self.state['micro_step'] = self.micro_step
+            self.micro_step += 1
+            self.reward = self.step_results[1]
+            black = not bool(np.max(self.step_results[0]))
+            while black: # black_loop
+                self.step_results = self.env.step([0,0])
+                black = not bool(np.max(self.step_results[0]))
+                self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+                self.state['micro_step'] = self.micro_step
+                self.micro_step += 1
+                self.reward = self.step_results[1]
+                stop = True
+            if stop:
+                break
+            if self.check_done() or stop:
+                return self.step_results, self.state, self.macro_stats(None), self.micro_step
+
+        return self.step_results, self.state, self.macro_stats(
+            "Observed"), self.micro_step

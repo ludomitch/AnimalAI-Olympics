@@ -38,7 +38,7 @@ bias_observables = {
     "occludes_more":2,
     "bigger":2,
     "more_goals":1,
-    # "moving":0
+    "moving":0
 
 }
 
@@ -49,7 +49,7 @@ ctx_observables = [
     'bigger',
     'more_goals',
     'gvis',
-    # 'moving',
+    'moving',
 
     'climb',
     'balance',
@@ -67,6 +67,7 @@ ef = ExtractFeatures(display=False, training=False)
 
 def first_steps(env):
     moving = False
+    move_count = 0
     obj = ef.run(env.render())
     for i in range(5):
         res = env.step([0,0])
@@ -78,7 +79,7 @@ def first_steps(env):
                 if o1!=o:
                     move_count+=1
         obj = obj_1
-        if move_count>3:
+        if move_count:
             moving = True
             break
     return res, moving

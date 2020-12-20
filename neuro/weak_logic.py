@@ -37,6 +37,7 @@ initiate :- initiate(X).
 object(X):- present(X).
 
 0{initiate(rotate)}1.
+0{initiate(observe)}1.
 0{initiate(interact(X))}1:- object(X).
 0{initiate(explore(X,Y))}1:- object(X), object(Y), X!=Y.
 0{initiate(climb(X))}1:-object(X).
@@ -46,8 +47,9 @@ object(X):- present(X).
 """
 
 test_lp = main_lp + action_logic + """
-:~ initiate(explore(V1,V2)),occludes_more(V1,V3),goal(V2).[-1@2,V1, V2,V3]
-:~ initiate(interact(V1)),visible(V1),goal(V1).[-1@3,V1]
+:~ initiate(interact(V1)), visible(V1,_), goal(V1).[-1@1,V1]
+:~ initiate(explore(V1,V2)),occludes(V1,V2),goal(V2),wall(V1).[-1@3,V1, V2]
+:~ initiate(observe),moving.[-1@3]
 
 """
 
@@ -87,11 +89,13 @@ class Grounder:
     @staticmethod
     def adjacent(macro_step,state):
         adjacent = ""
+        center_col = [0.45,0,0.1,1]
         for bbox, _, _, _id in state['obj']:
             for bbox1, _, _, _id1 in state['obj']:
                 dist = get_distance(bbox, bbox1)
                 if (_id1!=_id)&(dist<0.01):
-                    adjacent += f"adjacent({_id},{_id1}).\n"
+                    if any(get_overlap(center_col,i)>0.4 for i in [bbox,bbox1]):
+                        adjacent += f"adjacent({_id},{_id1}).\n"
         return adjacent
 
     @staticmethod
@@ -158,6 +162,7 @@ class Clingo:
             direction(left).
             direction(right).
             initiate(rotate).
+            initiate(observe).
             initiate(interact(X)):-goal(X).
             initiate(collect):-goal1(X).
             initiate(climb(X)):-ramp(X).

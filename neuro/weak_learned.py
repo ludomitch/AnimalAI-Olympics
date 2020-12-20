@@ -3,7 +3,7 @@ from animalai.envs.arena_config import ArenaConfig
 from centroidtracker import CentroidTracker
 import ma2 as macro
 from weak_logic import Logic
-from utils import preprocess, object_types
+from utils import preprocess, object_types, first_steps
 import random as rnd
 import time
 
@@ -72,6 +72,7 @@ class Pipeline:
         self.env.reset(self.ac)
         return name
 
+
     def learn_run(self):
         try:
             start = time.time()
@@ -83,7 +84,7 @@ class Pipeline:
             for idx in range(self.args.num_episodes+1):
                 arena_name = self.reset()
                 macro_limit = self.max_steps[arena_name]
-                step_results = self.env.step([[0, 0]])  # Take 0,0 step
+                step_results, moving = first_steps(self.env)  # Take 0,0 step
                 global_steps = 0
                 macro_step = 0
                 reward = 0
@@ -114,6 +115,10 @@ class Pipeline:
                         success = False
                         break
                     state = preprocess(self.ct, step_results, global_steps, reward)
+                    if macro_step==0:
+                        state['moving'] = moving
+                    else:
+                        state['moving'] = False
                     macro_action, observables = self.logic.run(
                         macro_step,
                         state,

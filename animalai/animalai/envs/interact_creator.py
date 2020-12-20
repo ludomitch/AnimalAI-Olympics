@@ -29,7 +29,7 @@ def make_obj(pos=False, size=False, name=False, rot=False):
 def run(counter):
     # agent_p = vector(randrange(1,39), 0 , randrange(1,39), randrange(1,39))
     agent_p = vector(randrange(2,38),0, randrange(1,5))
-    if counter < 1:
+    if counter < 8:
         goal_z = agent_p.z+5
         goal_x = agent_p.x + randrange(-3,3)
         obstacles=False
@@ -49,7 +49,7 @@ def run(counter):
 arenas:
   -1: !Arena
     pass_mark: 2
-    t: 20
+    t: 250
     items:"""
     for obj in ['Agent', 'GoodGoal']:
         inp = {"name":obj}

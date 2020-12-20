@@ -291,19 +291,14 @@ class Ilasp:
         for k,v in bias_observables.items():
             if k=='on':
                 res += f"#modeo(1, on(agent, var(x))).\n"
-            # elif k=='visible':
-            #     res += f"#modeo(1, visible(var(x), var(o))).\n"
-            # elif k=='occludes':
-            #     res += f"#modeo(1, occludes(var(x), var(y), var(o))).\n"
             elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
                 res+= f"#modeo(1, {k}({variables})).\n"
             else:
                 res+= f"#modeo(1, {k}).\n"
         res += f"""
-#weight(1).
 #weight(-1).
-#maxv(4).
+#maxv(3).
 #maxp({len(macro_actions)}).
 """
         return res

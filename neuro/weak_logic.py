@@ -315,7 +315,7 @@ class Ilasp:
 #weight(-1).
 #maxv(4).
 #maxp({len(macro_actions)}).
-#bias(":- #count { X: weak_body(initiate(X)) } != 1.").
+#bias(":- #count {{ X: weak_body(initiate(X)) }} != 1.").
 
 """
         return res

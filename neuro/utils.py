@@ -11,7 +11,7 @@ object_types = {
 }
 
 macro_actions = {
-    # "rotate":0, # _
+    "rotate":0, # _
     "observe":0, # _
     "interact":1, # x
     "collect":1, # mask_x
@@ -38,7 +38,13 @@ bias_observables = {
     "occludes_more":2,
     "bigger":2,
     "more_goals":1,
-    "moving":0
+    "moving":0,
+    "vwall":0,
+    "vplatform":0,
+    "vgoal":0,
+    "vlava":0,
+    "vramp":0,
+    "vgoal1":0
 
 }
 
@@ -48,10 +54,15 @@ ctx_observables = [
     'occludes_more',
     'bigger',
     'more_goals',
-    # 'gvis',
     'moving',
+    'vwall',
+    'vgoal',
+    'vplatform',
+    'vlava',
+    'vramp',
+    'vgoal1',
 
-    # 'rotate',
+    'rotate',
     'observe',
     'drop',
     'interact',

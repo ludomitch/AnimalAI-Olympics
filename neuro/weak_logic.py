@@ -20,14 +20,18 @@ def parse_args(x):
 main_lp = """
 present(X):-goal(X).
 present(X):- visible(X,_).
-gvis(X):- goal(X),visible(X,_).
 separator(Y):-on(agent, X), adjacent(X, Y), platform(X).
 can_occlude(X):-wall(X), not separator(X).
 occluding(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X).
 occludes(X,Y):-occluding(X,Y,_).
 occludes_more(X, Y) :- occluding(X,Z,O1), occluding(Y,Z,O2), O1 > O2.
-in_sight(X):-visible(X,_).
 bigger(X,Y):- goal(X), goal(Y), visible(X,O1), visible(Y,O2), O1>O2.
+vramp:-ramp(X).
+vwall:-wall(X).
+vgoal:-goal(X), visible(X,_).
+vlava:-lava(X).
+vplatform:-platform(X).
+vgoal1:-goal1(X).
 """
 
 action_logic = """
@@ -65,6 +69,7 @@ def flatten_macros(p):
     return res
 def variabilise(lp):
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    lp = lp.replace('left','1000001').replace('right', '100002')
     lp = ".\n".join(i for i in next(ASP(lp+main_lp).atoms_as_string.sorted) if any(j in i for j in ctx_observables))
     if lp:
         lp+= '.'
@@ -294,22 +299,24 @@ class Ilasp:
         for k,v in macro_actions.items():
             if v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
-                res+= f"#modeo(1, initiate({k}({variables}))).\n"
+                res+= f"#modeo(1, initiate({k}({variables})), (positive)).\n"
             else:
-                res+= f"#modeo(1, initiate({k})).\n"
+                res+= f"#modeo(1, initiate({k}), (positive)).\n"
 
         for k,v in bias_observables.items():
             if k=='on':
-                res += f"#modeo(1, on(agent, var(x))).\n"
+                res += f"#modeo(1, on(agent, var(x)), (positive)).\n"
             elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
-                res+= f"#modeo(1, {k}({variables})).\n"
+                res+= f"#modeo(1, {k}({variables}), (positive)).\n"
             else:
-                res+= f"#modeo(1, {k}).\n"
+                res+= f"#modeo(1, {k}, (positive)).\n"
         res += f"""
 #weight(-1).
-#maxv(3).
+#maxv(4).
 #maxp({len(macro_actions)}).
+#bias(":- #count { X: weak_body(initiate(X)) } != 1.").
+
 """
         return res
 
@@ -382,6 +389,8 @@ class Ilasp:
 
         # Start bash process that runs ilasp learning
         bashCommand = "ilasp --version=4 tmp.lp --simple -d"
+        print("TMP file created, run ILASP")
+        return
         start = time.time()
         print("Running ILASP")
         process = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)

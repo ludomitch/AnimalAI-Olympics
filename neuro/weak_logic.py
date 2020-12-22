@@ -298,7 +298,6 @@ class Ilasp:
     def expand_trace(self, trace):
         discount_factor = 0.9
         actions, states, success, len_trace = trace
-        success = 200 if success else -10
         values = []
         for step in range(len_trace):
             values.append(success*discount_factor**(len_trace-step-1))

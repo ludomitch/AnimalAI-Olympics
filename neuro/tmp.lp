@@ -13,12 +13,12 @@
 #modeo(1, bigger(var(x),var(y)), (positive)).
 #modeo(1, more_goals(var(x)), (positive)).
 #modeo(1, moving, (positive)).
-#modeo(1, vwall, (positive)).
-#modeo(1, vplatform, (positive)).
-#modeo(1, vgoal, (positive)).
-#modeo(1, vlava, (positive)).
-#modeo(1, vramp, (positive)).
-#modeo(1, vgoal1, (positive)).
+#modeo(1, wall, (positive)).
+#modeo(1, platform, (positive)).
+#modeo(1, goal, (positive)).
+#modeo(1, lava, (positive)).
+#modeo(1, ramp, (positive)).
+#modeo(1, goal1, (positive)).
 
 #weight(-1).
 #maxv(4).
@@ -28,742 +28,1374 @@
 #pos(a0,
 {},
 {},
-{initiate(drop(a)).
-more_goals(a).
-on(agent,b).
-vgoal1.
-vplatform.}).
-%%Value was:83.89704163526473
+{goal(a).
+initiate(observe).
+lava(b).
+lava(c).
+moving.
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:1.8919524193548374
 #pos(a1,
 {},
 {},
-{initiate(collect).
-more_goals(a).
+{goal(a).
+initiate(balance(b,a)).
+lava(c).
+lava(d).
+moving.
 on(agent,b).
-vgoal1.
-vplatform.}).
-%%Value was:57.2
+platform(b).
+wall(e).}).
+%%Value was:-3.501805263157896
 #pos(a2,
 {},
 {},
-{initiate(balance(a,b)).
-more_goals(c).
-on(agent,a).
-vgoal1.
-vplatform.}).
-%%Value was:33.69172999999999
+{goal(a).
+initiate(interact(a)).
+lava(b).
+lava(c).
+moving.
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:-4.430733333333334
 #pos(a3,
 {},
 {},
-{initiate(rotate).
-more_goals(a).
-on(agent,b).
-vgoal1.
-vplatform.}).
-%%Value was:9.852027500000002
+{goal(a).
+initiate(rotate).
+lava(b).
+lava(c).
+moving.
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:-4.725960576923075
 #pos(a4,
 {},
 {},
-{initiate(interact(a)).
-more_goals(b).
-on(agent,c).
-vgoal1.
-vplatform.}).
-%%Value was:-0.9077441860465122
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+lava(d).
+moving.
+on(agent,e).
+platform(e).
+wall(b).}).
+%%Value was:-4.841353125
 #pos(a5,
 {},
 {},
-{initiate(drop(a)).
-more_goals(b).
-on(agent,c).
-vgoal1.
-vplatform.}).
-%%Value was:-7.966953488571429
+{goal(a).
+initiate(drop(b)).
+lava(c).
+lava(d).
+moving.
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-6.188019827586204
 #pos(a6,
 {},
 {},
-{initiate(balance(a,b)).
-on(agent,a).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:74.0
+{goal(a).
+initiate(avoid(b,a)).
+lava(c).
+lava(b).
+moving.
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:-6.6310407079646
 #pos(a7,
 {},
 {},
-{initiate(climb(a)).
-on(agent,b).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:-10.0
+{goal(a).
+initiate(avoid(b,a)).
+lava(b).
+lava(c).
+moving.
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:-6.751073394495412
 #pos(a8,
 {},
 {},
-{initiate(interact(a)).
-on(agent,b).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:-10.0
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+lava(d).
+occludes(b,a).
+on(agent,e).
+platform(e).
+wall(b).}).
+%%Value was:47.01169565217391
 #pos(a9,
 {},
 {},
-{initiate(rotate).
-on(agent,a).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:-10.0
+{goal(a).
+initiate(observe).
+lava(b).
+lava(c).
+occludes(d,a).
+on(agent,e).
+platform(e).
+wall(d).}).
+%%Value was:14.990142857142855
 #pos(a10,
 {},
 {},
-{initiate(explore(a,b)).
-occludes(a,b).
-vwall.}).
-%%Value was:9.587171428571434
+{goal(a).
+initiate(interact(a)).
+lava(b).
+lava(c).
+occludes(d,a).
+on(agent,e).
+platform(e).
+wall(d).}).
+%%Value was:2.178400000000001
 #pos(a11,
 {},
 {},
-{initiate(rotate).
-occludes(a,b).
-vwall.}).
-%%Value was:-1.9806325301204777
+{goal(a).
+initiate(rotate).
+lava(b).
+lava(c).
+occludes(d,a).
+on(agent,e).
+platform(e).
+wall(d).}).
+%%Value was:1.4906842105263143
 #pos(a12,
 {},
 {},
-{initiate(interact(a)).
-occludes(b,a).
-vwall.}).
-%%Value was:-4.22481927710843
+{goal(a).
+initiate(drop(b)).
+lava(c).
+lava(d).
+occludes(e,a).
+on(agent,f).
+platform(f).
+wall(e).}).
+%%Value was:-7.492578947368419
 #pos(a13,
 {},
 {},
-{initiate(observe).
-occludes(a,b).
-vwall.}).
-%%Value was:-8.302105263157896
+{goal(a).
+initiate(balance(b,a)).
+lava(c).
+lava(d).
+occludes(e,a).
+on(agent,b).
+platform(b).
+wall(e).}).
+%%Value was:-7.932791666666668
 #pos(a14,
 {},
 {},
-{initiate(collect).
-vgoal1.
-vplatform.}).
-%%Value was:42.5
+{goal(a).
+initiate(avoid(b,a)).
+lava(b).
+lava(c).
+occludes(d,a).
+on(agent,e).
+platform(e).
+wall(d).}).
+%%Value was:-8.099545454545456
 #pos(a15,
 {},
 {},
-{initiate(rotate).
-vgoal1.
-vplatform.}).
-%%Value was:-7.157205
+{goal(a).
+initiate(avoid(b,a)).
+lava(c).
+lava(b).
+occludes(d,a).
+on(agent,e).
+platform(e).
+wall(d).}).
+%%Value was:-8.680571428571428
 #pos(a16,
 {},
 {},
-{initiate(interact(a)).
-vgoal1.
-vplatform.}).
-%%Value was:-8.726225
+{goal(a).
+initiate(balance(b,a)).
+on(agent,b).
+platform(b).}).
+%%Value was:27.821882951653944
 #pos(a17,
 {},
 {},
-{initiate(balance(a,b)).
-vgoal1.
-vplatform.}).
-%%Value was:-9.666666666666666
+{goal(a).
+initiate(drop(b)).
+on(agent,c).
+platform(c).}).
+%%Value was:7.173
 #pos(a18,
 {},
 {},
-{initiate(collect).
-more_goals(a).
-vgoal1.
-vplatform.}).
-%%Value was:172.0
+{goal(a).
+initiate(rotate).
+on(agent,b).
+platform(b).}).
+%%Value was:2.2551995249406174
 #pos(a19,
 {},
 {},
-{initiate(rotate).
-more_goals(a).
-vgoal1.
-vplatform.}).
-%%Value was:28.900837259999996
+{goal(a).
+initiate(interact(a)).
+on(agent,b).
+platform(b).}).
+%%Value was:-8.236673819742489
 #pos(a20,
 {},
 {},
-{initiate(balance(a,b)).
-more_goals(c).
-vgoal1.
-vplatform.}).
-%%Value was:2.0241176470588234
+{goal(a).
+initiate(observe).
+on(agent,b).
+platform(b).}).
+%%Value was:-8.55
 #pos(a21,
 {},
 {},
-{initiate(interact(a)).
-more_goals(b).
-vgoal1.
-vplatform.}).
-%%Value was:-8.68205
+{goal(a).
+initiate(climb(b)).
+platform(c).
+ramp(b).}).
+%%Value was:6.646798029556686
 #pos(a22,
 {},
 {},
-{initiate(interact(a)).
-vgoal.}).
-%%Value was:200.0
+{goal(a).
+initiate(balance(b,a)).
+platform(b).
+ramp(c).}).
+%%Value was:-7.7440860215053515
 #pos(a23,
 {},
 {},
-{initiate(rotate).
-vgoal.}).
-%%Value was:67.40037037037038
+{goal(a).
+initiate(rotate).
+platform(b).
+ramp(c).}).
+%%Value was:-8.316753926701567
 #pos(a24,
 {},
 {},
-{initiate(observe).
-vgoal.}).
-%%Value was:-9.033333333333333
+{goal(a).
+initiate(interact(a)).
+platform(b).
+ramp(c).}).
+%%Value was:-8.774542429284537
 #pos(a25,
 {},
 {},
-{initiate(drop(a)).
-on(agent,b).
-vplatform.}).
-%%Value was:7.173
+{goal(a).
+initiate(avoid(b,a)).
+lava(b).
+wall(c).
+wall(d).}).
+%%Value was:53.333333333333336
 #pos(a26,
 {},
 {},
-{initiate(balance(a,b)).
-on(agent,a).
-vplatform.}).
-%%Value was:4.2
+{goal(a).
+initiate(interact(a)).
+lava(b).
+wall(c).
+wall(d).}).
+%%Value was:42.5
 #pos(a27,
 {},
 {},
-{initiate(rotate).
-on(agent,a).
-vplatform.}).
-%%Value was:-6.272853658536586
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+wall(d).
+wall(b).}).
+%%Value was:25.36
 #pos(a28,
 {},
 {},
-{initiate(observe).
-on(agent,a).
-vplatform.}).
-%%Value was:-8.55
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+wall(b).
+wall(d).}).
+%%Value was:-8.8
 #pos(a29,
 {},
 {},
-{initiate(interact(a)).
-on(agent,b).
-vplatform.}).
-%%Value was:-9.869748427672956
+{goal(a).
+initiate(rotate).
+lava(b).
+wall(c).
+wall(d).}).
+%%Value was:-9.333333333333334
 #pos(a30,
 {},
 {},
-{initiate(observe).
-moving.
-on(agent,a).
-vgoal.
-vlava.
-vplatform.
-vwall.}).
-%%Value was:1.8919524193548374
+{goal(a).
+initiate(observe).
+lava(b).
+wall(c).
+wall(d).}).
+%%Value was:-9.333333333333334
 #pos(a31,
 {},
 {},
-{initiate(balance(a,b)).
-moving.
-on(agent,a).
-vgoal.
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-3.501805263157896
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(collect).
+more_goals(d).}).
+%%Value was:200.0
 #pos(a32,
 {},
 {},
-{initiate(interact(a)).
-moving.
-on(agent,b).
-vgoal.
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-4.430733333333334
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(rotate).
+more_goals(d).}).
+%%Value was:26.82943591909091
 #pos(a33,
 {},
 {},
-{initiate(rotate).
-moving.
-on(agent,a).
-vgoal.
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-4.725960576923075
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(interact(a)).
+more_goals(d).}).
+%%Value was:-8.627142857142857
 #pos(a34,
 {},
 {},
-{initiate(explore(a,b)).
-moving.
-on(agent,c).
-vgoal.
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-4.841353125
+{goal(a).
+initiate(balance(b,a)).
+on(agent,b).
+platform(b).
+ramp(c).}).
+%%Value was:74.0
 #pos(a35,
 {},
 {},
-{initiate(drop(a)).
-moving.
-on(agent,b).
-vgoal.
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-6.188019827586204
+{goal(a).
+initiate(climb(b)).
+on(agent,c).
+platform(c).
+ramp(b).}).
+%%Value was:-10.0
 #pos(a36,
 {},
 {},
-{initiate(avoid(a,b)).
-moving.
-on(agent,c).
-vgoal.
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-6.6899756756756705
+{goal(a).
+initiate(interact(a)).
+on(agent,b).
+platform(b).
+ramp(c).}).
+%%Value was:-10.0
 #pos(a37,
 {},
 {},
-{initiate(avoid(a,b)).
-vgoal.
-vlava.
-vwall.}).
-%%Value was:53.333333333333336
+{goal(a).
+initiate(rotate).
+on(agent,b).
+platform(b).
+ramp(c).}).
+%%Value was:-10.0
 #pos(a38,
 {},
 {},
-{initiate(explore(a,b)).
-vgoal.
-vlava.
-vwall.}).
-%%Value was:22.847826086956523
+{goal(a).
+initiate(interact(a)).
+wall(b).
+wall(c).}).
+%%Value was:161.9090909090909
 #pos(a39,
 {},
 {},
-{initiate(interact(a)).
-vgoal.
-vlava.
-vwall.}).
-%%Value was:13.866666666666667
+{goal(a).
+initiate(explore(b,a)).
+wall(b).
+wall(c).}).
+%%Value was:20.06083333333334
 #pos(a40,
 {},
 {},
-{initiate(rotate).
-vgoal.
-vlava.
-vwall.}).
-%%Value was:12.569999999999999
+{goal(a).
+initiate(explore(b,a)).
+wall(c).
+wall(b).}).
+%%Value was:15.40125
 #pos(a41,
 {},
 {},
-{initiate(observe).
-vgoal.
-vlava.
-vwall.}).
-%%Value was:-0.8829999999999998
+{goal(a).
+initiate(observe).
+wall(b).
+wall(c).}).
+%%Value was:-8.49625
 #pos(a42,
 {},
 {},
-{initiate(avoid(a,a)).
-vgoal.
-vlava.
-vwall.}).
-%%Value was:-8.893333333333333
+{goal(a).
+initiate(rotate).
+wall(b).
+wall(c).}).
+%%Value was:-8.6725
 #pos(a43,
 {},
 {},
-{bigger(a,b).
-initiate(interact(a)).
-vgoal.}).
-%%Value was:200.0
+{goal(a).
+initiate(explore(b,a)).
+occludes(b,a).
+wall(b).}).
+%%Value was:9.587171428571434
 #pos(a44,
 {},
 {},
-{bigger(a,b).
+{goal(a).
 initiate(rotate).
-vgoal.}).
-%%Value was:-10.0
+occludes(b,a).
+wall(b).}).
+%%Value was:-1.9806325301204777
 #pos(a45,
 {},
 {},
-{bigger(a,b).
-initiate(drop(c)).
-vgoal.}).
-%%Value was:-10.0
+{goal(a).
+initiate(interact(a)).
+occludes(b,a).
+wall(b).}).
+%%Value was:-4.22481927710843
 #pos(a46,
 {},
 {},
-{bigger(a,b).
-initiate(interact(b)).
-vgoal.}).
-%%Value was:-10.0
+{goal(a).
+initiate(observe).
+occludes(b,a).
+wall(b).}).
+%%Value was:-8.302105263157896
 #pos(a47,
 {},
 {},
-{initiate(explore(a,b)).
-occludes(c,b).
-occludes(a,b).
-occludes_more(a,c).
-on(agent,d).
-vplatform.
-vwall.}).
-%%Value was:92.80227272727286
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(collect).
+more_goals(d).
+platform(e).}).
+%%Value was:165.0
 #pos(a48,
 {},
 {},
-{initiate(rotate).
-occludes(a,b).
-occludes(c,b).
-occludes_more(c,a).
-on(agent,d).
-vplatform.
-vwall.}).
-%%Value was:-3.3905362776025343
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(rotate).
+more_goals(d).
+platform(e).}).
+%%Value was:32.3802621
 #pos(a49,
 {},
 {},
-{initiate(explore(a,b)).
-occludes(c,b).
-occludes(d,b).
-occludes_more(d,c).
-on(agent,e).
-vplatform.
-vwall.}).
-%%Value was:-5.341522491349462
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(interact(a)).
+more_goals(d).
+platform(e).}).
+%%Value was:-9.161249999999999
 #pos(a50,
 {},
 {},
-{initiate(explore(a,b)).
-occludes(a,b).
-occludes(c,b).
-occludes_more(c,a).
-on(agent,d).
-vplatform.
-vwall.}).
-%%Value was:-8.488817891373772
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(balance(d,a)).
+more_goals(e).
+platform(d).}).
+%%Value was:-9.327142857142857
 #pos(a51,
 {},
 {},
-{initiate(balance(a,b)).
-occludes(c,b).
-occludes(d,b).
-occludes_more(d,c).
-on(agent,a).
-vplatform.
-vwall.}).
-%%Value was:-8.49712460063895
+{goal(a).
+initiate(interact(a)).}).
+%%Value was:8.462891504605885
 #pos(a52,
 {},
 {},
-{initiate(interact(a)).
-occludes(b,a).
-occludes(c,a).
-occludes_more(c,b).
-on(agent,d).
-vplatform.
-vwall.}).
-%%Value was:-8.719838056680151
+{goal(a).
+initiate(rotate).}).
+%%Value was:2.8653617634635697
 #pos(a53,
 {},
 {},
-{initiate(avoid(a,b)).
-vgoal.
-vlava.}).
-%%Value was:192.0803787878788
+{goal(a).
+initiate(observe).}).
+%%Value was:-6.483941348973584
 #pos(a54,
 {},
 {},
-{initiate(rotate).
-vgoal.
-vlava.}).
-%%Value was:48.95307692307692
+{bigger(a,b).
+goal(b).
+goal(a).
+initiate(interact(a)).}).
+%%Value was:200.0
 #pos(a55,
 {},
 {},
-{initiate(interact(a)).
-vgoal.
-vlava.}).
-%%Value was:-5.787333333333333
+{bigger(a,b).
+goal(b).
+goal(a).
+initiate(rotate).}).
+%%Value was:-10.0
 #pos(a56,
 {},
 {},
-{initiate(observe).
-vgoal.
-vlava.}).
-%%Value was:-8.898333333333333
+{bigger(a,b).
+goal(b).
+goal(a).
+initiate(drop(c)).}).
+%%Value was:-10.0
 #pos(a57,
 {},
 {},
-{initiate(avoid(a,a)).
-vgoal.
-vlava.}).
+{bigger(a,b).
+goal(b).
+goal(a).
+initiate(interact(b)).}).
 %%Value was:-10.0
 #pos(a58,
 {},
 {},
-{initiate(collect).
-more_goals(a).
-vgoal1.}).
+{goal(a).
+initiate(interact(a)).
+lava(b).
+lava(c).}).
 %%Value was:200.0
 #pos(a59,
 {},
 {},
-{initiate(rotate).
-more_goals(a).
-vgoal1.}).
-%%Value was:26.82943591909091
+{goal(a).
+initiate(rotate).
+lava(b).
+lava(c).}).
+%%Value was:-10.0
 #pos(a60,
 {},
 {},
-{initiate(interact(a)).
-more_goals(b).
-vgoal1.}).
-%%Value was:-8.627142857142857
+{goal(a).
+initiate(explore(b,a)).
+occludes(c,a).
+occludes(b,a).
+occludes_more(b,c).
+on(agent,d).
+platform(d).
+wall(c).
+wall(b).
+wall(e).}).
+%%Value was:92.80227272727286
 #pos(a61,
 {},
 {},
-{initiate(rotate).
-vgoal1.}).
-%%Value was:2.6352794999999993
+{goal(a).
+initiate(rotate).
+occludes(b,a).
+occludes(c,a).
+occludes_more(c,b).
+on(agent,d).
+platform(d).
+wall(b).
+wall(c).
+wall(e).}).
+%%Value was:-3.3905362776025343
 #pos(a62,
 {},
 {},
-{initiate(collect).
-vgoal1.}).
-%%Value was:-1.6
+{goal(a).
+initiate(explore(b,a)).
+occludes(c,a).
+occludes(d,a).
+occludes_more(d,c).
+on(agent,e).
+platform(e).
+wall(c).
+wall(d).
+wall(b).}).
+%%Value was:-5.341522491349462
 #pos(a63,
 {},
 {},
-{initiate(interact(a)).
-vgoal1.}).
-%%Value was:-9.245315789473684
+{goal(a).
+initiate(explore(b,a)).
+occludes(b,a).
+occludes(c,a).
+occludes_more(c,b).
+on(agent,d).
+platform(d).
+wall(b).
+wall(c).
+wall(e).}).
+%%Value was:-8.488817891373772
 #pos(a64,
 {},
 {},
-{initiate(climb(a)).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:6.178922345483404
+{goal(a).
+initiate(balance(b,a)).
+occludes(c,a).
+occludes(d,a).
+occludes_more(d,c).
+on(agent,b).
+platform(b).
+wall(c).
+wall(d).
+wall(e).}).
+%%Value was:-8.49712460063895
 #pos(a65,
 {},
 {},
-{initiate(balance(a,b)).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:-7.99062068965523
+{goal(a).
+initiate(interact(a)).
+occludes(b,a).
+occludes(c,a).
+occludes_more(c,b).
+on(agent,d).
+platform(d).
+wall(b).
+wall(c).
+wall(e).}).
+%%Value was:-8.719838056680151
 #pos(a66,
 {},
 {},
-{initiate(rotate).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:-8.30374592833878
+{goal(a).
+initiate(interact(a)).
+wall(b).}).
+%%Value was:195.91439688715954
 #pos(a67,
 {},
 {},
-{initiate(interact(a)).
-vgoal.
-vplatform.
-vramp.}).
-%%Value was:-8.654153354632603
+{goal(a).
+initiate(explore(b,a)).
+wall(b).}).
+%%Value was:39.56703883495146
 #pos(a68,
 {},
 {},
-{initiate(balance(a,b)).
-on(agent,a).
-vgoal.
-vplatform.}).
-%%Value was:37.593525179856115
+{goal(a).
+initiate(rotate).
+wall(b).}).
+%%Value was:32.77902654867257
 #pos(a69,
 {},
 {},
-{initiate(rotate).
-on(agent,a).
-vgoal.
-vplatform.}).
-%%Value was:5.775167785234899
+{goal(a).
+initiate(observe).
+wall(b).}).
+%%Value was:-9.033333333333333
 #pos(a70,
 {},
 {},
-{initiate(interact(a)).
-on(agent,b).
-vgoal.
-vplatform.}).
-%%Value was:-7.390879478827362
+{goal(a).
+initiate(observe).
+lava(b).
+lava(c).
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:3.3159374999999978
 #pos(a71,
 {},
 {},
-{initiate(explore(a,b)).
-occludes(a,b).
-on(agent,c).
-vlava.
-vplatform.
-vwall.}).
-%%Value was:44.361258064516136
+{goal(a).
+initiate(rotate).
+lava(b).
+lava(c).
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:-6.74325
 #pos(a72,
 {},
 {},
-{initiate(observe).
-occludes(a,b).
-on(agent,c).
-vlava.
-vplatform.
-vwall.}).
-%%Value was:9.853999999999997
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+lava(d).
+on(agent,e).
+platform(e).
+wall(b).}).
+%%Value was:-6.989142857142857
 #pos(a73,
 {},
 {},
-{initiate(interact(a)).
-occludes(b,a).
-on(agent,c).
-vlava.
-vplatform.
-vwall.}).
-%%Value was:0.3547777777777783
+{goal(a).
+initiate(avoid(b,a)).
+lava(c).
+lava(b).
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:-7.142823529411766
 #pos(a74,
 {},
 {},
-{initiate(rotate).
-occludes(a,b).
-on(agent,c).
-vlava.
-vplatform.
-vwall.}).
-%%Value was:0.1787727272727263
+{goal(a).
+initiate(drop(b)).
+lava(c).
+lava(d).
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-7.2244285714285725
 #pos(a75,
 {},
 {},
-{initiate(drop(a)).
-occludes(b,c).
+{goal(a).
+initiate(interact(a)).
+lava(b).
+lava(c).
 on(agent,d).
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-7.525421874999998
+platform(d).
+wall(e).}).
+%%Value was:-7.2756
 #pos(a76,
 {},
 {},
-{initiate(balance(a,b)).
-occludes(c,b).
-on(agent,a).
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-8.01474193548387
+{goal(a).
+initiate(avoid(b,a)).
+lava(b).
+lava(c).
+on(agent,d).
+platform(d).
+wall(e).}).
+%%Value was:-7.356315789473686
 #pos(a77,
 {},
 {},
-{initiate(avoid(a,b)).
-occludes(c,b).
-on(agent,d).
-vlava.
-vplatform.
-vwall.}).
-%%Value was:-8.633341463414636
+{goal(a).
+initiate(balance(b,a)).
+lava(c).
+lava(d).
+on(agent,b).
+platform(b).
+wall(e).}).
+%%Value was:-7.7136000000000005
 #pos(a78,
 {},
 {},
-{initiate(interact(a)).
-vgoal.
-vwall.}).
-%%Value was:194.51865671641792
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(drop(e)).
+more_goals(e).
+on(agent,f).
+platform(f).}).
+%%Value was:78.54858627139286
 #pos(a79,
 {},
 {},
-{initiate(explore(a,b)).
-vgoal.
-vwall.}).
-%%Value was:37.67588495575218
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(collect).
+more_goals(e).
+on(agent,f).
+platform(f).}).
+%%Value was:70.0
 #pos(a80,
 {},
 {},
-{initiate(rotate).
-vgoal.
-vwall.}).
-%%Value was:30.68903361344538
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(balance(e,a)).
+more_goals(f).
+on(agent,e).
+platform(e).}).
+%%Value was:41.95617599999999
 #pos(a81,
 {},
 {},
-{initiate(observe).
-vgoal.
-vwall.}).
-%%Value was:-8.726428571428572
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(rotate).
+more_goals(e).
+on(agent,f).
+platform(f).}).
+%%Value was:14.118892758620687
+#pos(a82,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(interact(a)).
+more_goals(e).
+on(agent,f).
+platform(f).}).
+%%Value was:0.10965789473684191
+#pos(a83,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(drop(e)).
+more_goals(f).
+on(agent,g).
+platform(g).}).
+%%Value was:-8.005526427272727
+#pos(a84,
+{},
+{},
+{goal(a).
+initiate(explore(b,a)).
+lava(a).
+wall(b).}).
+%%Value was:37.666666666666664
+#pos(a85,
+{},
+{},
+{goal(a).
+initiate(rotate).
+lava(a).
+wall(b).}).
+%%Value was:17.62461538461538
+#pos(a86,
+{},
+{},
+{goal(a).
+initiate(observe).
+lava(a).
+wall(b).}).
+%%Value was:1.2087499999999993
+#pos(a87,
+{},
+{},
+{goal(a).
+initiate(avoid(a,a)).
+lava(a).
+wall(b).}).
+%%Value was:-8.893333333333333
+#pos(a88,
+{},
+{},
+{goal(a).
+initiate(interact(a)).
+lava(a).
+wall(b).}).
+%%Value was:-9.127272727272727
+#pos(a89,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(drop(d)).
+more_goals(d).
+on(agent,e).
+platform(e).}).
+%%Value was:108.8565
+#pos(a90,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(drop(d)).
+more_goals(e).
+on(agent,f).
+platform(f).}).
+%%Value was:-7.330500000000001
+#pos(a91,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(balance(d,a)).
+more_goals(e).
+on(agent,d).
+platform(d).}).
+%%Value was:-7.6305000000000005
+#pos(a92,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(rotate).
+more_goals(d).
+on(agent,e).
+platform(e).}).
+%%Value was:-7.824985714285715
+#pos(a93,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(interact(a)).
+more_goals(d).
+on(agent,e).
+platform(e).}).
+%%Value was:-8.64
+#pos(a94,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+initiate(collect).
+more_goals(d).
+on(agent,e).
+platform(e).}).
+%%Value was:-10.0
+#pos(a95,
+{},
+{},
+{goal(a).
+initiate(avoid(b,a)).
+lava(b).}).
+%%Value was:162.2163225806452
+#pos(a96,
+{},
+{},
+{goal(a).
+initiate(rotate).
+lava(b).}).
+%%Value was:40.64717105263156
+#pos(a97,
+{},
+{},
+{goal(a).
+initiate(interact(a)).
+lava(b).}).
+%%Value was:-7.3140963855421655
+#pos(a98,
+{},
+{},
+{goal(a).
+initiate(observe).
+lava(b).}).
+%%Value was:-8.416153846153845
+#pos(a99,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(collect).
+more_goals(e).
+platform(f).}).
+%%Value was:176.66666666666666
+#pos(a100,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(rotate).
+more_goals(e).
+platform(f).}).
+%%Value was:23.681700000000003
+#pos(a101,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(balance(e,a)).
+more_goals(f).
+platform(e).}).
+%%Value was:12.188888888888888
+#pos(a102,
+{},
+{},
+{goal(a).
+goal1(b).
+goal1(c).
+goal1(d).
+initiate(interact(a)).
+more_goals(e).
+platform(f).}).
+%%Value was:-8.362583333333333
+#pos(a103,
+{},
+{},
+{goal(a).
+initiate(balance(b,a)).
+lava(c).
+lava(d).
+lava(e).
+on(agent,b).
+platform(b).
+wall(f).}).
+%%Value was:10.196999999999996
+#pos(a104,
+{},
+{},
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+lava(d).
+lava(e).
+on(agent,f).
+platform(f).
+wall(b).}).
+%%Value was:-6.561
+#pos(a105,
+{},
+{},
+{goal(a).
+initiate(interact(a)).
+lava(b).
+lava(c).
+lava(d).
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-6.561
+#pos(a106,
+{},
+{},
+{goal(a).
+initiate(rotate).
+lava(b).
+lava(c).
+lava(d).
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-6.6419999999999995
+#pos(a107,
+{},
+{},
+{goal(a).
+initiate(observe).
+lava(b).
+lava(c).
+lava(d).
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-6.652125
+#pos(a108,
+{},
+{},
+{goal(a).
+initiate(avoid(b,a)).
+lava(c).
+lava(d).
+lava(b).
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-6.665142857142857
+#pos(a109,
+{},
+{},
+{goal(a).
+initiate(drop(b)).
+lava(c).
+lava(d).
+lava(e).
+on(agent,f).
+platform(f).
+wall(g).}).
+%%Value was:-6.720206896551728
+#pos(a110,
+{},
+{},
+{goal(a).
+initiate(avoid(b,a)).
+lava(b).
+lava(c).
+lava(d).
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-6.735461538461539
+#pos(a111,
+{},
+{},
+{goal(a).
+initiate(avoid(b,a)).
+lava(c).
+lava(b).
+lava(d).
+on(agent,e).
+platform(e).
+wall(f).}).
+%%Value was:-6.985384615384618
+#pos(a112,
+{},
+{},
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+occludes(b,a).
+on(agent,d).
+platform(d).
+wall(b).}).
+%%Value was:36.74125
+#pos(a113,
+{},
+{},
+{goal(a).
+initiate(drop(b)).
+lava(c).
+occludes(d,a).
+on(agent,e).
+platform(e).
+wall(d).}).
+%%Value was:-7.792857142857144
+#pos(a114,
+{},
+{},
+{goal(a).
+initiate(observe).
+lava(b).
+occludes(c,a).
+on(agent,d).
+platform(d).
+wall(c).}).
+%%Value was:-8.1225
+#pos(a115,
+{},
+{},
+{goal(a).
+initiate(rotate).
+lava(b).
+occludes(c,a).
+on(agent,d).
+platform(d).
+wall(c).}).
+%%Value was:-8.13
+#pos(a116,
+{},
+{},
+{goal(a).
+initiate(balance(b,a)).
+lava(c).
+occludes(d,a).
+on(agent,b).
+platform(b).
+wall(d).}).
+%%Value was:-8.295714285714286
+#pos(a117,
+{},
+{},
+{goal(a).
+initiate(interact(a)).
+lava(b).
+occludes(c,a).
+on(agent,d).
+platform(d).
+wall(c).}).
+%%Value was:-8.763333333333334
+#pos(a118,
+{},
+{},
+{goal(a).
+initiate(avoid(b,a)).
+lava(b).
+occludes(c,a).
+on(agent,d).
+platform(d).
+wall(c).}).
+%%Value was:-9.175555555555555
+#pos(a119,
+{},
+{},
+{goal(a).
+initiate(interact(a)).
+lava(b).
+wall(c).}).
+%%Value was:60.0
+#pos(a120,
+{},
+{},
+{goal(a).
+initiate(observe).
+lava(b).
+wall(c).}).
+%%Value was:-9.0
+#pos(a121,
+{},
+{},
+{goal(a).
+initiate(explore(b,a)).
+lava(c).
+wall(b).}).
+%%Value was:-9.05
+#pos(a122,
+{},
+{},
+{goal(a).
+goal1(b).
+initiate(collect).
+platform(c).}).
+%%Value was:42.5
+#pos(a123,
+{},
+{},
+{goal(a).
+goal1(b).
+initiate(rotate).
+platform(c).}).
+%%Value was:-7.157205
+#pos(a124,
+{},
+{},
+{goal(a).
+goal1(b).
+initiate(interact(a)).
+platform(c).}).
+%%Value was:-8.726225
+#pos(a125,
+{},
+{},
+{goal(a).
+goal1(b).
+initiate(balance(c,a)).
+platform(c).}).
+%%Value was:-9.666666666666666
+#pos(a126,
+{},
+{},
+{goal(a).
+goal1(b).
+initiate(rotate).}).
+%%Value was:2.6352794999999993
+#pos(a127,
+{},
+{},
+{goal(a).
+goal1(b).
+initiate(collect).}).
+%%Value was:-1.6
+#pos(a128,
+{},
+{},
+{goal(a).
+goal1(b).
+initiate(interact(a)).}).
+%%Value was:-9.245315789473684
 #brave_ordering(b0@10, a0, a1).
 #brave_ordering(b1@10, a0, a2).
 #brave_ordering(b2@10, a0, a3).
 #brave_ordering(b3@10, a0, a4).
 #brave_ordering(b4@10, a0, a5).
-#brave_ordering(b5@10, a6, a7).
-#brave_ordering(b6@10, a6, a8).
-#brave_ordering(b7@10, a6, a9).
-#brave_ordering(b8@10, a10, a11).
-#brave_ordering(b9@10, a10, a12).
-#brave_ordering(b10@10, a10, a13).
-#brave_ordering(b11@10, a14, a15).
-#brave_ordering(b12@10, a14, a16).
-#brave_ordering(b13@10, a14, a17).
-#brave_ordering(b14@10, a18, a19).
-#brave_ordering(b15@10, a18, a20).
-#brave_ordering(b16@10, a18, a21).
-#brave_ordering(b17@10, a22, a23).
-#brave_ordering(b18@10, a22, a24).
-#brave_ordering(b19@10, a25, a26).
-#brave_ordering(b20@10, a25, a27).
-#brave_ordering(b21@10, a25, a28).
-#brave_ordering(b22@10, a25, a29).
-#brave_ordering(b23@10, a30, a31).
-#brave_ordering(b24@10, a30, a32).
-#brave_ordering(b25@10, a30, a33).
-#brave_ordering(b26@10, a30, a34).
-#brave_ordering(b27@10, a30, a35).
-#brave_ordering(b28@10, a30, a36).
-#brave_ordering(b29@10, a37, a38).
-#brave_ordering(b30@10, a37, a39).
-#brave_ordering(b31@10, a37, a40).
-#brave_ordering(b32@10, a37, a41).
-#brave_ordering(b33@10, a37, a42).
-#brave_ordering(b34@10, a43, a44).
-#brave_ordering(b35@10, a43, a45).
-#brave_ordering(b36@10, a43, a46).
-#brave_ordering(b37@10, a47, a48).
-#brave_ordering(b38@10, a47, a49).
-#brave_ordering(b39@10, a47, a50).
-#brave_ordering(b40@10, a47, a51).
-#brave_ordering(b41@10, a47, a52).
-#brave_ordering(b42@10, a53, a54).
-#brave_ordering(b43@10, a53, a55).
-#brave_ordering(b44@10, a53, a56).
-#brave_ordering(b45@10, a53, a57).
+#brave_ordering(b5@10, a0, a6).
+#brave_ordering(b6@10, a0, a7).
+#brave_ordering(b7@10, a8, a9).
+#brave_ordering(b8@10, a8, a10).
+#brave_ordering(b9@10, a8, a11).
+#brave_ordering(b10@10, a8, a12).
+#brave_ordering(b11@10, a8, a13).
+#brave_ordering(b12@10, a8, a14).
+#brave_ordering(b13@10, a8, a15).
+#brave_ordering(b14@10, a16, a17).
+#brave_ordering(b15@10, a16, a18).
+#brave_ordering(b16@10, a16, a19).
+#brave_ordering(b17@10, a16, a20).
+#brave_ordering(b18@10, a21, a22).
+#brave_ordering(b19@10, a21, a23).
+#brave_ordering(b20@10, a21, a24).
+#brave_ordering(b21@10, a25, a26).
+#brave_ordering(b22@10, a25, a27).
+#brave_ordering(b23@10, a25, a28).
+#brave_ordering(b24@10, a25, a29).
+#brave_ordering(b25@10, a25, a30).
+#brave_ordering(b26@10, a31, a32).
+#brave_ordering(b27@10, a31, a33).
+#brave_ordering(b28@10, a34, a35).
+#brave_ordering(b29@10, a34, a36).
+#brave_ordering(b30@10, a34, a37).
+#brave_ordering(b31@10, a38, a39).
+#brave_ordering(b32@10, a38, a40).
+#brave_ordering(b33@10, a38, a41).
+#brave_ordering(b34@10, a38, a42).
+#brave_ordering(b35@10, a43, a44).
+#brave_ordering(b36@10, a43, a45).
+#brave_ordering(b37@10, a43, a46).
+#brave_ordering(b38@10, a47, a48).
+#brave_ordering(b39@10, a47, a49).
+#brave_ordering(b40@10, a47, a50).
+#brave_ordering(b41@10, a51, a52).
+#brave_ordering(b42@10, a51, a53).
+#brave_ordering(b43@10, a54, a55).
+#brave_ordering(b44@10, a54, a56).
+#brave_ordering(b45@10, a54, a57).
 #brave_ordering(b46@10, a58, a59).
-#brave_ordering(b47@10, a58, a60).
-#brave_ordering(b48@10, a61, a62).
-#brave_ordering(b49@10, a61, a63).
-#brave_ordering(b50@10, a64, a65).
-#brave_ordering(b51@10, a64, a66).
-#brave_ordering(b52@10, a64, a67).
-#brave_ordering(b53@10, a68, a69).
-#brave_ordering(b54@10, a68, a70).
-#brave_ordering(b55@10, a71, a72).
-#brave_ordering(b56@10, a71, a73).
-#brave_ordering(b57@10, a71, a74).
-#brave_ordering(b58@10, a71, a75).
-#brave_ordering(b59@10, a71, a76).
-#brave_ordering(b60@10, a71, a77).
-#brave_ordering(b61@10, a78, a79).
-#brave_ordering(b62@10, a78, a80).
-#brave_ordering(b63@10, a78, a81).
+#brave_ordering(b47@10, a60, a61).
+#brave_ordering(b48@10, a60, a62).
+#brave_ordering(b49@10, a60, a63).
+#brave_ordering(b50@10, a60, a64).
+#brave_ordering(b51@10, a60, a65).
+#brave_ordering(b52@10, a66, a67).
+#brave_ordering(b53@10, a66, a68).
+#brave_ordering(b54@10, a66, a69).
+#brave_ordering(b55@10, a70, a71).
+#brave_ordering(b56@10, a70, a72).
+#brave_ordering(b57@10, a70, a73).
+#brave_ordering(b58@10, a70, a74).
+#brave_ordering(b59@10, a70, a75).
+#brave_ordering(b60@10, a70, a76).
+#brave_ordering(b61@10, a70, a77).
+#brave_ordering(b62@10, a78, a79).
+#brave_ordering(b63@10, a78, a80).
+#brave_ordering(b64@10, a78, a81).
+#brave_ordering(b65@10, a78, a82).
+#brave_ordering(b66@10, a78, a83).
+#brave_ordering(b67@10, a84, a85).
+#brave_ordering(b68@10, a84, a86).
+#brave_ordering(b69@10, a84, a87).
+#brave_ordering(b70@10, a84, a88).
+#brave_ordering(b71@10, a89, a90).
+#brave_ordering(b72@10, a89, a91).
+#brave_ordering(b73@10, a89, a92).
+#brave_ordering(b74@10, a89, a93).
+#brave_ordering(b75@10, a89, a94).
+#brave_ordering(b76@10, a95, a96).
+#brave_ordering(b77@10, a95, a97).
+#brave_ordering(b78@10, a95, a98).
+#brave_ordering(b79@10, a99, a100).
+#brave_ordering(b80@10, a99, a101).
+#brave_ordering(b81@10, a99, a102).
+#brave_ordering(b82@10, a103, a104).
+#brave_ordering(b83@10, a103, a105).
+#brave_ordering(b84@10, a103, a106).
+#brave_ordering(b85@10, a103, a107).
+#brave_ordering(b86@10, a103, a108).
+#brave_ordering(b87@10, a103, a109).
+#brave_ordering(b88@10, a103, a110).
+#brave_ordering(b89@10, a103, a111).
+#brave_ordering(b90@10, a112, a113).
+#brave_ordering(b91@10, a112, a114).
+#brave_ordering(b92@10, a112, a115).
+#brave_ordering(b93@10, a112, a116).
+#brave_ordering(b94@10, a112, a117).
+#brave_ordering(b95@10, a112, a118).
+#brave_ordering(b96@10, a119, a120).
+#brave_ordering(b97@10, a119, a121).
+#brave_ordering(b98@10, a122, a123).
+#brave_ordering(b99@10, a122, a124).
+#brave_ordering(b100@10, a122, a125).
+#brave_ordering(b101@10, a126, a127).
+#brave_ordering(b102@10, a126, a128).

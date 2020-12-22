@@ -19,9 +19,10 @@ def parse_args(x):
 main_lp = """
 separator(Y):-on(agent, platform), adjacent(X, Y).
 can_occlude(X):-wall(X), not separator(X).
-occluding_goal(X,Y, O) :- goal(Y), not visible(Y, _), can_occlude(X).
-occludes_goal(X,Y):-occluding_goal(X,Y,_).
-occludes_more(X, Y) :- occluding_goal(X,Z,O1), occluding_goal(Y,Z,O2), O1 > O2.
+gvis:-goal(X).
+occluding_goal(X, O) :- not gvis, can_occlude(X), visible(X,O).
+occludes_goal(X):-occluding_goal(X,_).
+occludes_more(X, Y) :- occluding_goal(X,O1), occluding_goal(Y,O2), O1 > O2.
 bigger(X,Y):- goal(X), goal(Y), visible(X,O1), visible(Y,O2), O1>O2.
 """
 

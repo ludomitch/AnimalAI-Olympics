@@ -21,8 +21,16 @@ def run():
     traces = []
     for arena in arenas:
         my_file = open(f"simple_traces/{arena}.txt", "r")
-        content = my_file.read()
-        traces+= eval(content)
+        content = eval(my_file.read())
+        s = len([i for i in content if i[2]])
+        t = len(content)
+        l = t-s
+        reward = [-s/t*10, l/t*10] # fail, succ
+        for c,i in enumerate(content):
+            content[c][2] = reward[content[c][2]]
+            if arena!='moving':
+                content[c][1][0] = content[c][1][0].replace('moving.\n', '')
+            traces+= content
 
     logic = Logic()
     logic.ilasp.generate_examples(traces)

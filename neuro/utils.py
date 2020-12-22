@@ -13,12 +13,12 @@ object_types = {
 macro_actions = {
     "rotate":0, # _
     "observe":0, # _
+    "climb":0, # x
+    "collect":0, # mask_x
     "interact":1, # x
-    "collect":1, # mask_x
-    "explore":2, # x,y
-    "climb":1, # x
-    "balance":2, # mask_x, y
-    "avoid":2, # mask_x, y
+    "explore":1, # x,y
+    "balance":1, # mask_x, y
+    "avoid":1, # mask_x, y
     "drop":1
 }
 
@@ -34,23 +34,23 @@ bias_observables = {
     # 'ramp':1,
     # 'gvis':1,
     'on':2,
-    "occludes":2,
+    "occludes_goal":1,
     "occludes_more":2,
     "bigger":2,
     "more_goals":1,
     "moving":0,
-    "wall":0,
-    "platform":0,
-    "goal":0,
-    "lava":0,
-    "ramp":0,
-    "goal1":0
+    # "wall":0,
+    # "platform":0,
+    # "goal":0,
+    # "lava":0,
+    # "ramp":0,
+    # "goal1":0
 
 }
 
 ctx_observables = [
     'on',
-    'occludes',
+    'occludes_goal',
     'occludes_more',
     'bigger',
     'more_goals',

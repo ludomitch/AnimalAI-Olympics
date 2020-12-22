@@ -16,7 +16,7 @@ warnings.filterwarnings('ignore')
 from weak_logic import Logic
 def run():
     arenas = ['wall', 'red_maze', 'choice', 'ramp', 'numerosity', 'ymaze', 'moving']
-    # arenas = ['red_maze']
+    arenas = ['wall']
     # Concat traces
     traces = []
     for arena in arenas:
@@ -30,8 +30,7 @@ def run():
             content[c][2] = reward[content[c][2]]
             if arena!='moving':
                 content[c][1][0] = content[c][1][0].replace('moving.\n', '')
-            traces+= content
-
+        traces+= content
     logic = Logic()
     logic.ilasp.generate_examples(traces)
     logic.update_learned_lp()

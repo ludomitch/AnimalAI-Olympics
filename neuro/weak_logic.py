@@ -71,8 +71,9 @@ def variabilise(lp):
         var_map = {}
         for lit in y:
             for arg in lit[1]:
-                if (arg not in var_map)&isinstance(arg, int):
-                    var_map[arg] = letters.pop(0)
+                if (arg not in var_map):
+                    if isinstance(arg, int):
+                        var_map[arg] = letters.pop(0)
 
         # Sort vars by largest so smaller ones aren't replacing bigger numbers
         order = sorted(var_map, reverse=True)
@@ -267,7 +268,9 @@ class Ilasp:
         tmp = ["x", "y", "z", "o"]
         res = ""
         for k,v in macro_actions.items():
-            if v:
+            if k=="drop":
+                res+= "#modeo(1, initiate(drop(var(side))), (positive) ).\n"
+            elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
                 res+= f"#modeo(1, initiate({k}({variables})), (positive)).\n"
             else:
@@ -275,7 +278,9 @@ class Ilasp:
 
         for k,v in bias_observables.items():
             if k=='on':
-                res += f"#modeo(1, on(agent, var(x))).\n"
+                res += f"#modeo(1, on(agent, platform)).\n"
+            elif k=='more_goals':
+                res += "#modeo(1, more_goals(var(side))).\n"
             elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
                 res+= f"#modeo(1, {k}({variables})).\n"
@@ -318,7 +323,6 @@ class Ilasp:
         var_states = [variabilise(s) for s in states]
         unique_states = list(set(var_states))
         pairs = [[unique_pairs.index(p),unique_states.index(s)] for s,p in zip(var_states, pairs)]
-
         tree = {s: {} for s in range(len(unique_states))}
         for c, p in enumerate(pairs):
             if p[0] in tree[p[1]]:

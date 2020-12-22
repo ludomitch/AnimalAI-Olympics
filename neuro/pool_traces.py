@@ -16,7 +16,7 @@ warnings.filterwarnings('ignore')
 from weak_logic import Logic
 def run():
     arenas = ['wall', 'red_maze', 'choice', 'ramp', 'numerosity', 'ymaze', 'moving']
-    arenas = ['wall']
+    #arenas = ['wall']
     # Concat traces
     traces = []
     for arena in arenas:

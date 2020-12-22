@@ -62,7 +62,7 @@ def flatten_macros(p):
 def variabilise(lp):
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm','n','o','p','q','r','s','t','u','v','w','x','y','z']
     lp = lp.replace('left','1000001').replace('right', '100002')
-    lp = ".\n".join(i for i in next(ASP(lp+main_lp).atoms_as_string.sorted) if any(j in i for j in ctx_observables))
+    lp = ".\n".join(i for i in next(ASP(lp+main_lp).atoms_as_string.sorted) if any(j in i for j in ctx_observables)&(not any(j in i for j in ['ramp(', 'lava(','platform(', 'goal1('])))
     if lp:
         lp+= '.'
         p = next(ASP(lp).parse_args.sorted)
@@ -129,7 +129,7 @@ class Grounder:
         visible = ""
         masks = ['lava', 'platform', 'ramp', 'goal1']
         for box, obj_type, _occ_area, _id in state['obj']:
-            if obj_type in masks:
+            if obj_type in masks: # TODO THIS IS WRONG
                 masks.remove(obj_type)
                 visible +=f"{obj_type}.\n"        
             else:
@@ -288,7 +288,6 @@ class Ilasp:
                 res+= f"#modeo(1, {k}).\n"
         res += f"""
 #weight(-1).
-#weight(1).
 #maxv(4).
 #maxp({len(macro_actions)}).
 #bias(":- #count {{ X: weak_body(initiate(X)) }} != 1.").

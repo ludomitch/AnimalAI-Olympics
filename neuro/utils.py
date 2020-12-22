@@ -39,12 +39,12 @@ bias_observables = {
     "bigger":2,
     "more_goals":1,
     "moving":0,
-    "vwall":0,
-    "vplatform":0,
-    "vgoal":0,
-    "vlava":0,
-    "vramp":0,
-    "vgoal1":0
+    "wall":0,
+    "platform":0,
+    "goal":0,
+    "lava":0,
+    "ramp":0,
+    "goal1":0
 
 }
 
@@ -55,12 +55,12 @@ ctx_observables = [
     'bigger',
     'more_goals',
     'moving',
-    'vwall',
-    'vgoal',
-    'vplatform',
-    'vlava',
-    'vramp',
-    'vgoal1',
+    'wall',
+    'goal',
+    'platform',
+    'lava',
+    'ramp',
+    'goal1',
 
     'rotate',
     'observe',

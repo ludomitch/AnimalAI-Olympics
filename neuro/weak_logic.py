@@ -26,12 +26,6 @@ occluding(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X
 occludes(X,Y):-occluding(X,Y,_).
 occludes_more(X, Y) :- occluding(X,Z,O1), occluding(Y,Z,O2), O1 > O2.
 bigger(X,Y):- goal(X), goal(Y), visible(X,O1), visible(Y,O2), O1>O2.
-vramp:-ramp(X).
-vwall:-wall(X).
-vgoal:-goal(X), visible(X,_).
-vlava:-lava(X).
-vplatform:-platform(X).
-vgoal1:-goal1(X).
 """
 
 action_logic = """

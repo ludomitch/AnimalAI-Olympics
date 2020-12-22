@@ -16,11 +16,11 @@ warnings.filterwarnings('ignore')
 from weak_logic import Logic
 def run():
     arenas = ['wall', 'red_maze', 'choice', 'ramp', 'numerosity', 'ymaze', 'moving']
-    # arenas = ['numerosity']
+    # arenas = ['red_maze']
     # Concat traces
     traces = []
     for arena in arenas:
-        my_file = open(f"biased_traces/{arena}.txt", "r")
+        my_file = open(f"simple_traces/{arena}.txt", "r")
         content = my_file.read()
         traces+= eval(content)
 

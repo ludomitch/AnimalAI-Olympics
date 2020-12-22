@@ -176,9 +176,9 @@ class Interact(Action):
         super().__init__(env=env, ct=ct, state=state,
          step_results=step_results, args=args, checks=checks)
         self.config = {
-            "mode":"box",
+            "mode":"dual",
             "box": 0,
-            "mask": None
+            "mask": 'wall'
         }
         self.with_up = False
         self.always_visible = True
@@ -212,8 +212,8 @@ class Avoid(Action):
 
         self.config = {
             "mode":"dual",
-            "box": 1,
-            "mask": 0
+            "box": 0,
+            "mask": 'lava'
         }
         self.with_up = False
         self.always_visible = False
@@ -226,7 +226,7 @@ class Climb(Action):
         self.config = {
             "mode":"mask",
             "box": None,
-            "mask": 0
+            "mask": 'ramp'
         }
         self.with_up = True
         self.always_visible = True
@@ -238,8 +238,8 @@ class Balance(Action):
 
         self.config = {
             "mode":"dual",
-            "box": 1,
-            "mask": 0
+            "box": 0,
+            "mask": 'platform'
         }
         self.with_up = True
         self.always_visible = False

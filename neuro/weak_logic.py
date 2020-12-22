@@ -1,9 +1,8 @@
 import operator
 import time
 from collections import deque, namedtuple
-import random as rnd
 import subprocess
-import numpy as np
+from numpy import random as rnd
 
 from clyngor import ASP
 
@@ -18,13 +17,11 @@ def parse_args(x):
     return list(x[0])
 
 main_lp = """
-present(X):-goal(X).
-present(X):- visible(X,_).
-separator(Y):-on(agent, X), adjacent(X, Y), platform(X).
+separator(Y):-on(agent, platform), adjacent(X, Y).
 can_occlude(X):-wall(X), not separator(X).
-occluding(X,Y, O) :- present(Y), visible(X, O), not visible(Y, _), can_occlude(X).
-occludes(X,Y):-occluding(X,Y,_).
-occludes_more(X, Y) :- occluding(X,Z,O1), occluding(Y,Z,O2), O1 > O2.
+occluding_goal(X,Y, O) :- goal(Y), not visible(Y, _), can_occlude(X).
+occludes_goal(X,Y):-occluding_goal(X,Y,_).
+occludes_more(X, Y) :- occluding_goal(X,Z,O1), occluding_goal(Y,Z,O2), O1 > O2.
 bigger(X,Y):- goal(X), goal(Y), visible(X,O1), visible(Y,O2), O1>O2.
 """
 
@@ -83,18 +80,20 @@ def variabilise(lp):
             lp = lp.replace(str(var), var_map[var])
     return lp
 
+def more_goals(macro_step,state):
+    mg = ""
+    goals = [i for i in state['obj'] if i[1]=='goal1']
+    if len(goals)>1:
+        count = [i for i in state['obj'] if i[1]]
+        left = [i for i in count if i[0][0]<0.5]
+        right = [i for i in count if i[0][0]>0.5]
+        direction = "left" if len(left)>len(right) else 'right'
+        mg += f"more_goals({direction}).\n"
+    return mg
+
 class Grounder:
     def __init__(self):
         pass
-    # @staticmethod
-    # def in_front(macro_step,state):
-    #     in_front = ""
-    #     for bbox, _, _, _id in state['obj']:
-    #         for bbox1, _, _, _id1 in state['obj']:
-    #             dist = get_distance(bbox, bbox1)
-    #             if (_id1!=_id)&(dist<0.02):
-    #                 in_front += f"adjacent({_id},{_id1}, {macro_step}).\n"
-    #     return in_front
     @staticmethod
     def adjacent(macro_step,state):
         adjacent = ""
@@ -113,20 +112,10 @@ class Grounder:
         bottom_rect = [0, 0.75, 1, 0.25]
         for bbox, typ, _, _id in state['obj']:
             if get_overlap(bbox, bottom_rect)>0.5:
-                on += f"on(agent,{_id}).\n"
+                on += f"on(agent,{typ}).\n"
+                on += more_goals(macro_step, state)
         return on
 
-    @staticmethod
-    def more_goals(macro_step,state):
-        mg = ""
-        goals = [i for i in state['obj'] if i[1]=='goal1']
-        if len(goals)>1:
-            count = [i for i in state['obj'] if i[1]]
-            left = [i for i in count if i[0][0]<0.5]
-            right = [i for i in count if i[0][0]>0.5]
-            direction = "left" if len(left)>len(right) else 'right'
-            mg += f"more_goals({direction}).\n"
-        return mg
     @staticmethod
     def moving(macro_step,state):
         mv = ""
@@ -136,21 +125,23 @@ class Grounder:
     @staticmethod
     def visible(macro_step,state):
         visible = ""
+        masks = ['lava', 'platform', 'ramp', 'goal1']
         for box, obj_type, _occ_area, _id in state['obj']:
-            # if valid_observables[obj_type]: # The obj type has arguments
-            visible += f"visible({_id}, {_occ_area*100}).\n"
-            visible +=f"{obj_type}({_id}).\n"
-            # else:
-            #     visible += f"visible({obj_type}).\n"
+            if obj_type in masks:
+                masks.remove(obj_type)
+                visible +=f"{obj_type}.\n"        
+            else:
+                visible += f"visible({_id}, {_occ_area*100}).\n"
+                visible +=f"{obj_type}({_id}).\n"
         return visible
-    @staticmethod
-    def goal_visible(_,state):
-        try:
-            next(i[3] for i in state['obj'] if i[1] in ['goal'])
-            return ""
-        except StopIteration:
-            gg_id = 42
-            return f"goal({gg_id}).\n"
+    # @staticmethod
+    # def goal_visible(_,state):
+    #     try:
+    #         next(i[3] for i in state['obj'] if i[1] in ['goal'])
+    #         return ""
+    #     except StopIteration:
+    #         gg_id = 42
+    #         return f"goal({gg_id}).\n"
     def run(self, macro_step, state):
         res = ""
         for k,v in vars(Grounder).items():
@@ -165,39 +156,23 @@ class Clingo:
     def random_action_grounder(self, ground_observables):
         lp = f"""
             {ground_observables}
-            present(X):-goal(X).
-            present(X):- visible(X,_).
-            object(X):- present(X).
-            direction(left).
-            direction(right).
+            initiate(collect):-goal1.
+            initiate(climb):-ramp.
+            initiate(interact(X)):-goal(X).
+            initiate(explore(X)):- wall(X).
+            initiate(balance(X)):-platform, goal(X).
+            initiate(avoid(X)):-lava, goal(X).
             initiate(rotate).
             initiate(observe).
-            initiate(interact(X)):-goal(X).
-            initiate(collect):-goal1(X).
-            initiate(climb(X)):-ramp(X).
-            initiate(explore(X,Y)):- wall(X), goal(Y).
-            initiate(balance(X,Y)):-platform(X), goal(Y).
-            initiate(avoid(X,Y)):-lava(X), goal(Y).
-            initiate(drop(X)):-direction(X), on(agent, Y).
+            initiate(drop).
             """
-        # lp = f"""
-        #     {ground_observables}
-        #     present(X):-goal(X).
-        #     present(X):- visible(X).
-        #     object(X):- present(X).
-        #     initiate(rotate).
-        #     initiate(observe).
-        #     initiate(interact(X)):-object(X).
-        #     initiate(collect(X)):-object(X).
-        #     initiate(explore(X,Y)):- object(X), object(Y), X!=Y.
-        #     initiate(climb(X)):-object(X).
-        #     initiate(balance(X,Y)):-object(X), object(Y).
-        #     initiate(avoid(X,Y)):-object(X), object(Y).
-        #     """
 
         res = self.asp(lp)
         filtered_mas = [i for i in res.r[0] if 'initiate' in i]
         rand_action = rnd.choice(filtered_mas)
+        if 'drop' in rand_action:
+            side = rnd.choice(['left', 'right'])
+            rand_action = f"initiate(drop({side}))"
         return [rand_action]
 
     @staticmethod
@@ -252,15 +227,15 @@ class Clingo:
             {res['raw'][0]}.
             check(time, 50):- initiate(rotate).
             check(time, 20):- initiate(observe).
+            check(time, 150):- initiate(collect).
+            check(time, 100):- initiate(climb).
+            check(peaked, 0):- initiate(climb).
             check(time, 150):- initiate(interact(X)).
-            check(time, 150):- initiate(collect(X)).
-            check(visible, Y):- initiate(explore(X,Y)).
-            check(time, 100):- initiate(explore(X,Y)).
-            check(time, 100):- initiate(climb(X)).
-            check(peaked, 0):- initiate(climb(X)).
-            check(time, 100):- initiate(balance(X,Y)).
-            check(fallen, 0):- initiate(balance(X,Y)).
-            check(time, 100):- initiate(avoid(X,Y)).
+            check(visible, X):- initiate(explore(X)).
+            check(time, 100):- initiate(explore(X)).
+            check(time, 100):- initiate(balance(X)).
+            check(fallen, 0):- initiate(balance(X)).
+            check(time, 100):- initiate(avoid(X)).
             check(time, 20):- initiate(drop(X)).
 
             """).atoms_as_string)
@@ -299,14 +274,15 @@ class Ilasp:
 
         for k,v in bias_observables.items():
             if k=='on':
-                res += f"#modeo(1, on(agent, var(x)), (positive)).\n"
+                res += f"#modeo(1, on(agent, var(x))).\n"
             elif v:
                 variables = ",".join([f"var({tmp[i]})" for i in range(v)])
-                res+= f"#modeo(1, {k}({variables}), (positive)).\n"
+                res+= f"#modeo(1, {k}({variables})).\n"
             else:
-                res+= f"#modeo(1, {k}, (positive)).\n"
+                res+= f"#modeo(1, {k}).\n"
         res += f"""
 #weight(-1).
+#weight(1).
 #maxv(4).
 #maxp({len(macro_actions)}).
 #bias(":- #count {{ X: weak_body(initiate(X)) }} != 1.").

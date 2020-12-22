@@ -56,7 +56,7 @@ def run(opt):
 		env=env_path, seed=1,
 		arenas=arenas, num_episodes=opt.num,
 		inference=False, distribution=distribution,
-		max_steps=max_steps, mode='collect', save_path=f"biased_traces/{opt.arena}.txt")
+		max_steps=max_steps, mode='collect', save_path=f"simple_traces/{opt.arena}.txt")
 	pipe = Pipeline(args)
 	res = pipe.learn_run()
 

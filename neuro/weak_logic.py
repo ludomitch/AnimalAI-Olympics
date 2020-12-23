@@ -363,8 +363,8 @@ class Ilasp:
 
             ranking = sorted(tree[s].items(), key=operator.itemgetter(1), reverse=True)
             top_action = e_c
-            if ranking[0][1]<0: # Don't add examples or ordering when the best action didn't lead to positive episodes
-                continue
+            # if ranking[0][1]<0: # Don't add examples or ordering when the best action didn't lead to positive episodes
+            #     continue
             for c, i in enumerate(ranking):
                 action, val = i
                 examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[action]}}}).\n%%Value was:{val}\n"

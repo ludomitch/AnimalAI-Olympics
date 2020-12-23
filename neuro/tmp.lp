@@ -7,12 +7,12 @@
 #modeo(1, initiate(balance(var(x))), (positive)).
 #modeo(1, initiate(avoid(var(x))), (positive)).
 #modeo(1, initiate(drop(var(side))), (positive) ).
-#modeo(1, on(agent, platform)).
-#modeo(1, occludes_goal(var(x))).
-#modeo(1, occludes_more(var(x),var(y))).
-#modeo(1, bigger(var(x),var(y))).
-#modeo(1, more_goals(var(side))).
-#modeo(1, moving).
+#modeo(1, on(agent, platform), (positive)).
+#modeo(1, occludes_goal(var(x)), (positive)).
+#modeo(1, occludes_more(var(x),var(y)), (positive)).
+#modeo(1, bigger(var(x),var(y)), (positive)).
+#modeo(1, more_goals(var(side)), (positive)).
+#modeo(1, moving, (positive)).
 
 #weight(-1).
 #maxv(4).

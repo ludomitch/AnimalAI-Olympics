@@ -307,7 +307,7 @@ class Drop(Action):
     def run(self, pass_mark):
         """Rotate to first visible object"""
 
-        for i in range(15):
+        for i in range(10):
             action = [1, self.direction] if i<10 else [1, 0]
             self.step_results = self.env.step([action])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)

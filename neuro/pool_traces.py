@@ -20,7 +20,7 @@ def run():
     # Concat traces
     traces = []
     for arena in arenas:
-        my_file = open(f"simple_traces/{arena}.txt", "r")
+        my_file = open(f"early_traces/{arena}.txt", "r")
         content = eval(my_file.read())
         s = len([i for i in content if i[2]])
         t = len(content)

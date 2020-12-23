@@ -17,8 +17,8 @@ macro_actions = {
     "collect":0, # mask_x
     "interact":1, # x
     "explore":1, # x,y
-    "balance":1, # mask_x, y
-    "avoid":1, # mask_x, y
+    "balance":0, # mask_x, y
+    "avoid":0, # mask_x, y
     "drop":1
 }
 
@@ -34,7 +34,7 @@ bias_observables = {
     # 'ramp':1,
     # 'gvis':1,
     'on':2,
-    "occludes_goal":1,
+    "occludes":1,
     "occludes_more":2,
     "bigger":2,
     "more_goals":1,
@@ -50,7 +50,7 @@ bias_observables = {
 
 ctx_observables = [
     'on',
-    'occludes_goal',
+    'occludes',
     'occludes_more',
     'bigger',
     'more_goals',

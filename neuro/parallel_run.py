@@ -48,7 +48,7 @@ def run(opt):
 		"training_set/red_maze.yml":0,
 		"training_set/wall.yml":2,
 		"training_set/choice.yml":1,
-		"training_set/numerosity.yml": 1,
+		"training_set/numerosity.yml": 5,
 		"training_set/ymaze.yml": 0,
 		"training_set/moving.yml": 3
 	}

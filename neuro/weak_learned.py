@@ -92,7 +92,7 @@ class Pipeline:
                 actions_buffer = []
                 observables_buffer = []
 
-                if (self.mode=='collect')&(idx!=0)&((idx%self.args.num_episodes==0)|(success_count>=30)):
+                if (self.mode=='collect')&(idx!=0)&((idx%self.args.num_episodes==0)|(success_count>=50)):
                     with open(self.save_path, "w") as text_file:
                         text_file.write(str(traces))
                     break

@@ -62,7 +62,6 @@ class Action:
                         res[vel_size:] = next(i[0] for i in self.state['obj'] if i[1]==obj[1])
                     except StopIteration:
                         pass
-
         if self.config['mode'] in ['dual', 'mask']:
             masked_img = process_image(self.state['visual_obs'], **self.config)
             return masked_img, res
@@ -125,29 +124,33 @@ class Action:
 
     def identify_action_args(self):
         if self.args is None:
-            return
-
-        res = []
-        for arg in self.args:
-            if isinstance(arg, int):
-                if arg == 42:
-                    typ = "goal"
-                else:
+            if self.config['box'] is not None:
+                typ = self.config['box']
+                try:
+                    arg = next(i[3] for i in self.state['obj'] if i[1]==typ)
+                except StopIteration:
+                    arg = 0
+                self.config['box'] = [arg, typ]
+            else:
+                return
+        else:
+            res = []
+            for arg in self.args:
+                if isinstance(arg, int):
                     try:
                         typ = next(i[1] for i in self.state['obj'] if i[3]==arg)
                     except StopIteration:
                         typ = None
-            else:
-                typ = arg
-                arg = next(i[3] for i in self.state['obj'] if i[1]==arg)
-            res.append([arg, typ]) # ID and object type
-        for k,v in self.config.items():
-            if isinstance(v, int):
-                if k=="mask":
-                    self.config[k] = res[v][1]
-                else: #box
-                    self.config[k] = res[v]
-
+                else:
+                    typ = arg
+                    arg = next(i[3] for i in self.state['obj'] if i[1]==arg)
+                res.append([arg, typ]) # ID and object type
+            for k,v in self.config.items():
+                if isinstance(v, int):
+                    if k=="mask":
+                        self.config[k] = res[v][1]
+                    else: #box
+                        self.config[k] = res[v]
     def instantiate_checks(self):
         self.checks = [getattr(ck, i[0].title())(self.state, i[1]) for i in self.checks]
 
@@ -212,7 +215,7 @@ class Avoid(Action):
 
         self.config = {
             "mode":"dual",
-            "box": 0,
+            "box": 'goal',
             "mask": 'lava'
         }
         self.with_up = False
@@ -238,7 +241,7 @@ class Balance(Action):
 
         self.config = {
             "mode":"dual",
-            "box": 0,
+            "box": "goal",
             "mask": 'platform'
         }
         self.with_up = True

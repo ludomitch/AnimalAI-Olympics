@@ -20,9 +20,9 @@ main_lp = """
 separator(Y):-on(agent, platform), adjacent(X, Y).
 can_occlude(X):-wall(X), not separator(X).
 gvis:-goal(X).
-occluding_goal(X, O) :- not gvis, can_occlude(X), visible(X,O).
-occludes_goal(X):-occluding_goal(X,_).
-occludes_more(X, Y) :- occluding_goal(X,O1), occluding_goal(Y,O2), O1 > O2.
+occluding(X, O) :- not gvis, can_occlude(X), visible(X,O).
+occludes(X):-occluding(X,_).
+occludes_more(X, Y) :- occluding(X,O1), occluding(Y,O2), O1 > O2.
 bigger(X,Y):- goal(X), goal(Y), visible(X,O1), visible(Y,O2), O1>O2.
 """
 
@@ -34,19 +34,26 @@ object(X):- present(X).
 
 0{initiate(rotate)}1.
 0{initiate(observe)}1.
-0{initiate(interact(X))}1:- object(X).
-0{initiate(explore(X,Y))}1:- object(X), object(Y), X!=Y.
-0{initiate(climb(X))}1:-object(X).
-0{initiate(balance(X,Y))}1:-object(X), object(Y),X!=Y.
-0{initiate(avoid(X,Y))}1:-object(X), object(Y),X!=Y.
+0{initiate(climb)}1:-ramp.
+0{initiate(collect)}1:-goal1.
+0{initiate(drop(X))}1:-side(X).
+0{initiate(interact(X))}1:- goal(X).
+0{initiate(explore(X))}1:- wall(X).
+0{initiate(balance(X))}1:-platform, goal(X).
+0{initiate(avoid(X))}1:- goal(X).
 
 """
 
 test_lp = main_lp + action_logic + """
-:~ initiate(interact(V1)), visible(V1,_), goal(V1).[-1@1,V1]
-:~ initiate(explore(V1,V2)),occludes(V1,V2),goal(V2),wall(V1).[-1@3,V1, V2]
-:~ initiate(observe),moving.[-1@3]
-
+:~ initiate(climb).[-1@8]
+:~ initiate(observe).[-1@2]
+:~ initiate(interact(V1)), not on(agent,platform).[-1@7, V1]
+:~ initiate(avoid(V1)), not on(agent,platform).[-1@6, V1]
+:~ initiate(explore(V1)), occludes_goal(V1).[-1@5, V1]
+:~ initiate(rotate), not moving.[-1@3]
+:~ initiate(drop(V1)), not moving.[-1@4, V1]
+:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@1, V1, V2]
+:~ initiate(balance(V1)), not moving, on(agent,platform).[-1@9, V1]
 """
 def flatten_macros(p):
     res = []
@@ -108,6 +115,25 @@ class Grounder:
                         adjacent += f"adjacent({_id},{_id1}).\n"
         return adjacent
 
+
+    @staticmethod
+    def danger(macro_step,state):
+        danger = ""
+        goals = [i[0] for i in state['obj'] if i[1]=='goal']
+        lava = [i[0] for i in state['obj'] if i[1]=='lava']
+        if bool(lava)&bool(goals):
+            goals = [[i[0]-0.1,i[1], i[2]+0.2, 1-i[1]] for i in goals]
+            stop = False
+            for i in goals:
+                for j in lava:
+                    if get_overlap(i,j)>0.01:
+                        danger += 'danger.\n'
+                        stop = True
+                        break
+                if stop:
+                    break
+        return danger
+
     @staticmethod
     def on(macro_step,state):
         on = ""
@@ -115,7 +141,8 @@ class Grounder:
         for bbox, typ, _, _id in state['obj']:
             if get_overlap(bbox, bottom_rect)>0.5:
                 on += f"on(agent,{typ}).\n"
-                on += more_goals(macro_step, state)
+        if on:
+            on += more_goals(macro_step, state)
         return on
 
     @staticmethod
@@ -130,20 +157,13 @@ class Grounder:
         masks = ['lava', 'platform', 'ramp', 'goal1']
         for box, obj_type, _occ_area, _id in state['obj']:
             if obj_type in masks: # TODO THIS IS WRONG
-                masks.remove(obj_type)
-                visible +=f"{obj_type}.\n"        
+                if obj_type not in visible:
+                    visible +=f"{obj_type}.\n"        
             else:
                 visible += f"visible({_id}, {_occ_area*100}).\n"
                 visible +=f"{obj_type}({_id}).\n"
         return visible
-    # @staticmethod
-    # def goal_visible(_,state):
-    #     try:
-    #         next(i[3] for i in state['obj'] if i[1] in ['goal'])
-    #         return ""
-    #     except StopIteration:
-    #         gg_id = 42
-    #         return f"goal({gg_id}).\n"
+
     def run(self, macro_step, state):
         res = ""
         for k,v in vars(Grounder).items():
@@ -158,15 +178,16 @@ class Clingo:
     def random_action_grounder(self, ground_observables):
         lp = f"""
             {ground_observables}
-            initiate(collect):-goal1.
-            initiate(climb):-ramp.
             initiate(interact(X)):-goal(X).
             initiate(explore(X)):- wall(X).
-            initiate(balance(X)):-platform, goal(X).
-            initiate(avoid(X)):-lava, goal(X).
+            initiate(balance):-on(agent,X).
             initiate(rotate).
             initiate(observe).
-            initiate(drop).
+            initiate(drop):-on(agent,X).
+            initiate(collect):-goal1.
+            initiate(climb):-ramp.
+            initiate(avoid):-lava.
+
             """
 
         res = self.asp(lp)
@@ -232,12 +253,12 @@ class Clingo:
             check(time, 150):- initiate(collect).
             check(time, 100):- initiate(climb).
             check(peaked, 0):- initiate(climb).
-            check(time, 150):- initiate(interact(X)).
+            check(time, 100):- initiate(interact(X)).
             check(visible, X):- initiate(explore(X)).
             check(time, 100):- initiate(explore(X)).
-            check(time, 100):- initiate(balance(X)).
-            check(fallen, 0):- initiate(balance(X)).
-            check(time, 100):- initiate(avoid(X)).
+            check(time, 100):- initiate(balance).
+            check(fallen, 0):- initiate(balance).
+            check(time, 100):- initiate(avoid).
             check(time, 20):- initiate(drop(X)).
 
             """).atoms_as_string)

@@ -84,7 +84,7 @@ class Pipeline:
             for idx in range(self.args.num_episodes+1):
                 arena_name = self.reset()
                 macro_limit = self.max_steps[arena_name]
-                step_results, moving = first_steps(self.env)  # Take 0,0 step
+                step_results, moving = first_steps(self.env, arena_name)  # Take 0,0 step
                 global_steps = 0
                 macro_step = 0
                 reward = 0
@@ -92,7 +92,7 @@ class Pipeline:
                 actions_buffer = []
                 observables_buffer = []
 
-                if (self.mode=='collect')&(idx!=0)&((idx%self.args.num_episodes==0)|(success_count>=50)):
+                if (self.mode=='collect')&(idx!=0)&((idx%self.args.num_episodes==0)|(success_count>=30)):
                     with open(self.save_path, "w") as text_file:
                         text_file.write(str(traces))
                     break
@@ -101,9 +101,8 @@ class Pipeline:
                     print(self.arena_successes)
 
                 while not self.episode_over(step_results[2]):
-                    if (global_steps >= 500):#|(macro_step>macro_limit):
+                    if (global_steps >= 500)|(macro_step>macro_limit):
                         success = False
-                        print("Exceeded steps")
                         break
                     state = preprocess(self.ct, step_results, global_steps, reward)
                     if macro_step==0:

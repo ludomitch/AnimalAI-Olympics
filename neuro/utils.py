@@ -76,7 +76,10 @@ ctx_observables = [
 
 ef = ExtractFeatures(display=False, training=False)
 
-def first_steps(env):
+def first_steps(env, arena_name):
+    if 'moving' in arena_name:
+        return env.step([0,0]), True
+    return env.step([0,0]), False
     moving = False
     move_count = 0
     obj = ef.run(env.render())

@@ -45,18 +45,18 @@ def run(opt):
 	distribution = [1]
 	max_steps = {
 		"training_set/ramp.yml":2,
-		"training_set/red_maze.yml":1,
-		"training_set/wall.yml":3,
-		"training_set/choice.yml":2,
-		"training_set/numerosity.yml": 10,
+		"training_set/red_maze.yml":0,
+		"training_set/wall.yml":2,
+		"training_set/choice.yml":1,
+		"training_set/numerosity.yml": 1,
 		"training_set/ymaze.yml": 0,
-		"training_set/moving.yml": 5
+		"training_set/moving.yml": 3
 	}
 	args = margs(
 		env=env_path, seed=1,
 		arenas=arenas, num_episodes=opt.num,
 		inference=False, distribution=distribution,
-		max_steps=max_steps, mode='collect', save_path=f"simple_traces/{opt.arena}.txt")
+		max_steps=max_steps, mode='collect', save_path=f"early_traces/{opt.arena}.txt")
 	pipe = Pipeline(args)
 	res = pipe.learn_run()
 

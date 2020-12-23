@@ -39,6 +39,7 @@ bias_observables = {
     "bigger":2,
     "more_goals":1,
     "moving":0,
+    "danger":0
     # "wall":0,
     # "platform":0,
     # "goal":0,
@@ -61,8 +62,9 @@ ctx_observables = [
     'lava',
     'ramp',
     'goal1',
+    'danger',
 
-    'rotate',
+   'rotate',
     'observe',
     'drop',
     'interact',

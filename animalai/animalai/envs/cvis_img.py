@@ -28,8 +28,8 @@ objects = OD()
 # objects['wall'] = hsv_cls.grey
 # objects['goal1'] = hsv_cls.orange
 
-objects['platform'] = hsv_cls.blue
-mask_clr = 'platform'
+objects['wall'] = hsv_cls.grey
+mask_clr = 'wall'
 # box_clr = "platform"
 
 # objects['danger_zone'] = hsv_cls.red

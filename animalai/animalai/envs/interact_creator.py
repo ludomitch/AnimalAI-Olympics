@@ -1,5 +1,6 @@
 from collections import namedtuple as nt
-from random import randrange, choice, randint
+from random import randrange, randint
+from numpy.random import choice
 import math
 
 vector = nt('vec', ['x', 'y', 'z'])
@@ -22,7 +23,7 @@ def make_obj(pos=False, size=False, name=False, rot=False):
     if name == 'Wall':
         res += """
       colors:
-      - !RGB {r: 0, g: 0, b: 255}"""
+      - !RGB {r: 153, g: 153, b: 153}"""
     return res
 
 
@@ -62,20 +63,20 @@ arenas:
         base+=make_obj(**inp)
 
     if obstacles:
-        for _ in range(randint(3,6)):
-            typ = choice(['low', 'deep'])
+        for _ in range(randint(6,10)):
+            typ = choice(['low', 'deep'], p=[0.7,0.3])
             if typ =='low':
                 inp = {
                     "name": "Wall",
-                    "pos": vector(randrange(5, 35), 0, randrange(5, 35)),
-                    'size': vector(randrange(1,5), randrange(1,3)*0.5, randrange(1,5))
+                    "pos": vector(randrange(5, 35), 0, randrange(5, 25)),
+                    'size': vector(randrange(1,10), randrange(1,2)*0.5, randrange(1,5))
                 }
             else:
                 inp = {
                     "name": "Wall",
-                    "pos": vector(randrange(5, 35), 0, randrange(5, 35)),
+                    "pos": vector(randrange(5, 35), 0, randrange(5, 25)),
                     'rot': abs_agent_rot,
-                    'size': vector(randrange(1,5)*0.5,randrange(2,10), randrange(1,10))
+                    'size': vector(randrange(1,2)*0.5,randrange(2,10), randrange(1,10))
                 }
             base+=make_obj(**inp)
 

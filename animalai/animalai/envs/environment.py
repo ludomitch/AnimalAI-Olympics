@@ -813,36 +813,15 @@ class AnimalAIEnvironment(UnityEnvironment):
         return engine_configuration_channel
 
 
-    def reset(self, arenas_configurations: ArenaConfig = None) -> None:
-        if arenas_configurations:
-            arenas_configurations_proto = arenas_configurations.to_proto()
-            arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
-                deterministic=True
-            )
-            self.arenas_parameters_side_channel.send_raw_data(
-                bytearray(arenas_configurations_proto_string)
-            )
-        try:
-            super().reset()
-        except UnityTimeOutException as timeoutException:
-            if self.play:
-                pass
-            else:
-                raise timeoutException
     # def reset(self, arenas_configurations: ArenaConfig = None) -> None:
-
-    #     self.ramp_config =ic(self.counter)
-    #     ac = ArenaConfig(self.ramp_config)
-    #     self.counter+=1
-    #     if self.counter % 50 == 0:
-    #         print(f"COUNTER: {self.counter}")
-    #     arenas_configurations_proto = ac.to_proto()
-    #     arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
-    #         deterministic=True
-    #     )
-    #     self.arenas_parameters_side_channel.send_raw_data(
-    #         bytearray(arenas_configurations_proto_string)
-    #     )
+    #     if arenas_configurations:
+    #         arenas_configurations_proto = arenas_configurations.to_proto()
+    #         arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
+    #             deterministic=True
+    #         )
+    #         self.arenas_parameters_side_channel.send_raw_data(
+    #             bytearray(arenas_configurations_proto_string)
+    #         )
     #     try:
     #         super().reset()
     #     except UnityTimeOutException as timeoutException:
@@ -850,6 +829,27 @@ class AnimalAIEnvironment(UnityEnvironment):
     #             pass
     #         else:
     #             raise timeoutException
+    def reset(self, arenas_configurations: ArenaConfig = None) -> None:
+
+        self.ramp_config =ic(self.counter)
+        ac = ArenaConfig(self.ramp_config)
+        self.counter+=1
+        if self.counter % 50 == 0:
+            print(f"COUNTER: {self.counter}")
+        arenas_configurations_proto = ac.to_proto()
+        arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
+            deterministic=True
+        )
+        self.arenas_parameters_side_channel.send_raw_data(
+            bytearray(arenas_configurations_proto_string)
+        )
+        try:
+            super().reset()
+        except UnityTimeOutException as timeoutException:
+            if self.play:
+                pass
+            else:
+                raise timeoutException
 
 
     def close(self):

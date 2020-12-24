@@ -48,7 +48,7 @@ def run(counter):
         wall_len = randrange(8,min(30, ((wall_p.z-2)*2)))
 
 
-    if choices([True, False], weights=[0.1,0.9])[0]: # Do different
+    if choices([True, False], weights=[0.3,0.7])[0]: # Do different
         goal_s = randrange(1, 5)
         goodgoal_s = vector(goal_s,goal_s,goal_s)
         goodgoal_p = vector(randrange(1,39),2, randrange(1,39))
@@ -136,8 +136,8 @@ arenas:
     goal_s = randrange(1, 5)
     goodgoal_s = vector(goal_s,goal_s,goal_s)     
     agent_p = vector(wall_p.x,height, wall_p.z)
-    # agent_rot = round(math.degrees(math.atan2(agent_p.x - goal_x, agent_p.z-goal_z)) +180)
-    agent_rot = 0
+    agent_rot = round(math.degrees(math.atan2(agent_p.x - goal_x, agent_p.z-goal_z)) +180)
+    # agent_rot = 0
 
     for obj in ['Agent', 'Wall', "GoodGoal", "DeathZone"]:
         inp = {"name":obj}

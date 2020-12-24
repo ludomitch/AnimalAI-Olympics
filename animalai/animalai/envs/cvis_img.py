@@ -28,7 +28,7 @@ objects = OD()
 # objects['wall'] = hsv_cls.grey
 # objects['goal1'] = hsv_cls.orange
 
-objects['wall'] = hsv_cls.grey
+objects['wall'] = hsv_cls.blue
 mask_clr = 'wall'
 # box_clr = "platform"
 

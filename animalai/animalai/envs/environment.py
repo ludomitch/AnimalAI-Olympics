@@ -321,7 +321,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual', with_up=False):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual', with_up=True):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -745,11 +745,13 @@ class AnimalAIEnvironment(UnityEnvironment):
         resolution: int = None,
         grayscale: bool = False,
         side_channels: Optional[List[SideChannel]] = None,
-        alter_obs: bool = False
+        alter_obs: bool = False,
+        train:bool=True
     ):
 
         args = self.executable_args(n_arenas, play, resolution, grayscale)
         self.play = play
+        self.train = train
         self.inference = inference
         self.timeout = 10 if play else 60
         self.side_channels = side_channels if side_channels else []
@@ -813,23 +815,29 @@ class AnimalAIEnvironment(UnityEnvironment):
         return engine_configuration_channel
 
 
-    # def reset(self, arenas_configurations: ArenaConfig = None) -> None:
-    #     if arenas_configurations:
-    #         arenas_configurations_proto = arenas_configurations.to_proto()
-    #         arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
-    #             deterministic=True
-    #         )
-    #         self.arenas_parameters_side_channel.send_raw_data(
-    #             bytearray(arenas_configurations_proto_string)
-    #         )
-    #     try:
-    #         super().reset()
-    #     except UnityTimeOutException as timeoutException:
-    #         if self.play:
-    #             pass
-    #         else:
-    #             raise timeoutException
     def reset(self, arenas_configurations: ArenaConfig = None) -> None:
+        if self.train:
+            self.reset_train(arenas_configurations)
+        else:
+            self.reset_test(arenas_configurations)
+
+    def reset_test(self, arenas_configurations: ArenaConfig = None) -> None:
+        if arenas_configurations:
+            arenas_configurations_proto = arenas_configurations.to_proto()
+            arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
+                deterministic=True
+            )
+            self.arenas_parameters_side_channel.send_raw_data(
+                bytearray(arenas_configurations_proto_string)
+            )
+        try:
+            super().reset()
+        except UnityTimeOutException as timeoutException:
+            if self.play:
+                pass
+            else:
+                raise timeoutException
+    def reset_train(self, arenas_configurations: ArenaConfig = None) -> None:
 
         self.ramp_config =ic(self.counter)
         ac = ArenaConfig(self.ramp_config)

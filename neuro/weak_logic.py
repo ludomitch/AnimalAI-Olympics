@@ -30,30 +30,33 @@ action_logic = """
 :- initiate(X), initiate(Y), X!=Y.
 initiate :- initiate(X).
 :- not initiate.
-object(X):- present(X).
 
-0{initiate(rotate)}1.
-0{initiate(observe)}1.
-0{initiate(climb)}1:-ramp.
-0{initiate(collect)}1:-goal1.
-0{initiate(drop(X))}1:-side(X).
+side(left).
+side(right).
 0{initiate(interact(X))}1:- goal(X).
 0{initiate(explore(X))}1:- wall(X).
-0{initiate(balance(X))}1:-platform, goal(X).
-0{initiate(avoid(X))}1:- goal(X).
+0{initiate(drop(Y))}1:-on(agent,X), side(Y).
+0{initiate(balance)}1:-on(agent,X).
+0{initiate(climb)}1:-ramp.
+0{initiate(collect)}1:-goal1.
+0{initiate(avoid)}1:- lava.
+0{initiate(rotate)}1.
+0{initiate(observe)}1.
 
 """
 
 test_lp = main_lp + action_logic + """
-:~ initiate(climb).[-1@8]
-:~ initiate(observe).[-1@2]
-:~ initiate(interact(V1)), not on(agent,platform).[-1@7, V1]
-:~ initiate(avoid(V1)), not on(agent,platform).[-1@6, V1]
-:~ initiate(explore(V1)), occludes_goal(V1).[-1@5, V1]
-:~ initiate(rotate), not moving.[-1@3]
-:~ initiate(drop(V1)), not moving.[-1@4, V1]
-:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@1, V1, V2]
-:~ initiate(balance(V1)), not moving, on(agent,platform).[-1@9, V1]
+:~ initiate(avoid).[-1@4]
+:~ initiate(collect).[-1@8]
+:~ initiate(climb).[-1@13]
+:~ initiate(rotate).[-1@1]
+:~ initiate(interact(V1)), not danger.[-1@7, V1]
+:~ initiate(explore(V1)), occludes(V1).[-1@10, V1]
+:~ bigger(V1,V2), initiate(interact(V1)).[-1@5, V1, V2]
+:~ initiate(observe), on(agent,platform).[-1@6]
+:~ initiate(drop(V1)), more_goals(V1).[-1@12, V1]
+:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@3, V1, V2]
+:~ initiate(balance), not danger.[-1@9]
 """
 def flatten_macros(p):
     res = []

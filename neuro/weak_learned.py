@@ -6,6 +6,7 @@ from weak_logic import Logic
 from utils import preprocess, object_types, first_steps
 import random as rnd
 import time
+import config as cfg
 
 class Pipeline:
     def __init__(self, args, test=False):
@@ -17,9 +18,11 @@ class Pipeline:
         self.arenas = args.arenas
         self.arena_distribution = args.distribution
         self.max_steps = args.max_steps
-        self.arena_successes = {k:[0,0] for k in self.arenas}
-        self.logic = Logic()
         self.test = test
+
+        if not self.test:
+            self.arena_successes = {k:[0,0] for k in self.arenas}
+        self.logic = Logic()
         self.mode = args.mode
         self.save_path = args.save_path
         self.env = AnimalAIGym(
@@ -28,7 +31,7 @@ class Pipeline:
             n_arenas=1,
             seed=seed,
             grayscale=False,
-            resolution=84,
+            resolution=256,
             inference=args.inference
         )
 
@@ -79,8 +82,6 @@ class Pipeline:
             success_count = 0
             choice = 'random'
             traces = [] # list of lists: [actions, observables, success, macro_steps]
-            if self.test:
-                choice = 'test'
             for idx in range(self.args.num_episodes+1):
                 arena_name = self.reset()
                 macro_limit = self.max_steps[arena_name]
@@ -101,7 +102,7 @@ class Pipeline:
                     print(self.arena_successes)
 
                 while not self.episode_over(step_results[2]):
-                    if (global_steps >= 500)|(macro_step>macro_limit):
+                    if (global_steps >= self.ac.arenas[0].t)|(macro_step>macro_limit):
                         success = False
                         break
                     state = preprocess(self.ct, step_results, global_steps, reward)
@@ -140,3 +141,66 @@ class Pipeline:
         except KeyboardInterrupt:
             self.env.close()
 
+    def test_run(self):
+        try:
+            start = time.time()
+            success_count = 0
+            choice = 'test'
+            traces = [] # list of lists: [actions, observables, success, macro_steps]
+            self.arenas = []
+            for k,v in cfg.COMPETITION_CONFIGS.items():
+                for arena in v:
+                    self.arenas.append([k,arena])
+            self.arena_successes = {
+                k:{i:0 for i in v} for k,v in cfg.COMPETITION_CONFIGS.items()
+            }
+            for arena in self.arenas:
+                self.ac = ArenaConfig(f"../competition_configurations/{arena[1]}.yml")
+                self.env.reset(self.ac)
+                global_steps = 0
+                macro_step = 0
+                reward = 0
+                self.ct = {ot: CentroidTracker() for ot in object_types} # Initialise tracker
+                actions_buffer = []
+                observables_buffer = []
+                step_results = self.env.step([0,0])
+
+                while not self.episode_over(step_results[2]):
+                    if (global_steps >= self.ac.arenas[0].t):
+                        success = False
+                        break
+                    state = preprocess(self.ct, step_results, global_steps, reward)
+                    state['moving'] = False
+                    macro_action, observables = self.logic.run(
+                        macro_step,
+                        state,
+                        choice=choice)
+                    step_results, state, micro_step, success = self.take_macro_step(
+                        self.env, state, step_results, macro_action
+                    )
+
+                    global_steps += micro_step
+                    macro_step +=1
+                    actions_buffer.append(macro_action['raw'][0])
+                    observables_buffer.append(observables)
+                    if state['reward']>self.ac.arenas[0].pass_mark:
+                        success = True
+                        break
+                    else:
+                        success = False
+                traces.append([actions_buffer, observables_buffer, success, macro_step, arena[1]])
+                success_count += success
+                self.arena_successes[arena[0]][arena[1]]=int(success)
+
+            with open("test_run_traces.txt", "w") as text_file:
+                text_file.write(str(traces))
+            with open("test_run_successes.txt", "w") as text_file:
+                text_file.write(str(self.arena_successes))
+            end = time.time()
+            print(self.arena_successes)
+            print(f"The full run took {end-start}s")
+            print(f"TOTAL SUCCESSES: {success_count}/{len(self.arenas)}")
+
+            self.env.close()
+        except KeyboardInterrupt:
+            self.env.close()

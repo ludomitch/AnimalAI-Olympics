@@ -7,7 +7,6 @@
 #modeo(1, initiate(balance), (positive)).
 #modeo(1, initiate(avoid), (positive)).
 #modeo(1, initiate(drop(var(side))), (positive) ).
-#modeo(1, on(agent, platform)).
 #modeo(1, occludes(var(x))).
 #modeo(1, occludes_more(var(x),var(y))).
 #modeo(1, bigger(var(x),var(y))).
@@ -16,8 +15,8 @@
 #modeo(1, danger).
 
 #weight(-1).
-#maxv(4).
-#maxp(9).
+#maxv(2).
+#maxp(13).
 #bias(":- #count { X: weak_body(initiate(X)) } != 1.").
 
 #pos(a0,

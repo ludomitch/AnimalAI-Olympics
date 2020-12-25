@@ -25,7 +25,7 @@ def run():
         s = len([i for i in content if i[2]])
         t = len(content)
         l = t-s
-        reward = [-s/t*10, l/t*20] # fail, succ
+        reward = [-s/t*10, l/t*30] # fail, succ
         for c,i in enumerate(content):
             content[c][2] = reward[content[c][2]]
             if arena!='moving':

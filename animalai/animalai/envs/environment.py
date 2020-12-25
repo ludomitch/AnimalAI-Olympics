@@ -839,7 +839,7 @@ class AnimalAIEnvironment(UnityEnvironment):
                 raise timeoutException
     def reset_train(self, arenas_configurations: ArenaConfig = None) -> None:
 
-        self.ramp_config =ic(self.counter)
+        self.ramp_config =slc(self.counter)
         ac = ArenaConfig(self.ramp_config)
         self.counter+=1
         if self.counter % 50 == 0:

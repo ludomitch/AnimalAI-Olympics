@@ -6,7 +6,7 @@ from numpy import random as rnd
 
 from clyngor import ASP
 
-from utils import get_overlap, get_distance, macro_actions, ctx_observables, bias_observables
+from utils import get_overlap, get_distance, macro_actions, ctx_observables, bias_observables, goal_on_platform
 
 AnswerSet = namedtuple('AS', ['r', 'p', 'a', 'o']) # r for raw, p for parsed, a for arity
 parse_single_args = lambda x: list(list(ASP(x+'.').parse_args)[0])[0]
@@ -96,9 +96,8 @@ def more_goals(macro_step,state):
     mg = ""
     goals = [i for i in state['obj'] if i[1]=='goal1']
     if len(goals)>1:
-        count = [i for i in state['obj'] if i[1]]
-        left = [i for i in count if i[0][0]<0.5]
-        right = [i for i in count if i[0][0]>0.5]
+        left = [i for i in goals if i[0][0]<0.5]
+        right = [i for i in goals if i[0][0]>0.5]
         direction = "left" if len(left)>len(right) else 'right'
         mg += f"more_goals({direction}).\n"
     return mg
@@ -146,6 +145,11 @@ class Grounder:
                 on += f"on(agent,{typ}).\n"
         if on:
             on += more_goals(macro_step, state)
+
+        gop = goal_on_platform(state)
+        if gop:
+            on+= "on(goal, platform).\n"
+
         return on
 
     @staticmethod
@@ -159,7 +163,7 @@ class Grounder:
         visible = ""
         masks = ['lava', 'platform', 'ramp', 'goal1']
         for box, obj_type, _occ_area, _id in state['obj']:
-            if obj_type in masks: # TODO THIS IS WRONG
+            if obj_type in masks:
                 if obj_type not in visible:
                     visible +=f"{obj_type}.\n"        
             else:
@@ -261,6 +265,7 @@ class Clingo:
             check(time, 100):- initiate(explore(X)).
             check(time, 100):- initiate(balance).
             check(fallen, 0):- initiate(balance).
+            check(gop, 0):- initiate(balance).
             check(time, 100):- initiate(avoid).
             check(time, 20):- initiate(drop(X)).
 
@@ -303,6 +308,7 @@ class Ilasp:
         for k,v in bias_observables.items():
             if k=='on':
                 res += f"#modeo(1, on(agent, platform)).\n"
+                res += f"#modeo(1, on(goal, platform)).\n"
             elif k=='more_goals':
                 res += "#modeo(1, more_goals(var(side))).\n"
             elif v:
@@ -312,8 +318,8 @@ class Ilasp:
                 res+= f"#modeo(1, {k}).\n"
         res += f"""
 #weight(-1).
-#maxv(4).
-#maxp({len(macro_actions)}).
+#maxv(2).
+#maxp({len(macro_actions)+int(len(bias_observables)/2)}).
 #bias(":- #count {{ X: weak_body(initiate(X)) }} != 1.").
 
 """

@@ -1,3 +1,5 @@
+from utils import goal_on_platform
+
 class RollingChecks:
     def __init__(self, state, args):
         self.state = state
@@ -50,32 +52,26 @@ class Peaked(RollingChecks):
 class Fallen(RollingChecks):
     def __init__(self, state, args):
         super().__init__(state=state, args=args)
-        self.reached = 3
-        self.started_descent = False
-        self.static_count = 0
+        self.reached = 5
         self.falling_count = 0
     def run(self):
         vel = self.state['velocity'][1]
-        if abs(vel)<0.3:
-            if self.started_descent:
-                self.static_count+=1
-        elif vel<-0.1:# vel>0.1
-            self.static_count = 0
-            self.started_descent = True
+        if vel<-1:
             self.falling_count+=1
-        else: # climbing
-            self.static_count = 0
-            self.started_descent = False
-            self.falling_count = 0
 
-        if self.static_count >= self.reached:
+        if self.falling_count >= self.reached:
             return True, f"Fallen."
         return False, f"Hasn't fallen yet"
 
 
-class Clear(RollingChecks):
+class Gop(RollingChecks):
+    """Goal on Platform"""
     def __init__(self, state, args):
         super().__init__(state=state, args=args)
 
     def run(self): # Unobstructed view to front
-        pass
+        gop = goal_on_platform(self.state)
+        if gop or gop is None:
+            return False, "Goal still on platform or no goal in sight"
+        return True, "Goal no longer on platform, stop balancing"
+

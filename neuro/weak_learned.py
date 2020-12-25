@@ -20,8 +20,8 @@ class Pipeline:
         self.max_steps = args.max_steps
         self.test = test
 
-        if not self.test:
-            self.arena_successes = {k:[0,0] for k in self.arenas}
+        # if not self.test:
+        # self.arena_successes = {k:[0,0] for k in self.arenas}
         self.logic = Logic()
         self.mode = args.mode
         self.save_path = args.save_path
@@ -31,9 +31,10 @@ class Pipeline:
             n_arenas=1,
             seed=seed,
             grayscale=False,
-            resolution=256,
+            resolution=84,
             inference=args.inference
         )
+        self.env._env.train=False
 
     def format_macro_results(self, stats):
         res = """
@@ -114,8 +115,8 @@ class Pipeline:
                         macro_step,
                         state,
                         choice=choice)
-                    #print(macro_action)
-                    #print(observables)
+                    print(macro_action)
+                    print(observables)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
                     )
@@ -159,22 +160,23 @@ class Pipeline:
                 self.env.reset(self.ac)
                 global_steps = 0
                 macro_step = 0
-                reward = 0
                 self.ct = {ot: CentroidTracker() for ot in object_types} # Initialise tracker
                 actions_buffer = []
                 observables_buffer = []
                 step_results = self.env.step([0,0])
-
+                state = {'reward':min(0, self.ac.arenas[0].pass_mark)}
                 while not self.episode_over(step_results[2]):
                     if (global_steps >= self.ac.arenas[0].t):
                         success = False
                         break
-                    state = preprocess(self.ct, step_results, global_steps, reward)
+                    state = preprocess(self.ct, step_results, global_steps, state['reward'])
                     state['moving'] = False
                     macro_action, observables = self.logic.run(
                         macro_step,
                         state,
                         choice=choice)
+                    # print(macro_action)
+                    # print(observables)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
                     )
@@ -188,6 +190,7 @@ class Pipeline:
                         break
                     else:
                         success = False
+                print(f"{arena}: {success}")
                 traces.append([actions_buffer, observables_buffer, success, macro_step, arena[1]])
                 success_count += success
                 self.arena_successes[arena[0]][arena[1]]=int(success)
@@ -203,4 +206,5 @@ class Pipeline:
 
             self.env.close()
         except KeyboardInterrupt:
+            print(f"TOTAL SUCCESSES: {success_count}/{len(self.arenas)}")
             self.env.close()

@@ -164,7 +164,7 @@ class Pipeline:
                 actions_buffer = []
                 observables_buffer = []
                 step_results = self.env.step([0,0])
-                state = {'reward':min(0, self.ac.arenas[0].pass_mark)}
+                state = {'reward':0}
                 while not self.episode_over(step_results[2]):
                     if (global_steps >= self.ac.arenas[0].t):
                         success = False
@@ -187,7 +187,7 @@ class Pipeline:
                     observables_buffer.append(observables)
                     if state['reward']>self.ac.arenas[0].pass_mark:
                         success = True
-                        break
+                        # break
                     else:
                         success = False
                 # print(f"{arena}: {success}")

@@ -170,8 +170,8 @@ class Action:
             self.micro_step += 1
             go, stats = self.checks_clean()
             self.reward = self.step_results[1]
-            if self.state['reward'] > pass_mark:
-                break
+            # if self.state['reward'] > pass_mark:
+            #     break
         return self.step_results, self.state, stats, self.micro_step
 
 class Interact(Action):

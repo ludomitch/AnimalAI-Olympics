@@ -46,11 +46,11 @@ side(right).
 """
 
 test_lp = main_lp + action_logic + """
-:~ initiate(climb).[-1@5]
+:~ initiate(climb).[-1@6]
 :~ initiate(rotate).[-1@2]
 :~ initiate(balance).[-1@3]
 :~ initiate(collect).[-1@7]
-:~ initiate(explore(V1)).[-1@6, V1]
+:~ initiate(explore(V1)).[-1@5, V1]
 :~ initiate(avoid).[-1@4]
 :~ initiate(explore(V1)), occludes_more(V1,V2).[-1@12, V1, V2]
 :~ initiate(drop(V1)), more_goals(V1).[-1@9, V1]

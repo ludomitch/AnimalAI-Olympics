@@ -190,7 +190,7 @@ class Pipeline:
                         break
                     else:
                         success = False
-                print(f"{arena}: {success}")
+                # print(f"{arena}: {success}")
                 traces.append([actions_buffer, observables_buffer, success, macro_step, arena[1]])
                 success_count += success
                 self.arena_successes[arena[0]][arena[1]]=int(success)

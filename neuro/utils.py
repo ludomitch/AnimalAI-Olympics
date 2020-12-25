@@ -59,7 +59,7 @@ ctx_observables = [
     # 'gvis',
     'danger',
 
-    'wall',
+    # 'wall',
     'goal',
     'platform',
     'lava',
@@ -103,20 +103,24 @@ def first_steps(env, arena_name):
     return res, moving
 
 def goal_on_platform(state):
-    img = state['visual_obs']
-    dim = img.shape[0]
-    state = ef.run(img)
-    if not state['goal']:
-        return None
-    goal = state['goal'][0][0]
-    under_goal = [goal[0], goal[1]+goal[3], goal[2], goal[3]]
-    selector = [dim*(under_goal[0]), dim*(under_goal[1]), dim*under_goal[2], dim*under_goal[3]]
-    selector = [int(np.ceil(i)) for i in selector]
-    small_img = img[selector[1]:selector[1]+selector[3],selector[0]:selector[0]+selector[2],:]
-    res = ef.run(small_img)
-    if res['platform']:
-        return True
-    return False
+    try:
+        img = state['visual_obs']
+        dim = img.shape[0]
+        state = ef.run(img)
+        if not state['goal']:
+            return None
+        goal = state['goal'][0][0]
+        under_goal = [goal[0], goal[1]+goal[3], goal[2], goal[3]]
+        selector = [dim*(under_goal[0]), dim*(under_goal[1]), dim*under_goal[2], dim*under_goal[3]]
+        selector = [int(np.ceil(i)) for i in selector]
+        small_img = img[selector[1]:selector[1]+selector[3],selector[0]:selector[0]+selector[2],:]
+        res = ef.run(small_img)
+        if res['platform']:
+            return True
+        return False
+    except Exception as e:
+        print(e)
+        return False
 
 def load_pb(path_to_pb):
     with tf.gfile.GFile(path_to_pb, "rb") as f:

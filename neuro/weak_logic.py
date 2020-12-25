@@ -46,17 +46,17 @@ side(right).
 """
 
 test_lp = main_lp + action_logic + """
+:~ initiate(climb).[-1@5]
+:~ initiate(rotate).[-1@2]
+:~ initiate(balance).[-1@3]
+:~ initiate(collect).[-1@7]
+:~ initiate(explore(V1)).[-1@6, V1]
 :~ initiate(avoid).[-1@4]
-:~ initiate(collect).[-1@8]
-:~ initiate(climb).[-1@13]
-:~ initiate(rotate).[-1@1]
-:~ initiate(interact(V1)), not danger.[-1@7, V1]
-:~ initiate(explore(V1)), occludes(V1).[-1@10, V1]
-:~ bigger(V1,V2), initiate(interact(V1)).[-1@5, V1, V2]
-:~ initiate(observe), on(agent,platform).[-1@6]
-:~ initiate(drop(V1)), more_goals(V1).[-1@12, V1]
-:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@3, V1, V2]
-:~ initiate(balance), not danger.[-1@9]
+:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@12, V1, V2]
+:~ initiate(drop(V1)), more_goals(V1).[-1@9, V1]
+:~ bigger(V1,V2), initiate(interact(V1)).[-1@1, V1, V2]
+:~ initiate(interact(V1)), not danger, not on(goal,platform).[-1@8, V1]
+:~ danger, initiate(observe), on(agent,platform).[-1@10]
 """
 def flatten_macros(p):
     res = []
@@ -372,8 +372,8 @@ class Ilasp:
 
             ranking = sorted(tree[s].items(), key=operator.itemgetter(1), reverse=True)
             top_action = e_c
-            # if ranking[0][1]<0: # Don't add examples or ordering when the best action didn't lead to positive episodes
-            #     continue
+            if ranking[0][1]<0: # Don't add examples or ordering when the best action didn't lead to positive episodes
+                continue
             for c, i in enumerate(ranking):
                 action, val = i
                 examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[action]}}}).\n%%Value was:{val}\n"

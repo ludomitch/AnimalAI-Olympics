@@ -32,13 +32,13 @@ bias_observables = {
     # 'platform':1,
     # 'lava':1,
     # 'ramp':1,
-    # 'gvis':1,
+    # 'gvis':0,
     'on':2,
     "occludes":1,
     "occludes_more":2,
     "bigger":2,
     "more_goals":1,
-    "moving":0,
+    # "moving":0,
     "danger":0
     # "wall":0,
     # "platform":0,
@@ -55,14 +55,16 @@ ctx_observables = [
     'occludes_more',
     'bigger',
     'more_goals',
-    'moving',
+    # 'moving',
+    # 'gvis',
+    'danger',
+
     'wall',
     'goal',
     'platform',
     'lava',
     'ramp',
     'goal1',
-    'danger',
 
    'rotate',
     'observe',
@@ -110,9 +112,9 @@ def goal_on_platform(state):
     under_goal = [goal[0], goal[1]+goal[3], goal[2], goal[3]]
     selector = [dim*(under_goal[0]), dim*(under_goal[1]), dim*under_goal[2], dim*under_goal[3]]
     selector = [int(np.ceil(i)) for i in selector]
-    res = img[selector[1]:selector[1]+selector[3],selector[0]:selector[0]+selector[2],:]
-    res = ef.run(img)
-    if state['platform']:
+    small_img = img[selector[1]:selector[1]+selector[3],selector[0]:selector[0]+selector[2],:]
+    res = ef.run(small_img)
+    if res['platform']:
         return True
     return False
 

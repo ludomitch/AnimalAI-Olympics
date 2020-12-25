@@ -20,8 +20,6 @@ class Pipeline:
         self.max_steps = args.max_steps
         self.test = test
 
-        # if not self.test:
-        # self.arena_successes = {k:[0,0] for k in self.arenas}
         self.logic = Logic()
         self.mode = args.mode
         self.save_path = args.save_path
@@ -31,7 +29,7 @@ class Pipeline:
             n_arenas=1,
             seed=seed,
             grayscale=False,
-            resolution=84,
+            resolution=256,
             inference=args.inference
         )
         self.env._env.train=False
@@ -79,6 +77,8 @@ class Pipeline:
 
     def learn_run(self):
         try:
+            self.arena_successes = {k:[0,0] for k in self.arenas}
+
             start = time.time()
             success_count = 0
             choice = 'random'
@@ -94,7 +94,7 @@ class Pipeline:
                 actions_buffer = []
                 observables_buffer = []
 
-                if (self.mode=='collect')&(idx!=0)&((idx%self.args.num_episodes==0)|(success_count>=100)):
+                if (self.mode=='collect')&(idx!=0)&((idx%self.args.num_episodes==0)|(success_count>=20)):
                     with open(self.save_path, "w") as text_file:
                         text_file.write(str(traces))
                     break
@@ -115,8 +115,8 @@ class Pipeline:
                         macro_step,
                         state,
                         choice=choice)
-                    print(macro_action)
-                    print(observables)
+                    # print(macro_action)
+                    # print(observables)
                     step_results, state, micro_step, success = self.take_macro_step(
                         self.env, state, step_results, macro_action
                     )
@@ -127,7 +127,7 @@ class Pipeline:
                     observables_buffer.append(observables)
                     if state['reward']>self.ac.arenas[0].pass_mark:
                         success = True
-                        break
+                        # break
                     else:
                         success = False
                 traces.append([actions_buffer, observables_buffer, success, macro_step])
@@ -195,9 +195,9 @@ class Pipeline:
                 success_count += success
                 self.arena_successes[arena[0]][arena[1]]=int(success)
 
-            with open("test_run_traces.txt", "w") as text_file:
+            with open("test_run_traces1.txt", "w") as text_file:
                 text_file.write(str(traces))
-            with open("test_run_successes.txt", "w") as text_file:
+            with open("test_run_successes2.txt", "w") as text_file:
                 text_file.write(str(self.arena_successes))
             end = time.time()
             print(self.arena_successes)

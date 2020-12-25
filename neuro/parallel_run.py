@@ -44,12 +44,14 @@ def run(opt):
 	]
 	distribution = [1]
 	max_steps = {
-		"training_set/ramp.yml":2,
+		"training_set/ramp.yml":1,
+		"training_set/ramp2.yml":1,
 		"training_set/red_maze.yml":0,
 		"training_set/wall.yml":2,
 		"training_set/choice.yml":1,
 		"training_set/numerosity.yml": 5,
 		"training_set/ymaze.yml": 0,
+		"training_set/ymaze2.yml": 0,
 		"training_set/moving.yml": 3
 	}
 	args = margs(

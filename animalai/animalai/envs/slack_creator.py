@@ -51,8 +51,8 @@ def run(counter):
     if choices([True, False], weights=[0.3,0.7])[0]: # Do different
         goal_s = randrange(1, 5)
         goodgoal_s = vector(goal_s,goal_s,goal_s)
-        goodgoal_p = vector(randrange(1,39),2, randrange(1,39))
-        agent_p = vector(randrange(1,39),2, randrange(1,39))
+        goodgoal_p = vector(randrange(1,39),2, randrange(1,19))
+        agent_p = vector(randrange(1,39),2, randrange(22,39))
         agent_rot = round(math.degrees(math.atan2(agent_p.x - goodgoal_p.x, agent_p.z-goodgoal_p.z)) +180)
         agent_rot += randrange(-20,20)
         wall_p = vector(20,0,20)

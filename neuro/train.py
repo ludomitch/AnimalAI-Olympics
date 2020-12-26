@@ -19,8 +19,8 @@ warnings.filterwarnings('ignore')
 
 def get_args():
     parser = argparse.ArgumentParser('AnimalAI training loop')
-    parser.add_argument('-tc', '--train_config', type=str, default='no_vis_config', help='Prefix of training config file')
-    parser.add_argument('-e', '--env_name', type=str, default='aai_no_vis', help='Env prefix name')
+    parser.add_argument('-tc', '--train_config', type=str, default='train_ml_agents_config_ppo', help='Prefix of training config file')
+    parser.add_argument('-e', '--env_name', type=str, default='aai', help='Env prefix name')
     parser.add_argument('-cc', '--curric_config', type=str, default='curriculum1', help='Curriculum prefix name')
     parser.add_argument('-ac', '--arena_config', type=str, default='arena1', help='Arena prefix name')
     parser.add_argument('-r', '--run_id', type=str, default='run1', help='Curriculum prefix name')

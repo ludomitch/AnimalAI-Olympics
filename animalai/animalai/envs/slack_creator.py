@@ -33,11 +33,11 @@ def run(counter):
     else:
         side = 30
     wall_p = vector(side, 0, randrange(10,20))
-    if counter < 20:
+    if counter < 40:
         num_turns = 0
         wall_width = 8
         wall_len = randrange(7,10)
-        weights = [0.8, 0.2]
+        weights = [0.6, 0.4]
     elif counter < 150:
         num_turns = choices([0,1,2], weights=[0.1, 0.6,0.3])[0]
         wall_width = randrange(3,10)

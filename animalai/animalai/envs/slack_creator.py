@@ -37,18 +37,21 @@ def run(counter):
         num_turns = 0
         wall_width = 8
         wall_len = randrange(7,10)
+        weights = [0.8, 0.2]
     elif counter < 150:
         num_turns = choices([0,1,2], weights=[0.1, 0.6,0.3])[0]
         wall_width = randrange(3,10)
         wall_len = randrange(8,min(25, ((wall_p.z-2)*2)))
+        weights = [0.5, 0.5]
 
     else:
         num_turns = choices([0,1,2], weights=[0.05, 0.25,0.7])[0]
         wall_width = randrange(1,5)
         wall_len = randrange(8,min(30, ((wall_p.z-2)*2)))
+        weights = [0.4, 0.6]
 
 
-    if choices([True, False], weights=[0.3,0.7])[0]: # Do different
+    if choices([True, False], weights=weights)[0]: # Do different
         goal_s = randrange(1, 5)
         goodgoal_s = vector(goal_s,goal_s,goal_s)
         goodgoal_p = vector(randrange(1,39),2, randrange(1,19))

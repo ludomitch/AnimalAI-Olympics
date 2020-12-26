@@ -54,7 +54,7 @@ def run(counter):
     if choices([True, False], weights=weights)[0]: # Do different
         goal_s = randrange(1, 5)
         goodgoal_s = vector(goal_s,goal_s,goal_s)
-        goodgoal_p = vector(randrange(1,39),2, randrange(1,19))
+        goodgoal_p = vector(randrange(3,37),2, randrange(3,17))
         agent_p = vector(randrange(1,39),2, randrange(22,39))
         agent_rot = round(math.degrees(math.atan2(agent_p.x - goodgoal_p.x, agent_p.z-goodgoal_p.z)) +180)
         agent_rot += randrange(-20,20)

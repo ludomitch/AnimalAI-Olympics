@@ -169,7 +169,7 @@ class Action:
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             go, stats = self.checks_clean()
-            self.reward = self.step_results[1]
+            # self.reward = self.step_results[1]
             # if self.state['reward'] > pass_mark:
             #     break
         return self.step_results, self.state, stats, self.micro_step
@@ -274,10 +274,9 @@ class Rotate(Action):
 
         for _ in range(50):
             self.step_results = self.env.step([[0, 1]])
-            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
-            self.reward = self.step_results[1]
             # Rotate
             if self.state['obj']: #0 is placeholder macro step, has no effect
                 break # and run a few more rotations to point to it
@@ -285,8 +284,7 @@ class Rotate(Action):
                 return self.step_results, self.state, self.macro_stats(None), self.micro_step
         for _ in range(3): # add extra 3 rotations to be looking straight at object
             self.step_results = self.env.step([[0, 1]])
-            self.reward = self.step_results[1]
-            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             if self.check_done():
@@ -310,10 +308,9 @@ class Drop(Action):
         for i in range(10):
             action = [1, self.direction] if i<10 else [1, 0]
             self.step_results = self.env.step([action])
-            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
-            self.reward = self.step_results[1]
             # Rotate
             if self.state['velocity'][1]<-2: #0 is placeholder macro step, has no effect
                 break # and run a few more rotations to point to it
@@ -337,18 +334,16 @@ class Observe(Action):
         stop = False
         for _ in range(20):
             self.step_results = self.env.step([0,0])
-            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
-            self.reward = self.step_results[1]
             black = not bool(np.max(self.step_results[0]))
             while black: # black_loop
                 self.step_results = self.env.step([0,0])
                 black = not bool(np.max(self.step_results[0]))
-                self.state = preprocess(self.ct, self.step_results, self.micro_step, self.reward)
+                self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
                 self.state['micro_step'] = self.micro_step
                 self.micro_step += 1
-                self.reward = self.step_results[1]
                 stop = True
             if stop:
                 break

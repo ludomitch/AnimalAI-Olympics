@@ -1,5 +1,5 @@
 from collections import namedtuple as nt
-from random import randrange, choice
+from random import randrange, choice, choices
 import math
 
 vector = nt('vec', ['x', 'y', 'z'])
@@ -33,6 +33,11 @@ def make_obj(pos=False, size=False, name=False, rot=False):
 def run(counter):
     # agent_p = vector(randrange(1,39), 0 , randrange(1,39), randrange(1,39))
     agent_p = vector(randrange(2,38),0, randrange(1,3))
+
+    if counter>2:
+        if choices([True, False], weights=[0.5,0.5])[0]:
+            return alternate()
+
 
     if counter < 20:
         goal_z = agent_p.z+8
@@ -73,7 +78,7 @@ def run(counter):
 arenas:
   -1: !Arena
     pass_mark: 1
-    t: 200
+    t: 250
     items:"""
     for obj in ['Agent', 'GoodGoal']:
         inp = {"name":obj}
@@ -95,5 +100,40 @@ arenas:
         else: # Badgoal
             s = randrange(2,6)
             inp['size'] = vector(s,s,s)
+        base+=make_obj(**inp)
+    return [base]
+
+def alternate():
+    # agent_p = vector(randrange(1,39), 0 , randrange(1,39), randrange(1,39))
+    agent_p = vector(randrange(2,38),0, randrange(1,3))
+    goodgoal_p = vector(randrange(3,37), 0, randrange(35,37))
+    goal_s = randrange(1, 5)
+    goodgoal_s = vector(goal_s,goal_s,goal_s)     
+    agent_rot = round(math.degrees(math.atan2(agent_p.x - goodgoal_p.x, agent_p.z-goodgoal_p.z)) +180)
+    agent_rot += randrange(-20, 20)
+    base = """
+!ArenaConfig
+arenas:
+  -1: !Arena
+    pass_mark: 1
+    t: 250
+    items:"""
+    for obj in ['Agent', 'GoodGoal']:
+        inp = {"name":obj}
+        if obj.lower()+'_p' in locals():
+            inp['pos'] = locals()[obj.lower()+'_p']
+        if obj.lower()+'_s' in locals():
+            inp['size'] = locals()[obj.lower()+'_s']
+        if obj in ['Agent']:
+            inp['rot'] = agent_rot
+        base+=make_obj(**inp)
+
+    for c in range(4):
+        inp = {
+            "name": "DeathZone",
+            "pos": vector(5+c*10, 0, 20),
+            "size":vector(randrange(5,10),0, randrange(10,30))
+        }
+
         base+=make_obj(**inp)
     return [base]

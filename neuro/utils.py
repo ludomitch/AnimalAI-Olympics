@@ -140,6 +140,41 @@ def filter_observables(observables:str):
 def process_image(visual_obs:np.array, **args:dict):
     return ef.run(visual_obs, **args)
 
+def obstacle(state, typ):
+    # goals = [i[0] for i in state['obj'] if i[1]=='goal']
+    # obstacle = [i[0] for i in state['obj'] if i[1]==typ]
+    # if bool(obstacle)&bool(goals):
+    #     goals = [[i[0]-0.1,i[1], i[2]+0.2, 1-i[1]] for i in goals]
+    #     for i in goals:
+    #         for j in obstacle:
+    #             if get_overlap(i,j)>0.01:
+    bottom_rect = [0, 0.75, 1, 0.25]
+    for bbox, typ, _, _id in state['obj']:
+        if (get_overlap(bbox, bottom_rect)>0.5)&(typ=="wall"):
+            return False # Use simple
+    if goal_above_wall(state):
+        return True # Use advanced
+    return False # Use simple
+def goal_above_wall(state):
+    try:
+        img = state['visual_obs']
+        dim = img.shape[0]
+        state = ef.run(img)
+        if not state['goal']:
+            return None
+        goal = state['goal'][0][0]
+        under_goal = [goal[0], goal[1]+goal[3], goal[2], goal[3]]
+        selector = [dim*(under_goal[0]), dim*(under_goal[1]), dim*under_goal[2], dim*under_goal[3]]
+        selector = [int(np.ceil(i)) for i in selector]
+        small_img = img[selector[1]:selector[1]+selector[3],selector[0]:selector[0]+selector[2],:]
+        res = ef.run(small_img)
+        if res['wall']:
+            return True
+        return False
+    except Exception as e:
+        print(e)
+        return False
+
 def preprocess(ct, step_results, step, reward, macro_action=None):
     visual_obs = step_results[3]["batched_step_result"].obs[0][0] # last 0 idx bc batched
     vector_obs = step_results[3]["batched_step_result"].obs[1][0]

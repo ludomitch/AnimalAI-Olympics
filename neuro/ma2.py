@@ -3,7 +3,7 @@ from mlagents.tf_utils import tf
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-from utils import load_pb, preprocess, process_image#, get_distance
+from utils import load_pb, preprocess, process_image, obstacle
 import checks as ck
 # from collections import deque
 # import time
@@ -29,7 +29,8 @@ class Action:
         self.with_up = None
         self.graph = None
         self.always_visible = None
-        self.rcs = None
+        self.memory = np.zeros([1,128])
+        self.prev_action = np.zeros([1,2])
 
     @property
     def name(self):
@@ -93,24 +94,43 @@ class Action:
                     visual_obs = cv2.cv2.resize(visual_obs, dsize=(84, 84), interpolation=cv2.INTER_CUBIC)
                 vector_obs = vector_obs.reshape(1, -1)
                 visual_obs = visual_obs.reshape(1, 84, 84, 1)
-
                 feed_dict = {input_node: vector_obs,
                             action_masks: mask_constant,
                             visual_node: visual_obs}
 
+                if self.name in []:
+                    sequence_length = self.graph.get_tensor_by_name("sequence_length:0")
+                    prev_action = self.graph.get_tensor_by_name("prev_action:0")
+                    recurrent_in = self.graph.get_tensor_by_name("recurrent_in:0")
+                    recurrent_out = self.graph.get_tensor_by_name("recurrent_out:0")
+
+                    feed_dict = {**feed_dict,
+                        sequence_length:1,
+                        prev_action: self.prev_action,
+                        recurrent_in: self.memory
+                     }
+                    output_node = [output_node, recurrent_out]
+
             else:
                 vector_obs = vector_obs.reshape(1, -1)
                 feed_dict = {input_node: vector_obs, action_masks: mask_constant}
-
+            
             prediction = sess.run(
                 output_node,
                 feed_dict=feed_dict,
-            )[0]
+            )
 
-            prediction = np.exp(prediction)
+        if len(prediction)==2:
+            prediction, self.memory = prediction
+        prediction = prediction[0]
 
-            action = [choose_action_probability(prediction[:3]), choose_action_probability(prediction[3:])]
-        return np.array(action).reshape((1, 2))
+        prediction = np.exp(prediction)
+
+        action = [choose_action_probability(prediction[:3]), choose_action_probability(prediction[3:])]
+        action = np.array(action).reshape((1, 2))
+        self.prev_action = action
+
+        return action
 
     def checks_clean(self):
         if self.state['done']:
@@ -155,8 +175,8 @@ class Action:
         self.checks = [getattr(ck, i[0].title())(self.state, i[1]) for i in self.checks]
 
     def run(self, pass_mark):
-        self.identify_action_args()
         self.load_graph()
+        self.identify_action_args()
         self.instantiate_checks()
 
         go = True
@@ -184,8 +204,18 @@ class Interact(Action):
             "mask": 'wall'
         }
         self.with_up = False
-        self.always_visible = True
-
+        self.always_visible = False
+    def load_graph(self):
+        
+        model_path = f"macro_actions/v3/interact"
+        if obstacle(self.state, "wall") and not any(
+            i[2]=='ramp' for i in self.state['obj']):
+            model_path+= "_adv.pb"
+        else:
+            model_path+= "_simple.pb"
+            self.config['mode'] = 'box'
+            self.config['mask'] = None
+        self.graph = load_pb(model_path)
 class Explore(Action):
     def __init__(self, env, ct, state, step_results, args, checks):
         super().__init__(env=env, ct=ct, state=state,
@@ -238,6 +268,9 @@ class Balance(Action):
     def __init__(self, env, ct, state, step_results, args, checks):
         super().__init__(env=env, ct=ct, state=state,
          step_results=step_results, args=args, checks=checks)
+        # Slack 5 original
+        # Slack 7 revamp
+        # Slack 9 Recurrent
 
         self.config = {
             "mode":"dual",

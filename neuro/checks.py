@@ -1,4 +1,4 @@
-from utils import goal_on_platform
+from utils import goal_on_platform, danger
 
 class RollingChecks:
     def __init__(self, state, args):
@@ -75,3 +75,22 @@ class Gop(RollingChecks):
             return False, "Goal still on platform or no goal in sight"
         return True, "Goal no longer on platform, stop balancing"
 
+class Free(RollingChecks):
+    """Goal on Platform"""
+    def __init__(self, state, args):
+        super().__init__(state=state, args=args)
+
+    def run(self): # Unobstructed view to front
+        if danger(self.state):
+            return False, "Still dangerous"
+        return True, "Danger free"
+
+class Danger(RollingChecks):
+    """Goal on Platform"""
+    def __init__(self, state, args):
+        super().__init__(state=state, args=args)
+
+    def run(self): # Unobstructed view to front
+        if danger(self.state):
+            return True, "Dangerous"
+        return False, "No danger"

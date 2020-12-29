@@ -98,7 +98,7 @@ class Action:
                             action_masks: mask_constant,
                             visual_node: visual_obs}
 
-                if self.name in []:
+                if self.name in ['avoid']:
                     sequence_length = self.graph.get_tensor_by_name("sequence_length:0")
                     prev_action = self.graph.get_tensor_by_name("prev_action:0")
                     recurrent_in = self.graph.get_tensor_by_name("recurrent_in:0")
@@ -175,8 +175,8 @@ class Action:
         self.checks = [getattr(ck, i[0].title())(self.state, i[1]) for i in self.checks]
 
     def run(self, pass_mark):
-        self.load_graph()
         self.identify_action_args()
+        self.load_graph()
         self.instantiate_checks()
 
         go = True

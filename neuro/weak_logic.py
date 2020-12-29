@@ -267,6 +267,7 @@ class Clingo:
             check(fallen, 0):- initiate(balance).
             check(gop, 0):- initiate(balance).
             check(time, 100):- initiate(avoid).
+            check(free, 0):- initiate(avoid).
             check(time, 20):- initiate(drop(X)).
 
             """).atoms_as_string)

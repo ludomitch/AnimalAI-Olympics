@@ -262,12 +262,11 @@ class Clingo:
             check(peaked, 0):- initiate(climb).
             check(time, 100):- initiate(interact(X)).
             check(visible, X):- initiate(explore(X)).
-            check(time, 100):- initiate(explore(X)).
-            check(time, 100):- initiate(balance).
+            check(time, 150):- initiate(explore(X)).
+            check(time, 150):- initiate(balance).
             check(fallen, 0):- initiate(balance).
             check(gop, 0):- initiate(balance).
-            check(time, 100):- initiate(avoid).
-            check(free, 0):- initiate(avoid).
+            check(time, 150):- initiate(avoid).
             check(time, 20):- initiate(drop(X)).
 
             """).atoms_as_string)

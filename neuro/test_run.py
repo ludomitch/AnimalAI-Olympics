@@ -29,20 +29,24 @@ from animalai.envs.arena_config import ArenaConfig
 import warnings
 warnings.filterwarnings('ignore')
 
+def get_args():
+    parser = argparse.ArgumentParser('AnimalAI training loop')
+    parser.add_argument('-n', '--num', type=int, default=1000, help='Number of traces to collect')
+    args = parser.parse_args()
+    return args
 
-def run():
+def run(opt):
 	margs = namedtuple('args', 'env seed arenas num_episodes inference distribution max_steps mode save_path')
 	arenas = None
 	distribution = None
 	max_steps = None
-	num = 4
 	test = True
-	args = margs(env=env_path, seed=2, arenas=arenas, num_episodes=num+1,
+	args = margs(env=env_path, seed=opt.num, arenas=arenas, num_episodes=1,
 	             inference=False, distribution=distribution,
-	            max_steps=max_steps, mode='collect',save_path=f"biased_traces/test.txt")
+	            max_steps=max_steps, mode='collect',save_path=opt.num)
 	pipe = Pipeline(args, test)
-	pipe.buffer_size = num
 	res = pipe.test_run()
 
 if __name__ == '__main__':
-    run()
+    opt = get_args()
+    run(opt)

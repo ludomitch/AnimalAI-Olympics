@@ -31,6 +31,7 @@ class Action:
         self.always_visible = None
         self.memory = np.zeros([1,128])
         self.prev_action = np.zeros([1,2])
+        self.model_path = ""
 
     @property
     def name(self):
@@ -179,6 +180,7 @@ class Action:
         self.load_graph()
         self.instantiate_checks()
 
+        stuck = 0
         go = True
         while go:
             obs = self.process_state()
@@ -189,9 +191,11 @@ class Action:
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             go, stats = self.checks_clean()
-            # self.reward = self.step_results[1]
-            # if self.state['reward'] > pass_mark:
-            #     break
+            if (abs(self.state['velocity'][0])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore']):
+                stuck+=1
+                if stuck>=20:
+                    self.load_graph(True)
+                    stuck = 0
         return self.step_results, self.state, stats, self.micro_step
 
 class Interact(Action):
@@ -205,17 +209,22 @@ class Interact(Action):
         }
         self.with_up = False
         self.always_visible = False
-    def load_graph(self):
-        
-        model_path = f"macro_actions/v3/interact"
-        if obstacle(self.state, "wall") and not any(
-            i[2]=='ramp' for i in self.state['obj']):
-            model_path+= "_adv.pb"
+    def load_graph(self, override=False):
+
+        if override:
+            self.model_path = "macro_actions/v3/interact_adv.pb"
+            self.config['mode'] = 'dual'
+            self.config['mask'] = "wall"
         else:
-            model_path+= "_simple.pb"
-            self.config['mode'] = 'box'
-            self.config['mask'] = None
-        self.graph = load_pb(model_path)
+            self.model_path = f"macro_actions/v3/interact"
+            if obstacle(self.state, "wall") and not any(
+                i[2]=='ramp' for i in self.state['obj']):
+                self.model_path+= "_adv.pb"
+            else:
+                self.model_path+= "_simple.pb"
+                self.config['mode'] = 'box'
+                self.config['mask'] = None
+        self.graph = load_pb(self.model_path)
 class Explore(Action):
     def __init__(self, env, ct, state, step_results, args, checks):
         super().__init__(env=env, ct=ct, state=state,
@@ -227,16 +236,22 @@ class Explore(Action):
             "mask": None
         }
         self.with_up = False
-        self.always_visible = True # The wall is
+        self.always_visible = False # The wall is
 
-    def load_graph(self):
-        bbox = self.process_state()[2:]
-        model_path = f"macro_actions/v3/explore"
-        if (bbox[0]+bbox[2]/2)>0.5: # If obj is on right, go around left side
-            model_path+= "_right.pb"
+    def load_graph(self, override=False):
+        if override:
+            if 'left' in self.model_path:
+                self.model_path = "macro_actions/v3/explore_right.pb"
+            else:
+                self.model_path = "macro_actions/v3/explore_left.pb"
         else:
-            model_path+= "_left.pb"
-        self.graph = load_pb(model_path)
+            bbox = self.process_state()[2:]
+            self.model_path = f"macro_actions/v3/explore"
+            if (bbox[0]+bbox[2]/2)>0.49: # If obj is on right, go around left side
+                self.model_path+= "_right.pb"
+            else:
+                self.model_path+= "_left.pb"
+        self.graph = load_pb(self.model_path)
 
 class Avoid(Action):
     def __init__(self, env, ct, state, step_results, args, checks):

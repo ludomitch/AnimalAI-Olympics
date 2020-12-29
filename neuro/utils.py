@@ -153,17 +153,15 @@ def process_image(visual_obs:np.array, **args:dict):
     return ef.run(visual_obs, **args)
 
 def obstacle(state, typ):
-    # goals = [i[0] for i in state['obj'] if i[1]=='goal']
-    # obstacle = [i[0] for i in state['obj'] if i[1]==typ]
-    # if bool(obstacle)&bool(goals):
-    #     goals = [[i[0]-0.1,i[1], i[2]+0.2, 1-i[1]] for i in goals]
-    #     for i in goals:
-    #         for j in obstacle:
-    #             if get_overlap(i,j)>0.01:
+    center_col = [0.45,0.2,0.1,0.8]
     bottom_rect = [0, 0.75, 1, 0.25]
     for bbox, typ, _, _id in state['obj']:
+        if typ == 'wall':
+        if (get_overlap(bbox,center_col)>0.2) &(typ=="wall"):
+            return True # adv
         if (get_overlap(bbox, bottom_rect)>0.5)&(typ=="wall"):
             return False # Use simple
+
     if goal_above_wall(state):
         return True # Use advanced
     return False # Use simple

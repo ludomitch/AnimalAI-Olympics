@@ -185,19 +185,21 @@ class Pipeline:
                     macro_step +=1
                     actions_buffer.append(macro_action['raw'][0])
                     observables_buffer.append(observables)
+                    # print(self.ac.arenas[0].pass_mark)
+                    # print(state['reward'])
                     if state['reward']>self.ac.arenas[0].pass_mark:
                         success = True
                         # break
                     else:
                         success = False
-                print(f"{arena}: {success}")
+                # print(f"{arena}: {success}")
                 traces.append([actions_buffer, observables_buffer, success, macro_step, arena[1]])
                 success_count += success
                 self.arena_successes[arena[0]][arena[1]]=int(success)
 
-            with open("test_run_traces1.txt", "w") as text_file:
+            with open(f"test_run_traces{self.save_path}.txt", "w") as text_file:
                 text_file.write(str(traces))
-            with open("test_run_successes2.txt", "w") as text_file:
+            with open(f"test_run_successes{self.save_path}.txt", "w") as text_file:
                 text_file.write(str(self.arena_successes))
             end = time.time()
             print(self.arena_successes)

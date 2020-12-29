@@ -104,9 +104,12 @@ class ExtractFeatures:
                 continue
             coords = self.process_contour(ctr)
             for box in coords:
-                occluding_area = round(box[2]*box[3]*1000)
-                if (obj_type=='wall')&(occluding_area<3.1):#|(box[2]<0.05):
-                    continue
+                occluding_area = round(box[2]*box[3]*100000)
+                if (obj_type=='wall'):
+                    if (box[2]<0.03)|(occluding_area<60):
+                        # print(box, occluding_area)
+
+                        continue
                 features[obj_type] += [(box, obj_type, occluding_area)]
         return features
 

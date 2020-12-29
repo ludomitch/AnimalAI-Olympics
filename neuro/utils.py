@@ -156,7 +156,6 @@ def obstacle(state, typ):
     center_col = [0.45,0.2,0.1,0.8]
     bottom_rect = [0, 0.75, 1, 0.25]
     for bbox, typ, _, _id in state['obj']:
-        if typ == 'wall':
         if (get_overlap(bbox,center_col)>0.2) &(typ=="wall"):
             return True # adv
         if (get_overlap(bbox, bottom_rect)>0.5)&(typ=="wall"):

@@ -188,10 +188,10 @@ class TrainerControllerAAI(TrainerController):
                 n_steps = self.advance(env_manager)
                 for _ in range(n_steps):
                     global_step += 1
-                    if global_step!=0 and global_step%800==0:
-                        self._reset_env(env_manager)
-                        for trainer in self.trainers.values():
-                            trainer.end_episode()
+                    # if global_step!=0 and global_step%800==0:
+                    #     self._reset_env(env_manager)
+                    #     for trainer in self.trainers.values():
+                    #         trainer.end_episode()
                     self.reset_env_if_ready(env_manager, global_step)
                     if self._should_save_model(global_step):
                         self._save_model()

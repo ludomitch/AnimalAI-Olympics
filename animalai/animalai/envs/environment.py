@@ -341,11 +341,11 @@ class UnityEnvironment(BaseEnv):
 
             if with_up:
                 vel_shape = 3
-                vel_vector = [vel_vector_full[0]/5.81, vel_vector_full[1], vel_vector_full[2]/11.6]
+                vel_vector = [vel_vector_full[0]/9.45, vel_vector_full[1]/5.8, vel_vector_full[2]/18.8]
 
             else:
                 vel_shape = 2
-                vel_vector = [vel_vector_full[0]/5.81, vel_vector_full[2]/11.6]
+                vel_vector = [vel_vector_full[0]/9.45, vel_vector_full[2]/18.8]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
@@ -353,8 +353,8 @@ class UnityEnvironment(BaseEnv):
             # Reward shaping
             try:
                 backwards_punishment = 1
-                upwards_reward = 0.1
-                downwards_punishment = 0.1
+                upwards_reward = 1
+                downwards_punishment = 1
                 if reward>0.1:
                     reward += 1
 

@@ -34,26 +34,26 @@ def run(counter):
     # agent_p = vector(randrange(1,39), 0 , randrange(1,39), randrange(1,39))
     agent_p = vector(randrange(2,38),0, randrange(1,3))
 
-    if counter>20:
-        if choices([True, False], weights=[0.5,0.5])[0]:
+    if counter>=0:
+        if choices([True, False], weights=[1,0])[0]:
             return alternate()
 
 
-    if counter < 20:
+    if counter < 1:
         goal_z = agent_p.z+8
         goal_x = agent_p.x + randrange(-3,3)
         red_start = goal_z + 10
         red_end = goal_z + 30
         red_wide = 5
         num_red = 3
-    elif counter < 100:
+    elif counter < 4:
         goal_z = randrange(15,20)
         goal_x = randrange(2,38)
         red_start = agent_p.z + 6
         red_end = goal_z - 6
         red_wide = 8
         num_red = 3
-    elif counter < 200:
+    elif counter < 6:
         goal_z = randrange(25,30)
         goal_x = randrange(2,38)
         red_start = agent_p.z + 8
@@ -132,7 +132,8 @@ arenas:
         inp = {
             "name": "DeathZone",
             "pos": vector(5+c*10, 0, 20),
-            "size":vector(randrange(5,10),0, randrange(10,30))
+            "size":vector(randrange(5,6),0, randrange(10,30)),
+            "rot":0
         }
 
         base+=make_obj(**inp)

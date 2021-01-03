@@ -26,16 +26,16 @@ hsv_cls = HSV()
 objects = OD()
 # objects['danger_zone'] = hsv_cls.red
 # objects['wall'] = hsv_cls.grey
-objects['goal1'] = hsv_cls.orange
+# objects['goal1'] = hsv_cls.orange
 
 # objects['wall'] = hsv_cls.blue
 # mask_clr = 'wall'
 # box_clr = "platform"
 
 # objects['danger_zone'] = hsv_cls.red
-# objects['goal'] =  hsv_cls.green
-mask_clr = 'goal1'
-# box_clr = "goal"
+objects['goal'] =  hsv_cls.green
+# mask_clr = 'danger_zone'
+box_clr = "goal"
 
 class ExtractFeatures:
 	
@@ -120,14 +120,11 @@ class ExtractFeatures:
 		return masked_img, features
 
 	def run(self, img, mode='normal'):
-		if not self.training:
-			return self.run_test(img)
 		if mode=='dual':
 			return self.run_dual(img)
 
 		img = np.ascontiguousarray(
 			cv2.imdecode(np.frombuffer(img, np.uint8), -1))
-		# plt.imshow(img)
 		setattr(self, 'img', img)
 		setattr(self, 'hsv_img', cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV))
 		setattr(self, 'img_dim', img.shape)
@@ -142,29 +139,7 @@ class ExtractFeatures:
 			for i in coords:
 				features.append(i)
 
-		# Flatten list
-		if mode=='normal':
-			idx = 1
-		# elif mode == 'octx':
-		# 	idx = 2
-		# else:
-		# 	idx = 5
-		features = features[:idx]
+		features = features[:1]
 		features = [item for sublist in features for item in sublist]
-		return features
-
-	def run_test(self, img):
-		"""Returns list of tuples"""
-		self.img = (img*255)[:,:,::-1].astype(np.uint8)
-		self.hsv_img = cv2.cvtColor(self.img, cv2.COLOR_BGR2HSV)
-		self.img_dim = self.img.shape
-		features = []
-		for obj_type, hsv_clr in objects.items():
-			ctr, hier = self.get_contour(hsv_clr)
-			if ctr is None:
-				continue
-			coords = self.process_contour(ctr, obj_type)
-			for box in coords:
-				features.append((box, obj_type))
 		return features
 

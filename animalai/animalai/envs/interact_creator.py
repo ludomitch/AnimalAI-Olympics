@@ -33,9 +33,9 @@ def run(counter):
     if counter < 8:
         goal_z = agent_p.z+5
         goal_x = agent_p.x + randrange(-3,3)
-        obstacles=False
+        obstacles = False
     else:
-        obstacles = True
+        obstacles = False
         goal_z = randrange(10,36)
         goal_x = randrange(4,36)
 
@@ -44,7 +44,7 @@ def run(counter):
     goodgoal_s = vector(goal_s,goal_s,goal_s)     
     abs_agent_rot = round(math.degrees(math.atan2(agent_p.x - goal_x, agent_p.z-goal_z)) +180)
     
-    agent_rot = abs_agent_rot + randrange(-25, 25)
+    agent_rot = abs_agent_rot + randrange(-35, 35)
     base = """
 !ArenaConfig
 arenas:

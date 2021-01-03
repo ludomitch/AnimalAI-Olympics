@@ -1,0 +1,10 @@
+!ArenaConfig
+arenas:
+  -1: !Arena
+    pass_mark: 1
+    t: 150 
+    items:
+    - !Item
+      name: Agent
+    - !Item
+      name: GoodGoal

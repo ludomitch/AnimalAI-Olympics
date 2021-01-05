@@ -321,7 +321,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='normal', with_up=False):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=False):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -411,17 +411,6 @@ class UnityEnvironment(BaseEnv):
                 mask_img, bbox = self.ef.run_dual(img, mode)
                 vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
                 vector_obs.float_data.data.extend(vel_vector + bbox)
-
-
-                # plt.imshow(mask_img)
-                # plt.savefig('/Users/ludo/Desktop/before.png',bbox_inches='tight',transparent=True, pad_inches=0)
-                # print(mask_img.shape)
-                # s = np.mean(mask_img, axis=2)
-                # print(s.shape)
-                # plt.imshow(mask_img)
-                # plt.savefig('/Users/ludo/Desktop/after.png',bbox_inches='tight',transparent=True, pad_inches=0)
-                # s = np.reshape(s, [s.shape[0], s.shape[1], 1])
-                # print(s.shape)
 
                 # 5) Convert img to bytes
                 byteImgIO = io.BytesIO()

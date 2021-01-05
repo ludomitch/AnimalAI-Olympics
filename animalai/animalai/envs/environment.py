@@ -1,5 +1,11 @@
 from animalai.envs.arena_config import ArenaConfig
 from animalai.envs.cvis_img import ExtractFeatures
+from animalai.envs.ramp_creator import run as rc
+from animalai.envs.red_maze_creator import run as rmc
+from animalai.envs.interact_creator import run as ic
+from animalai.envs.slack_creator import run as slc
+
+
 import atexit
 import glob
 import uuid
@@ -10,6 +16,7 @@ import numpy as np
 import os
 import subprocess
 from typing import Dict, List, Optional, Any
+import yaml
 
 import mlagents_envs
 from mlagents_envs.side_channel.side_channel import SideChannel, IncomingMessage
@@ -60,6 +67,9 @@ from mlagents_envs.side_channel.side_channel import (
     OutgoingMessage,
 )
 from mlagents_envs.side_channel.raw_bytes_channel import RawBytesChannel
+
+from PIL import Image
+import io
 
 logger = logging.getLogger("mlagents_envs")
 
@@ -310,38 +320,116 @@ class UnityEnvironment(BaseEnv):
                     shell=True,
                 )
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='normal'):
+
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='normal', with_up=False):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
+
         agent_infos = rl_output.agentInfos
         for agent in range(0, len(agent_infos[
             agent_name].value)):
             agent_obs = agent_infos[
                 agent_name].value[agent].observations
-            # 1) Change vector observations to desired size
-            vector_obs = agent_obs[1]
-            vector_obs.shape.remove(3)
-            if mode == 'normal':
-                vector_obs.shape.extend([6])
-            elif mode == 'octx':
-                vector_obs.shape.extend([10])
-            else:
-                raise Exception(f"Mode {mode} not supported")
-            # 2) Extract image in bytes and then remove visual observations
-            img = agent_obs[0].compressed_data
-            if self.debug:
-                self.img = img
-            # self.img = img
-            del agent_obs[0]
+            reward = agent_infos[agent_name].value[agent].reward
 
-            #3) Run CV and retrieve bounding boxes as a list
-            res = self.ef.run(img, mode)
-            vel_vector = list(vector_obs.float_data.data)
-            vel_vector = [vel_vector[0]/9.45, vel_vector[2]/18.8]
+            # 1) Retrieve vector and img obs
+            img = agent_obs[0].compressed_data
+            vector_obs = agent_obs[1]
+            # 2) Reformat vector obs size
+            vector_obs.shape.remove(3)
+            vel_vector_full = list(vector_obs.float_data.data)
+
+            if with_up:
+                vel_shape = 3
+                vel_vector = [vel_vector_full[0]/9.45, vel_vector_full[1]/5.8, vel_vector_full[2]/18.8]
+
+            else:
+                vel_shape = 2
+                vel_vector = [vel_vector_full[0]/9.45, vel_vector_full[2]/18.8]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
-            vector_obs.float_data.data.extend(vel_vector + res)
+
+            # Reward shaping
+            # try:
+            #     backwards_punishment = 1
+            #     upwards_reward = 1
+            #     downwards_punishment = 1
+            #     if reward>0.1:
+            #         reward += 1
+
+            #     if vel_vector_full[-1]<0: # Punish going backwards
+            #         reward += backwards_punishment*vel_vector[-1] # vel vector is negative
+            #     if with_up:
+            #         if vel_vector_full[1]>0.01:
+            #             reward += upwards_reward*vel_vector[1]
+            #         elif vel_vector_full[1]<-0.01:
+            #             reward +=downwards_punishment*vel_vector[1]
+            #     agent_infos[agent_name].value[agent].reward = reward
+
+            # except IndexError:
+            #     pass
+
+            if mode == 'normal': # Just bbox
+                # 3) Extract image in bytes and then remove visual observations
+                img = agent_obs[0].compressed_data
+                if self.debug:
+                    self.img = img
+                del agent_obs[0]
+
+                #4) Run CV and retrieve bounding boxes as a list
+                res = self.ef.run(img, mode)
+                vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
+                vector_obs.float_data.data.extend(vel_vector + res)
+            elif mode == 'mask': # Just mask
+                # 3) Extract image in bytes and then remove visual observations
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(3)
+                agent_obs[0].shape.extend([84,84,1])
+
+                #4) Run CV and retrieve bounding boxes as a list
+                mask_img = self.ef.run_mask(img, mode)
+                vector_obs.shape.extend([vel_shape]) # 2 velocity
+                vector_obs.float_data.data.extend(vel_vector)
+
+                # 5) Convert img to bytes
+                byteImgIO = io.BytesIO()
+                byteImg = Image.fromarray(mask_img.astype(np.uint8))
+                byteImg.save(byteImgIO, "PNG")
+                byteImgIO.seek(0)
+                byteImg = byteImgIO.read()
+                agent_obs[0].compressed_data = byteImg                
+            else: # dual: bbox + mask
+                # 3) Extract image in bytes and then remove visual observations
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(3)
+                agent_obs[0].shape.extend([84,84,1])
+
+                #4) Run CV and retrieve bounding boxes as a list
+                mask_img, bbox = self.ef.run_dual(img, mode)
+                vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
+                vector_obs.float_data.data.extend(vel_vector + bbox)
+
+
+                # plt.imshow(mask_img)
+                # plt.savefig('/Users/ludo/Desktop/before.png',bbox_inches='tight',transparent=True, pad_inches=0)
+                # print(mask_img.shape)
+                # s = np.mean(mask_img, axis=2)
+                # print(s.shape)
+                # plt.imshow(mask_img)
+                # plt.savefig('/Users/ludo/Desktop/after.png',bbox_inches='tight',transparent=True, pad_inches=0)
+                # s = np.reshape(s, [s.shape[0], s.shape[1], 1])
+                # print(s.shape)
+
+                # 5) Convert img to bytes
+                byteImgIO = io.BytesIO()
+                byteImg = Image.fromarray(mask_img.astype(np.uint8))
+                byteImg.save(byteImgIO, "PNG")
+                byteImgIO.seek(0)
+                byteImg = byteImgIO.read()
+                agent_obs[0].compressed_data = byteImg
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:
         init_output = output.rl_initialization_output
@@ -409,11 +497,13 @@ class UnityEnvironment(BaseEnv):
             outputs = self.communicator.exchange(step_input)
         if outputs is None:
             raise UnityCommunicationException("Communicator has stopped.")
-
         self._update_group_specs(outputs)
         rl_output = outputs.rl_output
         self._update_state(rl_output)
         self._env_actions.clear()
+        # if self.train:
+        #     if self._env_state[group_name].done[0]:
+        #         self.reset()
 
     def get_agent_groups(self) -> List[AgentGroup]:
         return list(self._env_specs.keys())
@@ -635,9 +725,9 @@ class AnimalAIEnvironment(UnityEnvironment):
     # Default values for configuration parameters of the environment, can be changed if needed
     # Increasing the timescale value for training might speed up the process on powefull machines
     # but take care as the higher the timescale the more likely the physics might break
-    WINDOW_WIDTH = PlayTrain(play=1200, train=1200)
-    WINDOW_HEIGHT = PlayTrain(play=800, train=800)
-    QUALITY_LEVEL = PlayTrain(play=5, train=100)
+    WINDOW_WIDTH = PlayTrain(play=300, train=300)
+    WINDOW_HEIGHT = PlayTrain(play=300, train=300)
+    QUALITY_LEVEL = PlayTrain(play=5, train=1)
     TIMESCALE = PlayTrain(play=1, train=300)
     TARGET_FRAME_RATE = PlayTrain(play=60, train=-1)
     ARENA_CONFIG_SC_UUID = "9c36c837-cad5-498a-b675-bc19c9370072"
@@ -657,11 +747,13 @@ class AnimalAIEnvironment(UnityEnvironment):
         resolution: int = None,
         grayscale: bool = False,
         side_channels: Optional[List[SideChannel]] = None,
-        alter_obs: bool = False
+        alter_obs: bool = False,
+        train:bool=False
     ):
 
         args = self.executable_args(n_arenas, play, resolution, grayscale)
         self.play = play
+        self.train = train
         self.inference = inference
         self.timeout = 10 if play else 60
         self.side_channels = side_channels if side_channels else []
@@ -670,6 +762,8 @@ class AnimalAIEnvironment(UnityEnvironment):
 
         self.configure_side_channels(self.side_channels)
         self.side_channels += [self.arenas_obj_config_side_channel]
+        self.counter = 0
+
         super().__init__(
             file_name=file_name,
             worker_id=worker_id,
@@ -722,7 +816,14 @@ class AnimalAIEnvironment(UnityEnvironment):
         engine_configuration_channel.set_configuration(engine_configuration)
         return engine_configuration_channel
 
+
     def reset(self, arenas_configurations: ArenaConfig = None) -> None:
+        if self.train:
+            self.reset_train(arenas_configurations)
+        else:
+            self.reset_test(arenas_configurations)
+
+    def reset_test(self, arenas_configurations: ArenaConfig = None) -> None:
         if arenas_configurations:
             arenas_configurations_proto = arenas_configurations.to_proto()
             arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
@@ -731,6 +832,29 @@ class AnimalAIEnvironment(UnityEnvironment):
             self.arenas_parameters_side_channel.send_raw_data(
                 bytearray(arenas_configurations_proto_string)
             )
+        try:
+            super().reset()
+        except UnityTimeOutException as timeoutException:
+            if self.play:
+                pass
+            else:
+                raise timeoutException
+    def reset_train(self, arenas_configurations: ArenaConfig = None) -> None:
+
+        self.ramp_config =ic(self.counter)
+        # tests = [ '4-1-1' , '4-1-3' , '4-2-1' , '4-2-2' , '4-2-3' , '4-3-1' , '4-3-2' , '4-3-3' , '4-1-2' , '4-22-3' , '1-25-1' , '1-25-2' , '1-25-3' , '4-12-1' , '4-12-2' , '4-12-3' , '4-19-1' , '4-19-2' , '4-19-3' , '4-20-1' , '4-20-2' , '4-20-3' , '4-21-1' , '4-21-2' , '4-21-3' , '4-22-1' , '4-22-2' , '4-23-1' , '4-23-2' , '4-23-3' , '4-24-1' , '4-24-2' , '4-24-3' , '4-29-1' , '4-29-2' , '4-29-3' ]
+        # ac = ArenaConfig(f"../competition_configurations/{tests[self.counter]}.yml")
+        ac = ArenaConfig(self.ramp_config)
+        self.counter+=1
+        if self.counter % 50 == 0:
+            print(f"COUNTER: {self.counter}")
+        arenas_configurations_proto = ac.to_proto()
+        arenas_configurations_proto_string = arenas_configurations_proto.SerializeToString(
+            deterministic=True
+        )
+        self.arenas_parameters_side_channel.send_raw_data(
+            bytearray(arenas_configurations_proto_string)
+        )
         try:
             super().reset()
         except UnityTimeOutException as timeoutException:

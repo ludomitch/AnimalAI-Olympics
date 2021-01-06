@@ -6,6 +6,7 @@ from mlagents_envs.timers import timed
 from mlagents.trainers.trainer_util import TrainerFactory
 from mlagents.trainers.sampler_class import SamplerManager
 from animalai_train.meta_curriculum_aai import MetaCurriculumAAI
+from mlagents.tf_utils import tf
 
 
 class TrainerControllerAAI(TrainerController):

@@ -321,7 +321,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=False):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual', with_up=False):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -351,24 +351,24 @@ class UnityEnvironment(BaseEnv):
             del vector_obs.float_data.data[0]
 
             # Reward shaping
-            # try:
-            #     backwards_punishment = 1
-            #     upwards_reward = 1
-            #     downwards_punishment = 1
-            #     if reward>0.1:
-            #         reward += 1
+            try:
+                backwards_punishment = 1
+                upwards_reward = 1
+                downwards_punishment = 1
+                if reward>0.1:
+                    reward += 1
 
-            #     if vel_vector_full[-1]<0: # Punish going backwards
-            #         reward += backwards_punishment*vel_vector[-1] # vel vector is negative
-            #     if with_up:
-            #         if vel_vector_full[1]>0.01:
-            #             reward += upwards_reward*vel_vector[1]
-            #         elif vel_vector_full[1]<-0.01:
-            #             reward +=downwards_punishment*vel_vector[1]
-            #     agent_infos[agent_name].value[agent].reward = reward
+                if vel_vector_full[-1]<0: # Punish going backwards
+                    reward += backwards_punishment*vel_vector[-1] # vel vector is negative
+                if with_up:
+                    if vel_vector_full[1]>0.01:
+                        reward += upwards_reward*vel_vector[1]
+                    elif vel_vector_full[1]<-0.01:
+                        reward +=downwards_punishment*vel_vector[1]
+                agent_infos[agent_name].value[agent].reward = reward
 
-            # except IndexError:
-            #     pass
+            except IndexError:
+                pass
 
             if mode == 'normal': # Just bbox
                 # 3) Extract image in bytes and then remove visual observations
@@ -737,7 +737,7 @@ class AnimalAIEnvironment(UnityEnvironment):
         grayscale: bool = False,
         side_channels: Optional[List[SideChannel]] = None,
         alter_obs: bool = False,
-        train:bool=False
+        train:bool=True
     ):
 
         args = self.executable_args(n_arenas, play, resolution, grayscale)

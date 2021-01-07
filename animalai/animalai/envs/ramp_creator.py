@@ -57,7 +57,7 @@ def run(counter):
         randrange(agent_limit_z[1]+1, 39)
         ])
 
-    if counter < 100:
+    if counter < 20:
         agent_z = 1
         agent_x = ramp_p.x + randrange(-9,9)
         
@@ -68,7 +68,7 @@ def run(counter):
 arenas:
   -1: !Arena
     pass_mark: 2
-    t: 40
+    t: 250
     items:"""
     for obj in ['Agent', 'Ramp', 'Wall']:
         inp = {"name":obj}

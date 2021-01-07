@@ -1,5 +1,5 @@
 {"measure": "reward",
  "min_lesson_length": 100,
  "signal_smoothing": true,
- "thresholds": [5],
+ "thresholds": [],
  "configuration_files": ["0.yml"]}

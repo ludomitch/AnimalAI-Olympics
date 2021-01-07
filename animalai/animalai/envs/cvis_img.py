@@ -21,21 +21,23 @@ class HSV:
 	orange = [[20,121,158], [23,255,255]]
 	brown = [[7,53,40], [18,87,121]]
 	blue = [[119, 255, 106], [120, 255, 255]]
+	pink = [[149, 117, 107], [165, 255, 255]]
 
 hsv_cls = HSV()
 objects = OD()
 # objects['danger_zone'] = hsv_cls.red
-objects['wall'] = hsv_cls.grey
+# objects['wall'] = hsv_cls.grey
 # objects['goal1'] = hsv_cls.orange
+objects['ramp'] = hsv_cls.pink
 
 # objects['platform'] = hsv_cls.blue
 # mask_clr = 'goal1'
 # box_clr = "platform"
 
 # objects['danger_zone'] = hsv_cls.red
-objects['goal'] =  hsv_cls.green
-mask_clr = 'wall'
-box_clr = "goal"
+# objects['goal'] =  hsv_cls.green
+mask_clr = 'ramp'
+# box_clr = "goal"
 
 class ExtractFeatures:
 	

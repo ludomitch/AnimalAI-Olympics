@@ -20,7 +20,7 @@ def make_obj(pos=False, size=False, name=False, rot=False):
     if name == 'Ramp':
         res += """
       colors:
-      - !RGB {r: 0, g: 0, b: 255}"""
+      - !RGB {r: 255, g: 0, b: 255}"""
     if name == 'Wall':
         res += """
       colors:
@@ -36,7 +36,7 @@ def run(counter):
     ramp_width_upper_limit = (min(40-ramp_p.x, ramp_p.x)-4)*2
     ramp_width = randrange(2,ramp_width_upper_limit)
     ramp_length = randrange(2,ramp_length_upper_limit)
-    ramp_height = randrange(2,max(int(ramp_length*(3/5)),3))
+    ramp_height = randrange(1,max(int(ramp_length*(3/5)),3))
     ramp_s = vector(ramp_width, ramp_height, ramp_length)
     rot = 180
 
@@ -57,7 +57,7 @@ def run(counter):
         randrange(agent_limit_z[1]+1, 39)
         ])
 
-    if counter < 20:
+    if counter < 100:
         agent_z = 1
         agent_x = ramp_p.x + randrange(-9,9)
         
@@ -68,7 +68,7 @@ def run(counter):
 arenas:
   -1: !Arena
     pass_mark: 2
-    t: 250
+    t: 40
     items:"""
     for obj in ['Agent', 'Ramp', 'Wall']:
         inp = {"name":obj}
@@ -83,17 +83,20 @@ arenas:
         base+=make_obj(**inp)
 
     if ramp_width==2:
-        goal_i = range(1)
+        goal_i = range(2)
+        offset = 0
     elif ramp_width == 3:
-        goal_i = range(1)
+        goal_i = range(3)
+        offset = 0 
     else:
-        goal_i = range(1,max(2,int(ramp_width/2)-1))
+        goal_i = range(int(ramp_width))
+        offset = 1
 
     for i in goal_i:
         inp = {
             "name": "GoodGoal",
-            "pos": vector(wall_p.x-wall_s.x/2+1+2*i, ramp_height+1, wall_p.z),
-            "size": vector(2,2,2)
+            "pos": vector(wall_p.x-wall_s.x/2+0.5+1*i, ramp_height+1, wall_p.z),
+            "size": vector(1,1,1)
         }
         base+=make_obj(**inp)
     return [base]

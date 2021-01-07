@@ -7,7 +7,10 @@ from mlagents.trainers.trainer_util import TrainerFactory
 from mlagents.trainers.sampler_class import SamplerManager
 from animalai_train.meta_curriculum_aai import MetaCurriculumAAI
 from mlagents.tf_utils import tf
-
+from mlagents_envs.exception import (
+    UnityEnvironmentException,
+    UnityCommunicationException,
+)
 
 class TrainerControllerAAI(TrainerController):
     def __init__(

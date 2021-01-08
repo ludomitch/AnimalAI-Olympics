@@ -99,7 +99,7 @@ class Action:
                             action_masks: mask_constant,
                             visual_node: visual_obs}
 
-                if self.name in ['avoid']:
+                if self.name in []:
                     sequence_length = self.graph.get_tensor_by_name("sequence_length:0")
                     prev_action = self.graph.get_tensor_by_name("prev_action:0")
                     recurrent_in = self.graph.get_tensor_by_name("recurrent_in:0")

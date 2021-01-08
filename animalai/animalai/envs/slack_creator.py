@@ -65,7 +65,7 @@ def run(counter):
 arenas:
   -1: !Arena
     pass_mark: 1
-    t: 150 
+    t: 250 
     items:"""
 
         for obj in ['Agent', 'Wall', "GoodGoal"]:
@@ -92,7 +92,7 @@ arenas:
 arenas:
   -1: !Arena
     pass_mark: 1
-    t: 180 
+    t: 250 
     items:"""
     pos = wall_p
     goal_x = pos.x

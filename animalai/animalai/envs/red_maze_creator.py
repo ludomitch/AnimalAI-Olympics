@@ -16,7 +16,7 @@ def make_obj(pos=False, size=False, name=False, rot=False):
         res +=f"""
       sizes:
       - !Vector3 {{x: {size.x}, y: {size.y}, z: {size.z}}}"""
-    if rot:
+    if rot|isinstance(rot,int):
         res += f"""
       rotations: [{rot}]"""
     if name == 'Ramp':
@@ -34,26 +34,26 @@ def run(counter):
     # agent_p = vector(randrange(1,39), 0 , randrange(1,39), randrange(1,39))
     agent_p = vector(randrange(2,38),0, randrange(1,3))
 
-    if counter>=0:
-        if choices([True, False], weights=[1,0])[0]:
+    if counter>=20:
+        if choices([True, False], weights=[0.5,0.5])[0]:
             return alternate()
 
 
-    if counter < 1:
+    if counter < 20:
         goal_z = agent_p.z+8
         goal_x = agent_p.x + randrange(-3,3)
         red_start = goal_z + 10
         red_end = goal_z + 30
         red_wide = 5
         num_red = 3
-    elif counter < 4:
+    elif counter < 100:
         goal_z = randrange(15,20)
         goal_x = randrange(2,38)
         red_start = agent_p.z + 6
         red_end = goal_z - 6
         red_wide = 8
         num_red = 3
-    elif counter < 6:
+    elif counter < 175:
         goal_z = randrange(25,30)
         goal_x = randrange(2,38)
         red_start = agent_p.z + 8
@@ -132,7 +132,7 @@ arenas:
         inp = {
             "name": "DeathZone",
             "pos": vector(5+c*10, 0, 20),
-            "size":vector(randrange(5,6),0, randrange(10,30)),
+            "size":vector(randrange(5,10),0, randrange(20,30)),
             "rot":0
         }
 

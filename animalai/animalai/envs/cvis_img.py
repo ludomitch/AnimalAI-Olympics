@@ -25,19 +25,19 @@ class HSV:
 
 hsv_cls = HSV()
 objects = OD()
-# objects['danger_zone'] = hsv_cls.red
+objects['danger_zone'] = hsv_cls.red
 # objects['wall'] = hsv_cls.grey
 # objects['goal1'] = hsv_cls.orange
-objects['ramp'] = hsv_cls.pink
+# objects['ramp'] = hsv_cls.pink
 
 # objects['platform'] = hsv_cls.blue
 # mask_clr = 'goal1'
 # box_clr = "platform"
 
 # objects['danger_zone'] = hsv_cls.red
-# objects['goal'] =  hsv_cls.green
-mask_clr = 'ramp'
-# box_clr = "goal"
+objects['goal'] =  hsv_cls.green
+mask_clr = 'danger_zone'
+box_clr = "goal"
 
 class ExtractFeatures:
 	

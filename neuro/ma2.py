@@ -38,7 +38,7 @@ class Action:
         return self.__class__.__name__.lower()
 
     def load_graph(self):
-        model_path = f"macro_actions/v3/{self.name}.pb"
+        model_path = f"macro_actions/v4/{self.name}.pb"
         self.graph = load_pb(model_path)
 
     def process_state(self):
@@ -212,11 +212,11 @@ class Interact(Action):
     def load_graph(self, override=False):
 
         if override:
-            self.model_path = "macro_actions/v3/interact_adv.pb"
+            self.model_path = "macro_actions/v4/interact_adv.pb"
             self.config['mode'] = 'dual'
             self.config['mask'] = "wall"
         else:
-            self.model_path = f"macro_actions/v3/interact"
+            self.model_path = f"macro_actions/v4/interact"
             if obstacle(self.state, "wall") and not any(
                 i[2]=='ramp' for i in self.state['obj']):
                 self.model_path+= "_adv.pb"
@@ -241,12 +241,12 @@ class Explore(Action):
     def load_graph(self, override=False):
         if override:
             if 'left' in self.model_path:
-                self.model_path = "macro_actions/v3/explore_right.pb"
+                self.model_path = "macro_actions/v4/explore_right.pb"
             else:
-                self.model_path = "macro_actions/v3/explore_left.pb"
+                self.model_path = "macro_actions/v4/explore_left.pb"
         else:
             bbox = self.process_state()[2:]
-            self.model_path = f"macro_actions/v3/explore"
+            self.model_path = f"macro_actions/v4/explore"
             if (bbox[0]+bbox[2]/2)>0.49: # If obj is on right, go around left side
                 self.model_path+= "_right.pb"
             else:

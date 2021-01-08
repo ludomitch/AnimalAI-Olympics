@@ -385,9 +385,9 @@ class Ilasp:
         self.examples = examples + order
 
 
-    def run(self):        
+    def run(self, fname = "tmp.lp"):        
         # Create text file with lp
-        with open("tmp.lp", "w") as text_file:
+        with open(fname, "w") as text_file:
             text_file.write(self.create_mode_bias() + self.examples)
 
         # Start bash process that runs ilasp learning
@@ -427,8 +427,8 @@ class Logic:
     def update_examples(self, traces):
         self.ilasp.generate_examples(traces)
 
-    def update_learned_lp(self):
-        rules_learned = self.ilasp.run()
+    def update_learned_lp(self, fname = "tmp.lp"):
+        rules_learned = self.ilasp.run(fname)
         if rules_learned:
             self.clingo.learned_lp = rules_learned
 

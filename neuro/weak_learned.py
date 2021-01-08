@@ -197,9 +197,9 @@ class Pipeline:
                 success_count += success
                 self.arena_successes[arena[0]][arena[1]]=int(success)
 
-            with open(f"test_run_traces{self.save_path}.txt", "w") as text_file:
+            with open(f"test_stats/test_run_traces{self.save_path}.txt", "w") as text_file:
                 text_file.write(str(traces))
-            with open(f"test_run_successes{self.save_path}.txt", "w") as text_file:
+            with open(f"test_stats/test_run_successes{self.save_path}.txt", "w") as text_file:
                 text_file.write(str(self.arena_successes))
             end = time.time()
             print(self.arena_successes)

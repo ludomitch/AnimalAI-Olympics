@@ -4,12 +4,12 @@ cwd = os.getcwd()
 if "Desktop" in cwd:
 	sys.path.insert(0, "/Users/ludo/Desktop/animalai/animalai/animalai_train")
 	sys.path.insert(1, "/Users/ludo/Desktop/animalai/animalai/animalai")
-	env_path = '../env/aaiagain'
+	env_path = '../envs/aaiv2'
 
 else:
 	sys.path.insert(0, "/media/home/ludovico/aai/animalai")
 	sys.path.insert(1, "/media/home/ludovico/aai/animalai_train")
-	env_path = 'linux_builds/aai'
+	env_path = 'linux_builds/AnimalAI'
 
 from weak_learned import Pipeline
 from collections import namedtuple

@@ -830,7 +830,7 @@ class AnimalAIEnvironment(UnityEnvironment):
                 raise timeoutException
     def reset_train(self, arenas_configurations: ArenaConfig = None) -> None:
 
-        self.ramp_config =slc(self.counter)
+        self.ramp_config =rmc(self.counter)
         # tests = [ '4-1-1' , '4-1-3' , '4-2-1' , '4-2-2' , '4-2-3' , '4-3-1' , '4-3-2' , '4-3-3' , '4-1-2' , '4-22-3' , '1-25-1' , '1-25-2' , '1-25-3' , '4-12-1' , '4-12-2' , '4-12-3' , '4-19-1' , '4-19-2' , '4-19-3' , '4-20-1' , '4-20-2' , '4-20-3' , '4-21-1' , '4-21-2' , '4-21-3' , '4-22-1' , '4-22-2' , '4-23-1' , '4-23-2' , '4-23-3' , '4-24-1' , '4-24-2' , '4-24-3' , '4-29-1' , '4-29-2' , '4-29-3' ]
         # ac = ArenaConfig(f"../competition_configurations/{tests[self.counter]}.yml")
         ac = ArenaConfig(self.ramp_config)

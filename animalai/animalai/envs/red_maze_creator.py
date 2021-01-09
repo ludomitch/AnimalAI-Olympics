@@ -34,7 +34,7 @@ def run(counter):
     # agent_p = vector(randrange(1,39), 0 , randrange(1,39), randrange(1,39))
     agent_p = vector(randrange(2,38),0, randrange(1,3))
 
-    if counter>=20:
+    if counter>=100:
         if choices([True, False], weights=[0.5,0.5])[0]:
             return alternate()
 

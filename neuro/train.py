@@ -26,7 +26,7 @@ def get_args():
     parser.add_argument('-r', '--run_id', type=str, default='run1', help='Curriculum prefix name')
     parser.add_argument('-ne', '--num_envs', type=int, default=1, help='Number of simultaneous envs open')
     parser.add_argument('-na', '--num_arenas', type=int, default=1, help='Number of simultaneous arenas on each env')
-    parser.add_argument('-ao', '--alter_obs', type=bool, default=False, help='Whether to alter observations or not with CV')
+    parser.add_argument('-ao', '--alter_obs', type=bool, default=True, help='Whether to alter observations or not with CV')
     parser.add_argument('-lm', '--load_model', type=bool, default=False, help='Whether to load_model')
 
 

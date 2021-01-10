@@ -27,12 +27,12 @@ hsv_cls = HSV()
 objects = OD()
 # objects['danger_zone'] = hsv_cls.red
 # objects['wall'] = hsv_cls.grey
-objects['goal'] = hsv_cls.green
-# objects['ramp'] = hsv_cls.pink
+# objects['goal'] = hsv_cls.green
+objects['ramp'] = hsv_cls.pink
 
-objects['platform'] = hsv_cls.blue
-mask_clr = 'platform'
-box_clr = "goal"
+# objects['platform'] = hsv_cls.blue
+mask_clr = 'ramp'
+# box_clr = "goal"
 
 # objects['danger_zone'] = hsv_cls.red
 # objects['goal'] =  hsv_cls.green

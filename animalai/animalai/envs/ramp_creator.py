@@ -1,5 +1,5 @@
 from collections import namedtuple as nt
-from random import randrange, choice
+from random import randrange, choice, choices
 import math
 
 def make_obj(pos=False, size=False, name=False, rot=False):
@@ -34,16 +34,21 @@ def run(counter):
     ramp_p = vector(randrange(10,30),0, randrange(10,30))
     ramp_length_upper_limit = (min(40-ramp_p.z, ramp_p.z)-4)*2
     ramp_width_upper_limit = (min(40-ramp_p.x, ramp_p.x)-4)*2
-    ramp_width = randrange(2,ramp_width_upper_limit)
-    ramp_length = randrange(2,ramp_length_upper_limit)
-    ramp_height = randrange(1,max(int(ramp_length*(3/5)),3))
+    if choices([True, False], weights = [0.7, 0.3])[0]:
+        ramp_size = randrange(3,5)
+        ramp_width = ramp_size
+        ramp_length = ramp_size
+    else:
+        ramp_width = randrange(2,ramp_width_upper_limit)
+        ramp_length = randrange(2,ramp_length_upper_limit)
+    ramp_height = randrange(1,int(ramp_length*(3/5))*2)*0.5
     ramp_s = vector(ramp_width, ramp_height, ramp_length)
     rot = 180
 
 
     wall_p = vector(ramp_p.x, 0, 1.5 + ramp_p.z+ramp_s.z/2)
     wall_s = vector(ramp_width, ramp_s.y, 3)
-    goodgoal_p = vector(wall_p.x, ramp_height+1, wall_p.z)
+    goodgoal_p = vector(wall_p.x, ramp_height+1, wall_p.z+3)
     goodgoal_s = vector(3,3,3)
     agent_limit_x = [max(int(wall_p.x-wall_s.x/2),1), min(int(wall_p.x+wall_s.x/2),37)]
     agent_limit_z = [max(int(wall_p.z-wall_s.z/2),1), min(int(wall_p.z+wall_s.z/2),37)]

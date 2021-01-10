@@ -348,8 +348,7 @@ class UnityEnvironment(BaseEnv):
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
-            vector_obs.shape.extend([vel_shape]) # 2 velocity
-            vector_obs.float_data.data.extend(vel_vector)
+
             # Reward shaping
             try:
                 backwards_punishment = 1

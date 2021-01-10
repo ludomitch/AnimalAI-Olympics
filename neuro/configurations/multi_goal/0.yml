@@ -1,23 +1,11 @@
 !ArenaConfig
 arenas:
   -1: !Arena
-    pass_mark: 7
-    t: 250
+    pass_mark: 5
+    t: 150
     items:
     - !Item
       name: Agent
-    - !Item
-      name: GoodGoalMulti
-    - !Item
-      name: GoodGoalMulti
-    - !Item
-      name: GoodGoalMulti
-    - !Item
-      name: GoodGoalMulti
-    - !Item
-      name: GoodGoalMulti
-    - !Item
-      name: GoodGoalMulti
     - !Item
       name: GoodGoalMulti
     - !Item

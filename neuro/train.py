@@ -49,7 +49,7 @@ def train(opt):
     if opt.load_model:
         model_path = f"../models/{opt.load_model}"
     run_id = opt.run_id
-    base_port = 5010
+    base_port = 5010 + random.randrange(0,100)
     number_of_environments = opt.num_envs
     number_of_arenas_per_environment = opt.num_arenas
     print("ALTER OBS IS",opt.alter_obs)

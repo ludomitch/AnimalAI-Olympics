@@ -52,37 +52,37 @@ class TrainerControllerAAI(TrainerController):
         env.reset(config=new_meta_curriculum_config)
 
 
-    # @timed
-    # def start_learning(self, env_manager: EnvManager) -> None:
-    #     self._create_model_path(self.model_path)
-    #     tf.reset_default_graph()
-    #     global_step = 0
-    #     last_brain_behavior_ids: Set[str] = set()
-    #     try:
-    #         # Initial reset
-    #         self._reset_env(env_manager)
-    #         while self._not_done_training():
-    #             external_brain_behavior_ids = set(env_manager.external_brains.keys())
-    #             new_behavior_ids = external_brain_behavior_ids - last_brain_behavior_ids
-    #             self._create_trainers_and_managers(env_manager, new_behavior_ids)
-    #             last_brain_behavior_ids = external_brain_behavior_ids
-    #             n_steps = self.advance(env_manager)
-    #             for _ in range(n_steps):
-    #                 global_step += 1
-    #                 if global_step!=0 and global_step%800==0:
-    #                     self._reset_env(env_manager)
-    #                     for trainer in self.trainers.values():
-    #                         trainer.end_episode()
-    #                 self.reset_env_if_ready(env_manager, global_step)
-    #                 if self._should_save_model(global_step):
-    #                     self._save_model()
+    @timed
+    def start_learning(self, env_manager: EnvManager) -> None:
+        self._create_model_path(self.model_path)
+        tf.reset_default_graph()
+        global_step = 0
+        last_brain_behavior_ids: Set[str] = set()
+        try:
+            # Initial reset
+            self._reset_env(env_manager)
+            while self._not_done_training():
+                external_brain_behavior_ids = set(env_manager.external_brains.keys())
+                new_behavior_ids = external_brain_behavior_ids - last_brain_behavior_ids
+                self._create_trainers_and_managers(env_manager, new_behavior_ids)
+                last_brain_behavior_ids = external_brain_behavior_ids
+                n_steps = self.advance(env_manager)
+                for _ in range(n_steps):
+                    global_step += 1
+                    if global_step!=0 and global_step%800==0:
+                        self._reset_env(env_manager)
+                        for trainer in self.trainers.values():
+                            trainer.end_episode()
+                    self.reset_env_if_ready(env_manager, global_step)
+                    if self._should_save_model(global_step):
+                        self._save_model()
 
-    #         # Final save Tensorflow model
-    #         if global_step != 0 and self.train_model:
-    #             self._save_model()
-    #     except (KeyboardInterrupt, UnityCommunicationException):
-    #         if self.train_model:
-    #             self._save_model_when_interrupted()
-    #         pass
-    #     if self.train_model:
-    #         self._export_graph()
+            # Final save Tensorflow model
+            if global_step != 0 and self.train_model:
+                self._save_model()
+        except (KeyboardInterrupt, UnityCommunicationException):
+            if self.train_model:
+                self._save_model_when_interrupted()
+            pass
+        if self.train_model:
+            self._export_graph()

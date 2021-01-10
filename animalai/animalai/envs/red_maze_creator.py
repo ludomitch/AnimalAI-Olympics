@@ -35,7 +35,7 @@ def run(counter):
     agent_p = vector(randrange(2,38),0, randrange(1,3))
 
     if counter>=100:
-        if choices([True, False], weights=[0.5,0.5])[0]:
+        if choices([True, False], weights=[0.6,0.4])[0]:
             return alternate()
 
 
@@ -127,14 +127,42 @@ arenas:
         if obj in ['Agent']:
             inp['rot'] = agent_rot
         base+=make_obj(**inp)
-
-    for c in range(4):
+    others = 4
+    start = 5
+    if choices([True, False], weights=[0.8,0.2])[0]:
         inp = {
             "name": "DeathZone",
-            "pos": vector(5+c*10, 0, 20),
-            "size":vector(randrange(5,10),0, randrange(20,30)),
+            "pos": vector(3, 0, 20),
+            "size":vector(6, 0, randrange(20,30)),
+            "rot":0
+        }
+        base+=make_obj(**inp)
+
+        inp = {
+            "name": "DeathZone",
+            "pos": vector(37, 0, 20),
+            "size":vector(6,0, randrange(20,30)),
             "rot":0
         }
 
+        base+=make_obj(**inp)
+        others = 2
+        start = 15
+    if choices([True, False], weights=[0.8,0.2])[0]:
+        inp = {
+            "name": "DeathZone",
+            "pos": vector(choice([10,20,30]), 0, 20),
+            "size":vector(15, 0, randrange(1,6)),
+            "rot":0
+        }
+        base+=make_obj(**inp)
+
+    for c in range(others):
+        inp = {
+            "name": "DeathZone",
+            "pos": vector(start+c*10, 0, 20),
+            "size":vector(randrange(5,10),0, randrange(20,30)),
+            "rot":0
+        }
         base+=make_obj(**inp)
     return [base]

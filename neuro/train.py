@@ -15,6 +15,7 @@ from animalai_train.run_training_aai import run_training_aai;
 from animalai.envs.arena_config import ArenaConfig
 
 import warnings
+import random
 warnings.filterwarnings('ignore')
 
 def get_args():
@@ -67,7 +68,7 @@ def train(opt):
 
     print(
         f"Training now with {number_of_environments} envs each with {number_of_arenas_per_environment} arenas")
-    run_training_aai(0, args)
+    run_training_aai(random.randrange(0,100), args)
     print("Done training")
 
 if __name__ == '__main__':

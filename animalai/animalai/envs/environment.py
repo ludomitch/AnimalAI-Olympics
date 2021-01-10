@@ -321,7 +321,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='dual', with_up=True):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=False):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -358,67 +358,67 @@ class UnityEnvironment(BaseEnv):
                 if reward>0.1:
                     reward += 1
 
-                # if vel_vector_full[-1]<0: # Punish going backwards
-                #     reward += backwards_punishment*vel_vector[-1] # vel vector is negative
-                # if with_up:
-                #     if vel_vector_full[1]>0.01:
-                #         reward += upwards_reward*vel_vector[1]
-                #     elif vel_vector_full[1]<-0.01:
-                #         reward +=downwards_punishment*vel_vector[1]
+                if vel_vector_full[-1]<0: # Punish going backwards
+                    reward += backwards_punishment*vel_vector[-1] # vel vector is negative
+                if with_up:
+                    if vel_vector_full[1]>0.01:
+                        reward += upwards_reward*vel_vector[1]
+                    elif vel_vector_full[1]<-0.01:
+                        reward +=downwards_punishment*vel_vector[1]
                 agent_infos[agent_name].value[agent].reward = reward
 
             except IndexError:
                 pass
 
-            # if mode == 'normal': # Just bbox
-            #     # 3) Extract image in bytes and then remove visual observations
-            #     img = agent_obs[0].compressed_data
-            #     if self.debug:
-            #         self.img = img
-            #     del agent_obs[0]
+            if mode == 'normal': # Just bbox
+                # 3) Extract image in bytes and then remove visual observations
+                img = agent_obs[0].compressed_data
+                if self.debug:
+                    self.img = img
+                del agent_obs[0]
 
-            #     #4) Run CV and retrieve bounding boxes as a list
-            #     res = self.ef.run(img, mode)
-            #     vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
-            #     vector_obs.float_data.data.extend(vel_vector + res)
-            # elif mode == 'mask': # Just mask
-            #     # 3) Extract image in bytes and then remove visual observations
-            #     agent_obs[0].shape.remove(84)
-            #     agent_obs[0].shape.remove(84)
-            #     agent_obs[0].shape.remove(3)
-            #     agent_obs[0].shape.extend([84,84,1])
+                #4) Run CV and retrieve bounding boxes as a list
+                res = self.ef.run(img, mode)
+                vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
+                vector_obs.float_data.data.extend(vel_vector + res)
+            elif mode == 'mask': # Just mask
+                # 3) Extract image in bytes and then remove visual observations
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(3)
+                agent_obs[0].shape.extend([84,84,1])
 
-            #     #4) Run CV and retrieve bounding boxes as a list
-            #     mask_img = self.ef.run_mask(img, mode)
-            #     vector_obs.shape.extend([vel_shape]) # 2 velocity
-            #     vector_obs.float_data.data.extend(vel_vector)
+                #4) Run CV and retrieve bounding boxes as a list
+                mask_img = self.ef.run_mask(img, mode)
+                vector_obs.shape.extend([vel_shape]) # 2 velocity
+                vector_obs.float_data.data.extend(vel_vector)
 
-            #     # 5) Convert img to bytes
-            #     byteImgIO = io.BytesIO()
-            #     byteImg = Image.fromarray(mask_img.astype(np.uint8))
-            #     byteImg.save(byteImgIO, "PNG")
-            #     byteImgIO.seek(0)
-            #     byteImg = byteImgIO.read()
-            #     agent_obs[0].compressed_data = byteImg                
-            # else: # dual: bbox + mask
-            #     # 3) Extract image in bytes and then remove visual observations
-            #     agent_obs[0].shape.remove(84)
-            #     agent_obs[0].shape.remove(84)
-            #     agent_obs[0].shape.remove(3)
-            #     agent_obs[0].shape.extend([84,84,1])
+                # 5) Convert img to bytes
+                byteImgIO = io.BytesIO()
+                byteImg = Image.fromarray(mask_img.astype(np.uint8))
+                byteImg.save(byteImgIO, "PNG")
+                byteImgIO.seek(0)
+                byteImg = byteImgIO.read()
+                agent_obs[0].compressed_data = byteImg                
+            else: # dual: bbox + mask
+                # 3) Extract image in bytes and then remove visual observations
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(84)
+                agent_obs[0].shape.remove(3)
+                agent_obs[0].shape.extend([84,84,1])
 
-            #     #4) Run CV and retrieve bounding boxes as a list
-            #     mask_img, bbox = self.ef.run_dual(img, mode)
-            #     vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
-            #     vector_obs.float_data.data.extend(vel_vector + bbox)
+                #4) Run CV and retrieve bounding boxes as a list
+                mask_img, bbox = self.ef.run_dual(img, mode)
+                vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
+                vector_obs.float_data.data.extend(vel_vector + bbox)
 
-            #     # 5) Convert img to bytes
-            #     byteImgIO = io.BytesIO()
-            #     byteImg = Image.fromarray(mask_img.astype(np.uint8))
-            #     byteImg.save(byteImgIO, "PNG")
-            #     byteImgIO.seek(0)
-            #     byteImg = byteImgIO.read()
-            #     agent_obs[0].compressed_data = byteImg
+                # 5) Convert img to bytes
+                byteImgIO = io.BytesIO()
+                byteImg = Image.fromarray(mask_img.astype(np.uint8))
+                byteImg.save(byteImgIO, "PNG")
+                byteImgIO.seek(0)
+                byteImg = byteImgIO.read()
+                agent_obs[0].compressed_data = byteImg
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:
         init_output = output.rl_initialization_output
@@ -737,7 +737,7 @@ class AnimalAIEnvironment(UnityEnvironment):
         grayscale: bool = False,
         side_channels: Optional[List[SideChannel]] = None,
         alter_obs: bool = False,
-        train:bool=True
+        train:bool=False
     ):
 
         args = self.executable_args(n_arenas, play, resolution, grayscale)

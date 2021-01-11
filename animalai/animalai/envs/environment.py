@@ -4,7 +4,7 @@ from animalai.envs.ramp_creator import run as rc
 from animalai.envs.red_maze_creator import run as rmc
 from animalai.envs.interact_creator import run as ic
 from animalai.envs.slack_creator import run as slc
-
+import random
 
 import atexit
 import glob
@@ -321,7 +321,7 @@ class UnityEnvironment(BaseEnv):
                 )
 
 
-    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=True):
+    def _alter_observations(self, rl_output, agent_name='AnimalAI?team=0',mode='mask', with_up=False):
         # agent_name ='AnimalAI?team=0'
         # Reformat observations for each agent
 
@@ -348,8 +348,8 @@ class UnityEnvironment(BaseEnv):
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
-            # vector_obs.shape.extend([vel_shape]) # 2 velocity
-            # vector_obs.float_data.data.extend(vel_vector)
+            vector_obs.shape.extend([vel_shape]) # 2 velocity
+            vector_obs.float_data.data.extend(vel_vector)
             # Reward shaping
             try:
                 backwards_punishment = 1
@@ -357,8 +357,6 @@ class UnityEnvironment(BaseEnv):
                 downwards_punishment = 1
                 if reward>0.1:
                     reward += 1
-                else:
-                    reward -= 0.01
                 if vel_vector_full[-1]<0.1: # Punish going backwards
                     reward += backwards_punishment*vel_vector[-1] # vel vector is negative
                 if with_up:
@@ -371,55 +369,55 @@ class UnityEnvironment(BaseEnv):
             except IndexError:
                 pass
 
-            if mode == 'normal': # Just bbox
-                # 3) Extract image in bytes and then remove visual observations
-                img = agent_obs[0].compressed_data
-                if self.debug:
-                    self.img = img
-                del agent_obs[0]
+            # if mode == 'normal': # Just bbox
+            #     # 3) Extract image in bytes and then remove visual observations
+            #     img = agent_obs[0].compressed_data
+            #     if self.debug:
+            #         self.img = img
+            #     del agent_obs[0]
 
-                #4) Run CV and retrieve bounding boxes as a list
-                res = self.ef.run(img, mode)
-                vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
-                vector_obs.float_data.data.extend(vel_vector + res)
-            elif mode == 'mask': # Just mask
-                # 3) Extract image in bytes and then remove visual observations
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(3)
-                agent_obs[0].shape.extend([84,84,1])
+            #     #4) Run CV and retrieve bounding boxes as a list
+            #     res = self.ef.run(img, mode)
+            #     vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
+            #     vector_obs.float_data.data.extend(vel_vector + res)
+            # elif mode == 'mask': # Just mask
+            #     # 3) Extract image in bytes and then remove visual observations
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(3)
+            #     agent_obs[0].shape.extend([84,84,1])
 
-                #4) Run CV and retrieve bounding boxes as a list
-                mask_img = self.ef.run_mask(img, mode)
-                vector_obs.shape.extend([vel_shape]) # 2 velocity
-                vector_obs.float_data.data.extend(vel_vector)
+            #     #4) Run CV and retrieve bounding boxes as a list
+            #     mask_img = self.ef.run_mask(img, mode)
+            #     vector_obs.shape.extend([vel_shape]) # 2 velocity
+            #     vector_obs.float_data.data.extend(vel_vector)
 
-                # 5) Convert img to bytes
-                byteImgIO = io.BytesIO()
-                byteImg = Image.fromarray(mask_img.astype(np.uint8))
-                byteImg.save(byteImgIO, "PNG")
-                byteImgIO.seek(0)
-                byteImg = byteImgIO.read()
-                agent_obs[0].compressed_data = byteImg                
-            else: # dual: bbox + mask
-                # 3) Extract image in bytes and then remove visual observations
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(3)
-                agent_obs[0].shape.extend([84,84,1])
+            #     # 5) Convert img to bytes
+            #     byteImgIO = io.BytesIO()
+            #     byteImg = Image.fromarray(mask_img.astype(np.uint8))
+            #     byteImg.save(byteImgIO, "PNG")
+            #     byteImgIO.seek(0)
+            #     byteImg = byteImgIO.read()
+            #     agent_obs[0].compressed_data = byteImg                
+            # else: # dual: bbox + mask
+            #     # 3) Extract image in bytes and then remove visual observations
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(3)
+            #     agent_obs[0].shape.extend([84,84,1])
 
-                #4) Run CV and retrieve bounding boxes as a list
-                mask_img, bbox = self.ef.run_dual(img, mode)
-                vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
-                vector_obs.float_data.data.extend(vel_vector + bbox)
+            #     #4) Run CV and retrieve bounding boxes as a list
+            #     mask_img, bbox = self.ef.run_dual(img, mode)
+            #     vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
+            #     vector_obs.float_data.data.extend(vel_vector + bbox)
 
-                # 5) Convert img to bytes
-                byteImgIO = io.BytesIO()
-                byteImg = Image.fromarray(mask_img.astype(np.uint8))
-                byteImg.save(byteImgIO, "PNG")
-                byteImgIO.seek(0)
-                byteImg = byteImgIO.read()
-                agent_obs[0].compressed_data = byteImg
+            #     # 5) Convert img to bytes
+            #     byteImgIO = io.BytesIO()
+            #     byteImg = Image.fromarray(mask_img.astype(np.uint8))
+            #     byteImg.save(byteImgIO, "PNG")
+            #     byteImgIO.seek(0)
+            #     byteImg = byteImgIO.read()
+            #     agent_obs[0].compressed_data = byteImg
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:
         init_output = output.rl_initialization_output
@@ -831,10 +829,12 @@ class AnimalAIEnvironment(UnityEnvironment):
                 raise timeoutException
     def reset_train(self, arenas_configurations: ArenaConfig = None) -> None:
 
-        self.ramp_config =rc(self.counter)
-        # tests = [ '4-1-1' , '4-1-3' , '4-2-1' , '4-2-2' , '4-2-3' , '4-3-1' , '4-3-2' , '4-3-3' , '4-1-2' , '4-22-3' , '1-25-1' , '1-25-2' , '1-25-3' , '4-12-1' , '4-12-2' , '4-12-3' , '4-19-1' , '4-19-2' , '4-19-3' , '4-20-1' , '4-20-2' , '4-20-3' , '4-21-1' , '4-21-2' , '4-21-3' , '4-22-1' , '4-22-2' , '4-23-1' , '4-23-2' , '4-23-3' , '4-24-1' , '4-24-2' , '4-24-3' , '4-29-1' , '4-29-2' , '4-29-3' , ]
-        # ac = ArenaConfig(f"../competition_configurations/{tests[self.counter]}.yml")
-        ac = ArenaConfig(self.ramp_config)
+        # self.ramp_config =rc(self.counter)
+        tests = ['1-20-1', '1-20-2', '1-20-3', '1-21-1', '1-21-2', '1-21-3', '1-22-1', '1-22-2', '1-22-3', '1-18-1', '1-18-2', '1-18-3', '1-19-1', '1-19-2', '1-19-3', '4-30-1', '4-30-2', '4-30-3', '1-23-3', '1-23-1', '1-23-2', '1-27-1', '1-27-2', '1-27-3', '1-28-1', '1-28-2', '1-28-3', '1-26-3', '1-26-2', '1-26-1', '1-29-1', '1-29-2', '1-29-3', '1-30-1', '1-30-2', '1-30-3']
+        ac = ArenaConfig(f"../competition_configurations/{random.choice(tests)}.yml")
+        ac.arenas[-1] = ac.arenas[0]
+
+        # ac = ArenaConfig(self.ramp_config)
         self.counter+=1
         if self.counter % 50 == 0:
             print(f"COUNTER: {self.counter}")

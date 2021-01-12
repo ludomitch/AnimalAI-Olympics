@@ -39,7 +39,7 @@ def run(counter):
             return alternate()
 
 
-    if counter < 20:
+    if counter < 40:
         goal_z = agent_p.z+8
         goal_x = agent_p.x + randrange(-3,3)
         red_start = goal_z + 10

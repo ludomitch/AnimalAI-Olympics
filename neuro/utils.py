@@ -130,6 +130,9 @@ ef = ExtractFeatures(display=False, training=False)
 def first_steps(env, arena_name):
     x1 = ef.run(env.render())['goal1']
     st = env.step([0,0])
+    if not x1:
+        # print("EMPTY")
+        return st, ""
     x2 = ef.run(env.render())['goal1']
     mov = np.mean([i[0][0]for i in x2])-np.mean([i[0][0]for i in x1])
     res = ""

@@ -201,7 +201,7 @@ class Action:
 
             # BRAKES
             if not go and "explore" in self.model_path:
-                print("BRAKES")
+                # print("BRAKES")
                 for _ in range(2):
                     self.env.step([-1,0])
                     self.state = preprocess(self.ct, self.step_results, self.micro_step,

@@ -165,12 +165,16 @@ class Pipeline:
                 observables_buffer = []
                 step_results = self.env.step([0,0])
                 state = {'reward':0}
+                step_results, moving = first_steps(self.env, "arena_name")  # Take 0,0 step
+                state['moving'] = moving
                 while not self.episode_over(step_results[2]):
                     if (global_steps >= self.ac.arenas[0].t):
                         success = False
                         break
                     state = preprocess(self.ct, step_results, global_steps, state['reward'])
-                    state['moving'] = False
+                    if macro_step==0:
+                        state['moving'] = moving
+
                     macro_action, observables = self.logic.run(
                         macro_step,
                         state,

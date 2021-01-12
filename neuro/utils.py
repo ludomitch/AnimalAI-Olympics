@@ -80,27 +80,76 @@ ctx_observables = [
 
 ef = ExtractFeatures(display=False, training=False)
 
+# def first_steps(env, arena_name):
+#     # if 'moving' in arena_name:
+#     #     return env.step([0,0]), True
+#     # return env.step([0,0]), False
+#     x1 = ef.run(env.render())['goal1']
+#     env.step([0,0])
+#     x2 = ef.run(env.render())['goal1']
+#     st = env.step([0,0])
+#     x3 = ef.run(env.render())['goal1']
+#     st = env.step([0,0])
+#     x4 = ef.run(env.render())['goal1']
+#     moving_left = 0
+#     moving_right = 0
+#     left = 0
+#     right = 0
+#     left_size = 0
+#     right_size = 0
+#     for i,j,k,l in zip(x1,x2,x3,x4):
+#         tmp = (j[0][0]-i[0][0])+(k[0][0]-j[0][0])+(l[0][0]-k[0][0])
+#         if tmp > 0:
+#             moving_left+=1
+#         if tmp < 0:
+#             moving_right+= 1
+#         if tmp == 0:
+#             if i[0][0] < 0.5:
+#                 left += 1
+#                 left_size = i[3]
+#             else:
+#                 right += 1
+#                 right_size +=i[3]
+
+#     if moving_left+moving_right>0:
+#         if left > right:
+#             res = "more_goals(left)."
+#         elif right>left:
+#             res = "more_goals(right)."
+#         else:
+#             res = ""
+#     else:
+#         if left_size>right_size:
+#             res = "more_goals(left)."   
+#         elif right_size>left_size:
+#             res = "more_goals(right)."
+#         else:
+#             res = ""
+#     return st, res
+
 def first_steps(env, arena_name):
-    if 'moving' in arena_name:
-        return env.step([0,0]), True
-    return env.step([0,0]), False
-    moving = False
-    move_count = 0
-    obj = ef.run(env.render())
-    for i in range(5):
-        res = env.step([0,0])
-        obj_1 = ef.run(env.render())
-        for v,v1 in zip(obj.values(), obj_1.values()):
-            if v:
-                o = v[0][0][0]* v[0][0][1]
-                o1 = v1[0][0][0]* v1[0][0][1]
-                if o1!=o:
-                    move_count+=1
-        obj = obj_1
-        if move_count:
-            moving = True
-            break
-    return res, moving
+    x1 = ef.run(env.render())['goal1']
+    st = env.step([0,0])
+    x2 = ef.run(env.render())['goal1']
+    mov = np.mean([i[0][0]for i in x2])-np.mean([i[0][0]for i in x1])
+    res = ""
+    if mov>0:
+        res = "more_goals(right).\n"
+    elif mov<0:
+        res = "more_goals(left).\n"
+    else: # res = 0
+        left = [i[2] for i in x1 if i[0][0]<0.5]
+        right = [i[2] for i in x2 if i[0][0]>0.5]
+        if len(left)>len(right):
+            res = "more_goals(left).\n"
+        elif len(right)>len(left):
+            res = "more_goals(right).\n"
+        else:
+            if sum(left)>sum(right):
+                res = "more_goals(left).\n"
+            else:
+                res = "more_goals(right).\n"
+    return st, res
 
 def goal_on_platform(state):
     img = state['visual_obs']
@@ -186,7 +235,7 @@ def goal_above_wall(state):
 def preprocess(ct, step_results, step, reward, macro_action=None):
     visual_obs = step_results[3]["batched_step_result"].obs[0][0] # last 0 idx bc batched
     vector_obs = step_results[3]["batched_step_result"].obs[1][0]
-    vector_obs = [vector_obs[0]/5.81, vector_obs[1], vector_obs[2]/11.6]
+    vector_obs = [vector_obs[0]/9.45, vector_obs[1]/5.8, vector_obs[2]/18.8]
     bboxes = ef.run(visual_obs)
     ids = {k:[] for k in object_types}
     for ot,  ct_i in ct.items():

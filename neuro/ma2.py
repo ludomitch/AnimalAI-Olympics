@@ -54,6 +54,8 @@ class Action:
         res = np.zeros(obs_size+vel_size)
         res[:vel_size] = vel
 
+        if self.config['mode'] == "full":
+            return self.state['visual_obs'], res
         if not self.config['mode'] == "mask":
             obj = self.config['box']
             try: # Look for id first, then obj type
@@ -94,7 +96,7 @@ class Action:
                 if visual_obs.shape[0]!=84:
                     visual_obs = cv2.cv2.resize(visual_obs, dsize=(84, 84), interpolation=cv2.INTER_CUBIC)
                 vector_obs = vector_obs.reshape(1, -1)
-                visual_obs = visual_obs.reshape(1, 84, 84, 1)
+                visual_obs = visual_obs.reshape(1, 84, 84, -1)
                 feed_dict = {input_node: vector_obs,
                             action_masks: mask_constant,
                             visual_node: visual_obs}
@@ -259,9 +261,9 @@ class Avoid(Action):
          step_results=step_results, args=args, checks=checks)
 
         self.config = {
-            "mode":"dual",
-            "box": 'goal',
-            "mask": 'lava'
+            "mode":"full",
+            "box": None,
+            "mask": None
         }
         self.with_up = False
         self.always_visible = False
@@ -303,7 +305,7 @@ class Collect(Action):
         self.config = {
             "mode":"mask",
             "box": None,
-            "mask": 'goal1'
+            "mask": "goal1" # goal1
         }
         self.with_up = False
         self.always_visible = False
@@ -353,7 +355,7 @@ class Drop(Action):
     def run(self, pass_mark):
         """Rotate to first visible object"""
 
-        for i in range(10):
+        for i in range(30):
             action = [1, self.direction] if i<10 else [1, 0]
             self.step_results = self.env.step([action])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])

@@ -49,7 +49,7 @@ test_lp = main_lp + action_logic + """
 :~ initiate(climb).[-1@10]
 :~ initiate(rotate).[-1@2]
 :~ initiate(balance).[-1@3]
-:~ initiate(collect).[-1@8]
+:~ initiate(collect), not lava.[-1@8]
 :~ initiate(explore(V1)), occludes(V1).[-1@5, V1]
 :~ initiate(avoid).[-1@4]
 :~ initiate(explore(V1)), occludes_more(V1,V2).[-1@12, V1, V2]
@@ -92,15 +92,15 @@ def variabilise(lp):
             lp = lp.replace(str(var), var_map[var])
     return lp
 
-def more_goals(macro_step,state):
-    mg = ""
-    goals = [i for i in state['obj'] if i[1]=='goal1']
-    if len(goals)>1:
-        left = [i for i in goals if i[0][0]<0.5]
-        right = [i for i in goals if i[0][0]>0.5]
-        direction = "left" if len(left)>len(right) else 'right'
-        mg += f"more_goals({direction}).\n"
-    return mg
+# def more_goals(macro_step,state):
+#     mg = ""
+#     goals = [i for i in state['obj'] if i[1]=='goal1']
+#     if len(goals)>1:
+#         left = [i for i in goals if i[0][0]<0.5]
+#         right = [i for i in goals if i[0][0]>0.5]
+#         direction = "left" if len(left)>len(right) else 'right'
+#         mg += f"more_goals({direction}).\n"
+#     return mg
 
 class Grounder:
     def __init__(self):
@@ -143,8 +143,8 @@ class Grounder:
         for bbox, typ, _, _id in state['obj']:
             if get_overlap(bbox, bottom_rect)>0.5:
                 on += f"on(agent,{typ}).\n"
-        if on:
-            on += more_goals(macro_step, state)
+        # if on:
+        #     on += more_goals(macro_step, state)
 
         gop = goal_on_platform(state)
         if gop:
@@ -154,10 +154,9 @@ class Grounder:
 
     @staticmethod
     def moving(macro_step,state):
-        mv = ""
-        if state['moving']:
-            mv += "moving.\n"
-        return mv
+        if "moving" in state:
+            return state['moving']
+        return ""
     @staticmethod
     def visible(macro_step,state):
         visible = ""
@@ -265,9 +264,9 @@ class Clingo:
             check(time, 150):- initiate(explore(X)).
             check(time, 150):- initiate(balance).
             check(fallen, 0):- initiate(balance).
-            check(gop, 0):- initiate(balance).
             check(time, 150):- initiate(avoid).
             check(time, 20):- initiate(drop(X)).
+            check(fallen, 0):- initiate(drop(X)).
 
             """).atoms_as_string)
         checks = checks[0]

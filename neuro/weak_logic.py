@@ -264,6 +264,7 @@ class Clingo:
             check(time, 150):- initiate(explore(X)).
             check(time, 150):- initiate(balance).
             check(fallen, 0):- initiate(balance).
+            check(gop, 0):- initiate(balance).
             check(time, 150):- initiate(avoid).
             check(time, 20):- initiate(drop(X)).
             check(fallen, 0):- initiate(drop(X)).

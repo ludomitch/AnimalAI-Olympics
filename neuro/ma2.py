@@ -193,11 +193,21 @@ class Action:
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             go, stats = self.checks_clean()
-            if (abs(self.state['velocity'][0])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore']):
+            if (abs(self.state['velocity'][-1])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore']):
                 stuck+=1
                 if stuck>=20:
                     self.load_graph(True)
                     stuck = 0
+
+            # BRAKES
+            if not go and "explore" in self.model_path:
+                print("BRAKES")
+                for _ in range(2):
+                    self.env.step([-1,0])
+                    self.state = preprocess(self.ct, self.step_results, self.micro_step,
+                    self.state['reward'], self.name)
+                    self.micro_step += 1
+
         return self.step_results, self.state, stats, self.micro_step
 
 class Interact(Action):

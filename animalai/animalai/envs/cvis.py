@@ -16,7 +16,7 @@ class HSV:
     green = [[33,80,40], [102,255,255]]
     red = [[0,170,183], [2,186,188]]
     grey = [[0,0,0], [0,0,224]]
-    orange = [[20,100,192], [23,255,255]]
+    orange = [[20,100,192], [23,219,255]]
     brown = [[7,53,40], [18,87,121]]
     blue = [[119, 255, 106], [120, 255, 255]]
     pink = [[149, 117, 107], [165, 255, 255]]
@@ -109,6 +109,9 @@ class ExtractFeatures:
                     if (box[2]<0.03)|(occluding_area<60):
                         # print(box, occluding_area)
 
+                        continue
+                elif obj_type == 'goal1':
+                    if occluding_area<15:
                         continue
                 features[obj_type] += [(box, obj_type, occluding_area)]
         return features

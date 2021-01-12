@@ -10,7 +10,7 @@ class Visible(RollingChecks):
         super().__init__(state=state, args=args)
         self.obj_id = args
     def run(self):
-        if any(i[1]in['goal','goal1'] for i in self.state['obj']):
+        if any(i[1]in['goal'] for i in self.state['obj']):
             return True, f"Success: Object {self.obj_id} now visible"
         return False, f"Object {self.obj_id} still not visible"
 

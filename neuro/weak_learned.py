@@ -163,7 +163,7 @@ class Pipeline:
                 self.ct = {ot: CentroidTracker() for ot in object_types} # Initialise tracker
                 actions_buffer = []
                 observables_buffer = []
-                step_results = self.env.step([0,0])
+                # step_results = self.env.step([0,0])
                 state = {'reward':0}
                 step_results, moving = first_steps(self.env, "arena_name")  # Take 0,0 step
                 state['moving'] = moving

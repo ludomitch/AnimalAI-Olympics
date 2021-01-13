@@ -348,76 +348,76 @@ class UnityEnvironment(BaseEnv):
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
             del vector_obs.float_data.data[0]
-            # vector_obs.shape.extend([vel_shape]) # 2 velocity
-            # vector_obs.float_data.data.extend(vel_vector)
+            vector_obs.shape.extend([vel_shape]) # 2 velocity
+            vector_obs.float_data.data.extend(vel_vector)
             # Reward shaping
-            try:
-                backwards_punishment = 1
-                upwards_reward = 1
-                downwards_punishment = 1
-                if reward>0.1:
-                    reward += 1
-                if vel_vector_full[-1]<0.1: # Punish going backwards
-                    reward += backwards_punishment*vel_vector[-1] # vel vector is negative
-                if with_up:
-                    if vel_vector_full[1]>0.1:
-                        reward += upwards_reward*vel_vector[1]
-                    elif vel_vector_full[1]<-0.1:
-                        reward +=downwards_punishment*vel_vector[1]
-                agent_infos[agent_name].value[agent].reward = reward
+            # try:
+            #     backwards_punishment = 1
+            #     upwards_reward = 1
+            #     downwards_punishment = 1
+            #     if reward>0.1:
+            #         reward += 1
+            #     if vel_vector_full[-1]<0.1: # Punish going backwards
+            #         reward += backwards_punishment*vel_vector[-1] # vel vector is negative
+            #     if with_up:
+            #         if vel_vector_full[1]>0.1:
+            #             reward += upwards_reward*vel_vector[1]
+            #         elif vel_vector_full[1]<-0.1:
+            #             reward +=downwards_punishment*vel_vector[1]
+            #     agent_infos[agent_name].value[agent].reward = reward
 
-            except IndexError:
-                pass
+            # except IndexError:
+            #     pass
 
-            if mode == 'normal': # Just bbox
-                # 3) Extract image in bytes and then remove visual observations
-                img = agent_obs[0].compressed_data
-                if self.debug:
-                    self.img = img
-                del agent_obs[0]
+            # if mode == 'normal': # Just bbox
+            #     # 3) Extract image in bytes and then remove visual observations
+            #     img = agent_obs[0].compressed_data
+            #     if self.debug:
+            #         self.img = img
+            #     del agent_obs[0]
 
-                #4) Run CV and retrieve bounding boxes as a list
-                res = self.ef.run(img, mode)
-                vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
-                vector_obs.float_data.data.extend(vel_vector + res)
-            elif mode == 'mask': # Just mask
-                # 3) Extract image in bytes and then remove visual observations
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(3)
-                agent_obs[0].shape.extend([84,84,1])
+            #     #4) Run CV and retrieve bounding boxes as a list
+            #     res = self.ef.run(img, mode)
+            #     vector_obs.shape.extend([4+vel_shape]) # 2 velocity + 4 bbox
+            #     vector_obs.float_data.data.extend(vel_vector + res)
+            # elif mode == 'mask': # Just mask
+            #     # 3) Extract image in bytes and then remove visual observations
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(3)
+            #     agent_obs[0].shape.extend([84,84,1])
 
-                #4) Run CV and retrieve bounding boxes as a list
-                mask_img = self.ef.run_mask(img, mode)
-                vector_obs.shape.extend([vel_shape]) # 2 velocity
-                vector_obs.float_data.data.extend(vel_vector)
+            #     #4) Run CV and retrieve bounding boxes as a list
+            #     mask_img = self.ef.run_mask(img, mode)
+            #     vector_obs.shape.extend([vel_shape]) # 2 velocity
+            #     vector_obs.float_data.data.extend(vel_vector)
 
-                # 5) Convert img to bytes
-                byteImgIO = io.BytesIO()
-                byteImg = Image.fromarray(mask_img.astype(np.uint8))
-                byteImg.save(byteImgIO, "PNG")
-                byteImgIO.seek(0)
-                byteImg = byteImgIO.read()
-                agent_obs[0].compressed_data = byteImg                
-            else: # dual: bbox + mask
-                # 3) Extract image in bytes and then remove visual observations
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(84)
-                agent_obs[0].shape.remove(3)
-                agent_obs[0].shape.extend([84,84,1])
+            #     # 5) Convert img to bytes
+            #     byteImgIO = io.BytesIO()
+            #     byteImg = Image.fromarray(mask_img.astype(np.uint8))
+            #     byteImg.save(byteImgIO, "PNG")
+            #     byteImgIO.seek(0)
+            #     byteImg = byteImgIO.read()
+            #     agent_obs[0].compressed_data = byteImg                
+            # else: # dual: bbox + mask
+            #     # 3) Extract image in bytes and then remove visual observations
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(84)
+            #     agent_obs[0].shape.remove(3)
+            #     agent_obs[0].shape.extend([84,84,1])
 
-                #4) Run CV and retrieve bounding boxes as a list
-                mask_img, bbox = self.ef.run_dual(img, mode)
-                vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
-                vector_obs.float_data.data.extend(vel_vector + bbox)
+            #     #4) Run CV and retrieve bounding boxes as a list
+            #     mask_img, bbox = self.ef.run_dual(img, mode)
+            #     vector_obs.shape.extend([vel_shape+4]) # 2 velocity + 4 bbox
+            #     vector_obs.float_data.data.extend(vel_vector + bbox)
 
-                # 5) Convert img to bytes
-                byteImgIO = io.BytesIO()
-                byteImg = Image.fromarray(mask_img.astype(np.uint8))
-                byteImg.save(byteImgIO, "PNG")
-                byteImgIO.seek(0)
-                byteImg = byteImgIO.read()
-                agent_obs[0].compressed_data = byteImg
+            #     # 5) Convert img to bytes
+            #     byteImgIO = io.BytesIO()
+            #     byteImg = Image.fromarray(mask_img.astype(np.uint8))
+            #     byteImg.save(byteImgIO, "PNG")
+            #     byteImgIO.seek(0)
+            #     byteImg = byteImgIO.read()
+            #     agent_obs[0].compressed_data = byteImg
 
     def _update_group_specs(self, output: UnityOutputProto) -> None:
         init_output = output.rl_initialization_output
@@ -830,30 +830,23 @@ class AnimalAIEnvironment(UnityEnvironment):
     def reset_train(self, arenas_configurations: ArenaConfig = None) -> None:
 
 
-        if random.choices([True, False],weights=[0.2,0.8])[0]:
-            self.ramp_config =ic(self.counter)
+        if random.choices([True, False],weights=[0.3,0.7])[0]:
+            self.ramp_config =rmc(self.counter)
             ac = ArenaConfig(self.ramp_config)
         else:
-            tests = [ '6-10-1','6-10-2','6-10-3',
-'6-11-1','6-11-2','6-11-3',
-'6-12-1','6-12-2','6-12-3',
-'1-1-1', '1-1-2', '1-1-3', '1-2-1', '1-2-2' , '1-2-3' , '1-3-1' , '1-3-2' , '1-3-3' ,
-'4-16-1','4-16-2','4-16-3',
-'1-18-1' , '1-18-2' , '1-18-3' ,
-'1-19-1' ,'1-19-2' , '1-19-3',
-'1-4-1' , '1-4-2' , '1-4-3' , '1-5-1' , '1-5-2' , '1-5-3' , 
-'2-3-1' ,
-'2-4-1',
-'2-1-1','2-1-2',
-'2-2-1','2-2-2',
-'2-5-1','2-5-2','2-5-3',
-'2-6-1','2-6-2','2-6-3',
-'4-7-1', '4-7-2', '4-7-3',
-'3-4-1','3-4-2','3-4-3',
-'3-7-1','3-7-2','3-7-3',
-'5-13-1','5-13-2','5-13-3',
-'3-25-1','3-25-2','3-25-3',
-'3-26-1','3-26-2','3-26-3', 'fake1','fake2','fake1','fake2', 'fake1', 'fake2']
+            tests = ['4-6-1','4-6-2','4-6-3',
+'4-10-1','4-10-2','4-10-3',
+'4-11-1','4-11-2','4-11-3',
+'4-13-1','4-13-2','4-13-3',
+'4-14-1','4-14-2','4-14-3',
+'4-15-1','4-15-2','4-15-3',
+'4-30-1' , '4-30-2' , '4-30-3' , 
+'4-28-3' , '1-24-1' , '1-24-2' , '1-24-3' , '4-28-1' , '4-28-2',
+'4-1-1' , '4-1-3' , '4-2-1' , '4-2-2' , '4-2-3' , '4-3-1' , '4-3-2' ,
+'4-3-3' , '4-1-2' , '4-22-3' , '1-25-1' , '1-25-2' , '1-25-3' , '4-12-1' ,
+'4-12-2' , '4-12-3' , '4-19-1' , '4-19-2' , '4-19-3' , '4-20-1' , '4-20-2' , '4-20-3' ,
+'4-21-1' , '4-21-2' , '4-21-3' , '4-22-1' , '4-22-2' , '4-29-1' , '4-29-2' , '4-29-3' ,
+'1-26-1','1-26-2','1-26-3']
             ac = ArenaConfig(f"../competition_configurations/{random.choice(tests)}.yml")
             ac.arenas[-1] = ac.arenas[0]
         self.counter+=1

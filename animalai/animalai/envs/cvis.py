@@ -16,7 +16,8 @@ class HSV:
     green = [[33,80,40], [102,255,255]]
     red = [[0,170,183], [2,186,188]]
     grey = [[0,0,0], [0,0,224]]
-    orange = [[20,100,192], [23,219,255]]
+    orange1 = [[20,121,158], [23,255,255]]
+    orange2 = [[20,100,158], [23,255,255]]
     brown = [[7,53,40], [18,87,121]]
     blue = [[119, 255, 106], [120, 255, 255]]
     pink = [[149, 117, 107], [165, 255, 255]]
@@ -24,7 +25,8 @@ class HSV:
 hsv_cls = HSV()
 objects = OD()
 objects['goal'] =  hsv_cls.green
-objects['goal1'] = hsv_cls.orange
+objects['goal1'] = hsv_cls.orange1
+objects['goal2'] = hsv_cls.orange2
 objects['lava'] = hsv_cls.red
 objects['wall'] = hsv_cls.grey
 objects['platform'] = hsv_cls.blue
@@ -111,7 +113,7 @@ class ExtractFeatures:
 
                         continue
                 elif obj_type == 'goal1':
-                    if occluding_area<15:
+                    if occluding_area<5:
                         continue
                 features[obj_type] += [(box, obj_type, occluding_area)]
         return features

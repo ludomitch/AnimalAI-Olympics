@@ -14,6 +14,9 @@ def choose_action_probability(predictions_exp):
 
 test=False
 
+prev_action = {
+    0:0
+}
 
 class Action:
     def __init__(self, env, ct, state, step_results, args, checks):
@@ -38,8 +41,8 @@ class Action:
         return self.__class__.__name__.lower()
 
     def load_graph(self):
-        model_path = f"macro_actions/v4/{self.name}.pb"
-        self.graph = load_pb(model_path)
+        self.model_path = f"macro_actions/v4/{self.name}.pb"
+        self.graph = load_pb(self.model_path)
 
     def process_state(self):
         obs_size = 4 if self.config['mode'] in ['dual', 'box'] else 0
@@ -193,7 +196,7 @@ class Action:
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             go, stats = self.checks_clean()
-            if (abs(self.state['velocity'][-1])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore']):
+            if (abs(self.state['velocity'][-1])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore','climb']):
                 stuck+=1
                 if stuck>=20:
                     self.load_graph(True)
@@ -203,10 +206,10 @@ class Action:
             if not go and "explore" in self.model_path:
                 # print("BRAKES")
                 for _ in range(2):
-                    self.env.step([-1,0])
+                    self.env.step([0,0])
                     self.state = preprocess(self.ct, self.step_results, self.micro_step,
                     self.state['reward'], self.name)
-                    self.micro_step += 1
+                    self.state['micro_step'] = self.micro_step
 
         return self.step_results, self.state, stats, self.micro_step
 
@@ -251,18 +254,23 @@ class Explore(Action):
         self.always_visible = False # The wall is
 
     def load_graph(self, override=False):
-        if override:
-            if 'left' in self.model_path:
-                self.model_path = "macro_actions/v4/explore_right.pb"
-            else:
-                self.model_path = "macro_actions/v4/explore_left.pb"
+
+        if prev_action[0]:
+            self.model_path = f"macro_actions/v4/explore_{prev_action[0]}.pb"
+            prev_action[0] = 0
         else:
-            bbox = self.process_state()[2:]
-            self.model_path = f"macro_actions/v4/explore"
-            if (bbox[0]+bbox[2]/2)>0.49: # If obj is on right, go around left side
-                self.model_path+= "_right.pb"
+            if override:
+                if 'left' in self.model_path:
+                    self.model_path = "macro_actions/v4/explore_right.pb"
+                else:
+                    self.model_path = "macro_actions/v4/explore_left.pb"
             else:
-                self.model_path+= "_left.pb"
+                bbox = self.process_state()[2:]
+                self.model_path = f"macro_actions/v4/explore"
+                if (bbox[0]+bbox[2]/2)>0.49: # If obj is on right, go around left side
+                    self.model_path+= "_right.pb"
+                else:
+                    self.model_path+= "_left.pb"
         self.graph = load_pb(self.model_path)
 
 class Avoid(Action):
@@ -333,17 +341,18 @@ class Rotate(Action):
         """Rotate to first visible object"""
 
         for _ in range(50):
-            self.step_results = self.env.step([[0, 1]])
+            self.step_results = self.env.step([[0, 2]])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             # Rotate
             if self.state['obj']: #0 is placeholder macro step, has no effect
-                break # and run a few more rotations to point to it
+                if not self.state['obj'][0][1]=='platform':
+                    break # and run a few more rotations to point to it
             if self.check_done():
                 return self.step_results, self.state, self.macro_stats(None), self.micro_step
         for _ in range(3): # add extra 3 rotations to be looking straight at object
-            self.step_results = self.env.step([[0, 1]])
+            self.step_results = self.env.step([[0, 2]])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
@@ -357,6 +366,8 @@ class Drop(Action):
         super().__init__(env=env, ct=ct, state=state,
          step_results=step_results, args=args, checks=checks)
         self.direction = 2 if args[0]=='left' else 1
+        prev_action[0] = args[0]
+        self.instantiate_checks()
 
     def check_done(self):
         if self.state['done']:
@@ -365,8 +376,13 @@ class Drop(Action):
     def run(self, pass_mark):
         """Rotate to first visible object"""
 
-        for i in range(30):
-            action = [1, self.direction] if i<10 else [1, 0]
+        for i in range(40):
+            if i<10:
+                action = [0,0]
+            elif i<20:
+                action = [1,self.direction]
+            else:
+                action = [1, 0]
             self.step_results = self.env.step([action])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
@@ -374,9 +390,9 @@ class Drop(Action):
             # Rotate
             if self.state['velocity'][1]<-2: #0 is placeholder macro step, has no effect
                 break # and run a few more rotations to point to it
-            if self.check_done():
+            go, _ = self.checks_clean()
+            if self.check_done() or not go:
                 return self.step_results, self.state, self.macro_stats(None), self.micro_step
-
         return self.step_results, self.state, self.macro_stats(
             "Dropped"), self.micro_step
 

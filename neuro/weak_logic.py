@@ -52,7 +52,7 @@ test_lp = main_lp + action_logic + """
 :~ initiate(collect), not lava.[-1@8]
 :~ initiate(explore(V1)), occludes(V1).[-1@5, V1]
 :~ initiate(avoid).[-1@4]
-:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@12, V1, V2]
+:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@6, V1, V2]
 :~ initiate(drop(V1)), more_goals(V1).[-1@9, V1]
 :~ bigger(V1,V2), initiate(interact(V1)).[-1@1, V1, V2]
 :~ initiate(interact(V1)), not danger, not on(goal,platform).[-1@7, V1]
@@ -256,7 +256,7 @@ class Clingo:
             {res['raw'][0]}.
             check(time, 50):- initiate(rotate).
             check(time, 20):- initiate(observe).
-            check(time, 150):- initiate(collect).
+            check(time, 50):- initiate(collect).
             check(time, 100):- initiate(climb).
             check(peaked, 0):- initiate(climb).
             check(time, 100):- initiate(interact(X)).
@@ -266,7 +266,7 @@ class Clingo:
             check(fallen, 0):- initiate(balance).
             check(gop, 0):- initiate(balance).
             check(time, 150):- initiate(avoid).
-            check(time, 20):- initiate(drop(X)).
+            check(time, 40):- initiate(drop(X)).
             check(fallen, 0):- initiate(drop(X)).
 
             """).atoms_as_string)

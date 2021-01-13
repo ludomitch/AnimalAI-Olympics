@@ -736,7 +736,7 @@ class AnimalAIEnvironment(UnityEnvironment):
         grayscale: bool = False,
         side_channels: Optional[List[SideChannel]] = None,
         alter_obs: bool = False,
-        train:bool=False
+        train:bool=True
     ):
 
         args = self.executable_args(n_arenas, play, resolution, grayscale)

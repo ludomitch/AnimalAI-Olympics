@@ -133,7 +133,7 @@ class Action:
         prediction = np.exp(prediction)
 
         action = [choose_action_probability(prediction[:3]), choose_action_probability(prediction[3:])]
-        action = np.array(action).reshape((1, 2))
+        action = np.array(action).reshape((2))
         self.prev_action = action
 
         return action

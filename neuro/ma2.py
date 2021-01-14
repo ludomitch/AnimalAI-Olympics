@@ -215,6 +215,8 @@ class Action:
                     self.state = preprocess(self.ct, self.step_results, self.micro_step,
                     self.state['reward'], self.name)
                     self.state['micro_step'] = self.micro_step
+                    if not self.checks_clean()[0]:
+                        break
 
         return self.step_results, self.state, stats, self.micro_step
 
@@ -374,10 +376,6 @@ class Drop(Action):
         prev_action[0] = args[0]
         self.instantiate_checks()
 
-    def check_done(self):
-        if self.state['done']:
-            return True
-        return False
     def run(self, pass_mark):
         """Rotate to first visible object"""
 
@@ -396,7 +394,7 @@ class Drop(Action):
             if self.state['velocity'][1]<-2: #0 is placeholder macro step, has no effect
                 break # and run a few more rotations to point to it
             go, _ = self.checks_clean()
-            if self.check_done() or not go:
+            if not go:
                 return self.step_results, self.state, self.macro_stats(None), self.micro_step
         return self.step_results, self.state, self.macro_stats(
             "Dropped"), self.micro_step

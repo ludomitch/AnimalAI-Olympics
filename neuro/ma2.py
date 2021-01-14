@@ -8,6 +8,7 @@ import checks as ck
 # from collections import deque
 # import time
 import cv2
+from gym_unity.envs import UnityGymException
 
 def choose_action_probability(predictions_exp):
     return np.random.choice(list(range(3)), 1, p=predictions_exp)[0]
@@ -190,7 +191,11 @@ class Action:
         while go:
             obs = self.process_state()
             action = self.get_action(obs)
-            self.step_results = self.env.step(action)
+            try:
+                self.step_results = self.env.step(action)
+            except (KeyError, UnityGymException):
+                print(self.model_path, action, self.state['done'], self.state['obj'])
+                self.step_results = self.env.step([0,0])
             self.state = preprocess(self.ct, self.step_results, self.micro_step,
                 self.state['reward'], self.name)
             self.state['micro_step'] = self.micro_step
@@ -341,7 +346,7 @@ class Rotate(Action):
         """Rotate to first visible object"""
 
         for _ in range(50):
-            self.step_results = self.env.step([[0, 2]])
+            self.step_results = self.env.step([0, 2])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
@@ -352,7 +357,7 @@ class Rotate(Action):
             if self.check_done():
                 return self.step_results, self.state, self.macro_stats(None), self.micro_step
         for _ in range(3): # add extra 3 rotations to be looking straight at object
-            self.step_results = self.env.step([[0, 2]])
+            self.step_results = self.env.step([0, 2])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
@@ -383,7 +388,7 @@ class Drop(Action):
                 action = [1,self.direction]
             else:
                 action = [1, 0]
-            self.step_results = self.env.step([action])
+            self.step_results = self.env.step(action)
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1

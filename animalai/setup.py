@@ -16,6 +16,6 @@ setup(
     ],
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     zip_safe=False,
-    install_requires=["mlagents-envs==0.16.0", "gym-unity==0.16.0", "jsonpickle", "pyyaml"],
+    install_requires=["mlagents-envs==0.15.1", "gym-unity==0.15.0", "jsonpickle", "pyyaml"],
     python_requires=">=3.5",
 )

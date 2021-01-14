@@ -16,6 +16,6 @@ setup(
     ],
     packages=find_packages(exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     zip_safe=False,
-    install_requires=["animalai==2.0.0", "mlagents==0.16.0"],
+    install_requires=["animalai==2.0.0", "mlagents==0.15.1"],
     python_requires=">=3.6.1",
 )

@@ -215,7 +215,7 @@ class Action:
                     self.state = preprocess(self.ct, self.step_results, self.micro_step,
                     self.state['reward'], self.name)
                     self.state['micro_step'] = self.micro_step
-                    if not self.checks_clean()[0]:
+                    if self.state['done']:
                         break
 
         return self.step_results, self.state, stats, self.micro_step

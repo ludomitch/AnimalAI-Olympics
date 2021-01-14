@@ -33,30 +33,12 @@
 #pos(a2,
 {},
 {},
-{initiate(explore(a)).
-occludes(a).}).
-%%Value was:1.3549929676511943
-#pos(a3,
-{},
-{},
-{initiate(rotate).
-occludes(a).}).
-%%Value was:-0.6704809286898841
-#pos(a4,
-{},
-{},
-{initiate(observe).
-occludes(a).}).
-%%Value was:-1.081111111111113
-#pos(a5,
-{},
-{},
 {danger.
 goal(a).
 initiate(avoid).
 lava.}).
 %%Value was:21.346153846153847
-#pos(a6,
+#pos(a3,
 {},
 {},
 {danger.
@@ -64,7 +46,7 @@ goal(a).
 initiate(rotate).
 lava.}).
 %%Value was:-2.8846153846153846
-#pos(a7,
+#pos(a4,
 {},
 {},
 {danger.
@@ -72,7 +54,7 @@ goal(a).
 initiate(observe).
 lava.}).
 %%Value was:-2.884615384615385
-#pos(a8,
+#pos(a5,
 {},
 {},
 {danger.
@@ -80,6 +62,24 @@ goal(a).
 initiate(interact(a)).
 lava.}).
 %%Value was:-2.8846153846153855
+#pos(a6,
+{},
+{},
+{initiate(explore(a)).
+occludes(a).}).
+%%Value was:1.3549929676511943
+#pos(a7,
+{},
+{},
+{initiate(rotate).
+occludes(a).}).
+%%Value was:-0.6704809286898841
+#pos(a8,
+{},
+{},
+{initiate(observe).
+occludes(a).}).
+%%Value was:-1.081111111111113
 #pos(a9,
 {},
 {},
@@ -107,9 +107,9 @@ initiate(observe).}).
 #brave_ordering(b0@10, a0, a1).
 #brave_ordering(b1@10, a2, a3).
 #brave_ordering(b2@10, a2, a4).
-#brave_ordering(b3@10, a5, a6).
-#brave_ordering(b4@10, a5, a7).
-#brave_ordering(b5@10, a5, a8).
+#brave_ordering(b3@10, a2, a5).
+#brave_ordering(b4@10, a6, a7).
+#brave_ordering(b5@10, a6, a8).
 #brave_ordering(b6@10, a9, a10).
 #brave_ordering(b7@10, a9, a11).
 #brave_ordering(b8@10, a9, a12).

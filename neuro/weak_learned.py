@@ -196,17 +196,17 @@ class Pipeline:
                         # break
                     else:
                         success = False
-                print(f"{arena}: {success}")
+                # print(f"{arena}: {success}")
                 traces.append([actions_buffer, observables_buffer, success, macro_step, arena[1]])
                 success_count += success
                 self.arena_successes[arena[0]][arena[1]]=int(success)
 
-            with open(f"test_stats/test_run_traces{self.save_path}.txt", "w") as text_file:
+            with open(f"{self.save_path}traces.txt", "w") as text_file:
                 text_file.write(str(traces))
-            with open(f"test_stats/test_run_successes{self.save_path}.txt", "w") as text_file:
+            with open(f"{self.save_path}scores.txt", "w") as text_file:
                 text_file.write(str(self.arena_successes))
             end = time.time()
-            print(self.arena_successes)
+            # print(self.arena_successes)
             print(f"The full run took {end-start}s")
             print(f"TOTAL SUCCESSES: {success_count}/{len(self.arenas)}")
 

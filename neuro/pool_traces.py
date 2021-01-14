@@ -17,15 +17,15 @@ def run():
     ['wall'],
     ['wall', 'red_maze'],
     ['wall', 'red_maze', 'ramp'],
-    ['wall', 'red_maze', 'ramp', 'ymaze'],
-    ['wall', 'red_maze', 'ramp', 'ymaze', 'numerosity'],
-    ['wall', 'red_maze', 'ramp', 'ymaze', 'numerosity', 'choice'],
-    ['wall', 'red_maze', 'ramp', 'ymaze', 'numerosity', 'choice', 'moving']]
+    ['wall', 'red_maze', 'ramp', 'ymaze3'],
+    ['wall', 'red_maze', 'ramp', 'ymaze3', 'numerosity'],
+    ['wall', 'red_maze', 'ramp', 'ymaze3', 'numerosity', 'choice'],
+    ['wall', 'red_maze', 'ramp', 'ymaze3', 'numerosity', 'choice', 'moving']]
     # Concat traces
     traces = []
     for num_i, arenas in enumerate(incremental):
         for arena in arenas:
-            my_file = open(f"early_traces/{arena}.txt", "r")
+            my_file = open(f"traces/early_traces/{arena}.txt", "r")
             content = eval(my_file.read())
             s = len([i for i in content if i[2]])
             t = len(content)
@@ -37,9 +37,9 @@ def run():
                     content[c][1][0] = content[c][1][0].replace('moving.\n', '')
             traces+= content
         logic = Logic()
-        print(f"/incremental_traces/{num_i}.lp")
+        print(f"/incremental_traces1/{num_i}.lp")
         logic.ilasp.generate_examples(traces)
-        logic.update_learned_lp(f"incremental_traces/{num_i}.lp")
+        logic.update_learned_lp(f"traces/incremental_traces/{num_i}.lp")
         print(f"Run {c} done")
 
 if __name__ == '__main__':

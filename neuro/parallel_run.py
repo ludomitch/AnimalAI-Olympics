@@ -4,7 +4,7 @@ cwd = os.getcwd()
 if "Desktop" in cwd:
 	sys.path.insert(0, "/Users/ludo/Desktop/animalai/animalai/animalai_train")
 	sys.path.insert(1, "/Users/ludo/Desktop/animalai/animalai/animalai")
-	env_path = '../env/aaiagain'
+	env_path = '../envs/aaiv2'
 
 else:
 	sys.path.insert(0, "/media/home/ludovico/aai/animalai")
@@ -52,13 +52,14 @@ def run(opt):
 		"training_set/numerosity.yml": 5,
 		"training_set/ymaze.yml": 0,
 		"training_set/ymaze2.yml": 0,
+		"training_set/ymaze3.yml": 0,
 		"training_set/moving.yml": 3
 	}
 	args = margs(
 		env=env_path, seed=1,
 		arenas=arenas, num_episodes=opt.num,
 		inference=False, distribution=distribution,
-		max_steps=max_steps, mode='collect', save_path=f"early_traces/{opt.arena}.txt")
+		max_steps=max_steps, mode='collect', save_path=f"traces/early_traces/{opt.arena}.txt")
 	pipe = Pipeline(args)
 	res = pipe.learn_run()
 

@@ -196,7 +196,7 @@ class Action:
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             go, stats = self.checks_clean()
-            if (abs(self.state['velocity'][-1])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore','climb']):
+            if (abs(self.state['velocity'][-1])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore']):
                 stuck+=1
                 if stuck>=20:
                     self.load_graph(True)

@@ -155,7 +155,11 @@ class Pipeline:
             self.arena_successes = {
                 k:{i:0 for i in v} for k,v in cfg.COMPETITION_CONFIGS.items()
             }
+            count = 0
             for arena in self.arenas:
+                if count%100==0 and count!=0:
+                    print(f"{self.save_path}:{success_count}/{count} arenas completed")
+                count+=1
                 self.ac = ArenaConfig(f"../competition_configurations/{arena[1]}.yml")
                 self.env.reset(self.ac)
                 global_steps = 0

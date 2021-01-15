@@ -81,7 +81,7 @@ mps = {
 :~ bigger(V1,V2), initiate(interact(V1)).[-1@10, V1, V2]
 :~ initiate(drop(V1)), more_goals(V1).[-1@12, V1]
 :~ danger, initiate(avoid), not on(agent,platform).[-1@9]
-"""
+""",
 	101:"""
 :~ initiate(climb).[-1@10]
 :~ danger, initiate(observe), on(agent,platform).[-1@10]

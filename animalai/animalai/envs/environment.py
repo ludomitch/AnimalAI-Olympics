@@ -468,7 +468,9 @@ class UnityEnvironment(BaseEnv):
     def render(self):
         return self.get_step_result('AnimalAI?team=0').obs[0][0]
     def stp(self,action):
-        self.set_actions('AnimalAI?team=0', np.array([action]))
+        n_agents = self._env_state['AnimalAI?team=0'].n_agents()
+        res = [action for i in range(n_agents)]
+        self.set_actions('AnimalAI?team=0', np.array(res))
         self.step()
         return self.get_step_result('AnimalAI?team=0')
     @timed

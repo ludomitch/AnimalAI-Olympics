@@ -189,34 +189,32 @@ class Action:
         stuck = 0
         go = True
         while go:
-            obs = self.process_state()
-            action = self.get_action(obs)
-            try:
-                self.step_results = self.env.stp(action)
-            except (KeyError, UnityGymException):
-                print(self.model_path, action, self.state['done'], self.state['obj'])
-                self.step_results = self.env.stp([0,0])
-            self.state = preprocess(self.ct, self.step_results, self.micro_step,
-                self.state['reward'], self.name)
-            self.state['micro_step'] = self.micro_step
-            self.micro_step += 1
-            go, stats = self.checks_clean()
             if (abs(self.state['velocity'][-1])<0.1)&any(i in self.model_path for i in ['interact_simple', 'explore']):
                 stuck+=1
                 if stuck>=20:
                     self.load_graph(True)
                     stuck = 0
 
-            # BRAKES
-            if not go and "explore" in self.model_path:
-                # print("BRAKES")
-                for _ in range(2):
-                    self.env.stp([0,0])
-                    self.state = preprocess(self.ct, self.step_results, self.micro_step,
-                    self.state['reward'], self.name)
-                    self.state['micro_step'] = self.micro_step
-                    if self.state['done']:
-                        break
+            obs = self.process_state()
+            action = self.get_action(obs)
+            self.step_results = self.env.stp(action)
+            self.state = preprocess(self.ct, self.step_results, self.micro_step,
+                self.state['reward'], self.name)
+            self.state['micro_step'] = self.micro_step
+            self.micro_step += 1
+            go, stats = self.checks_clean()
+
+
+        # BRAKES
+        if not self.state['done'] and "explore" in self.model_path:
+            # print("BRAKES")
+            for _ in range(2):
+                self.step_results = self.env.stp([0,0])
+                self.state = preprocess(self.ct, self.step_results, self.micro_step,
+                self.state['reward'], self.name)
+                self.state['micro_step'] = self.micro_step
+                if self.state['done']:
+                    break
 
         return self.step_results, self.state, stats, self.micro_step
 
@@ -416,10 +414,10 @@ class Observe(Action):
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
-            black = not bool(np.max(self.step_results[0]))
+            black = not bool(np.max(self.step_results.obs[0][0]))
             while black: # black_loop
                 self.step_results = self.env.stp([0,0])
-                black = not bool(np.max(self.step_results[0]))
+                black = not bool(np.max(self.step_results.obs[0][0]))
                 self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
                 self.state['micro_step'] = self.micro_step
                 self.micro_step += 1

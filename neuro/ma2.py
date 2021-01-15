@@ -241,11 +241,9 @@ class Interact(Action):
                 i[2]=='ramp' for i in self.state['obj']):
                 self.model_path+= "_adv.pb"
             else:
-                self.model_path+= "_adv.pb"
-                # self.config['mode'] = 'box'
-                # self.config['mask'] = None
-                self.config['mode'] = 'dual'
-                self.config['mask'] = "wall"
+                self.model_path+= "_simple.pb"
+                self.config['mode'] = 'box'
+                self.config['mask'] = None
         self.graph = load_pb(self.model_path)
 class Explore(Action):
     def __init__(self, env, ct, state, step_results, args, checks):

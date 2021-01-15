@@ -1,4 +1,4 @@
-from animalai.envs.gym.environment import AnimalAIGym
+from animalai.envs.environment import AnimalAIEnvironment
 from animalai.envs.arena_config import ArenaConfig
 from centroidtracker import CentroidTracker
 import ma2 as macro
@@ -23,16 +23,16 @@ class Pipeline:
         self.logic = Logic()
         self.mode = args.mode
         self.save_path = args.save_path
-        self.env = AnimalAIGym(
-            environment_filename=env_path,
+        self.env = AnimalAIEnvironment(
+            file_name=env_path,
             worker_id=worker_id,
             n_arenas=1,
             seed=seed,
             grayscale=False,
             resolution=256,
-            inference=args.inference
+            inference=args.inference,
+            train=False
         )
-        self.env._env.train=False
 
     def format_macro_results(self, stats):
         res = """
@@ -171,7 +171,7 @@ class Pipeline:
                 state = {'reward':0}
                 step_results, moving = first_steps(self.env, "arena_name")  # Take 0,0 step
                 state['moving'] = moving
-                while not self.episode_over(step_results[2]):
+                while not self.episode_over(step_results.done[0]):
                     if (global_steps >= self.ac.arenas[0].t):
                         success = False
                         break

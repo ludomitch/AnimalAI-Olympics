@@ -192,10 +192,10 @@ class Action:
             obs = self.process_state()
             action = self.get_action(obs)
             try:
-                self.step_results = self.env.step(action)
+                self.step_results = self.env.stp(action)
             except (KeyError, UnityGymException):
                 print(self.model_path, action, self.state['done'], self.state['obj'])
-                self.step_results = self.env.step([0,0])
+                self.step_results = self.env.stp([0,0])
             self.state = preprocess(self.ct, self.step_results, self.micro_step,
                 self.state['reward'], self.name)
             self.state['micro_step'] = self.micro_step
@@ -211,7 +211,7 @@ class Action:
             if not go and "explore" in self.model_path:
                 # print("BRAKES")
                 for _ in range(2):
-                    self.env.step([0,0])
+                    self.env.stp([0,0])
                     self.state = preprocess(self.ct, self.step_results, self.micro_step,
                     self.state['reward'], self.name)
                     self.state['micro_step'] = self.micro_step
@@ -348,7 +348,7 @@ class Rotate(Action):
         """Rotate to first visible object"""
 
         for _ in range(50):
-            self.step_results = self.env.step([0, 2])
+            self.step_results = self.env.stp([0, 2])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
@@ -359,7 +359,7 @@ class Rotate(Action):
             if self.check_done():
                 return self.step_results, self.state, self.macro_stats(None), self.micro_step
         for _ in range(3): # add extra 3 rotations to be looking straight at object
-            self.step_results = self.env.step([0, 2])
+            self.step_results = self.env.stp([0, 2])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
@@ -386,7 +386,7 @@ class Drop(Action):
                 action = [1,self.direction]
             else:
                 action = [1, 0]
-            self.step_results = self.env.step(action)
+            self.step_results = self.env.stp(action)
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
@@ -412,13 +412,13 @@ class Observe(Action):
         """Observe"""
         stop = False
         for _ in range(20):
-            self.step_results = self.env.step([0,0])
+            self.step_results = self.env.stp([0,0])
             self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
             self.state['micro_step'] = self.micro_step
             self.micro_step += 1
             black = not bool(np.max(self.step_results[0]))
             while black: # black_loop
-                self.step_results = self.env.step([0,0])
+                self.step_results = self.env.stp([0,0])
                 black = not bool(np.max(self.step_results[0]))
                 self.state = preprocess(self.ct, self.step_results, self.micro_step, self.state['reward'])
                 self.state['micro_step'] = self.micro_step

@@ -465,7 +465,12 @@ class UnityEnvironment(BaseEnv):
         else:
             raise UnityEnvironmentException("No Unity environment is loaded.")
 
-
+    def render(self):
+        return self.get_step_result('AnimalAI?team=0').obs[0][0]
+    def stp(self,action):
+        self.set_actions('AnimalAI?team=0', np.array([action]))
+        self.step()
+        return self.get_step_result('AnimalAI?team=0')
     @timed
     def step(self) -> None:
         if self._is_first_message:

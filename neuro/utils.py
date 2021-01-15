@@ -129,7 +129,7 @@ ef = ExtractFeatures(display=False, training=False)
 
 def first_steps(env, arena_name):
     x1 = ef.run(env.render())['goal2']
-    st = env.step([0,0])
+    st = env.stp([0,0])
     if not x1:
         # print("EMPTY")
         return st, ""
@@ -236,8 +236,8 @@ def goal_above_wall(state):
     return False
 
 def preprocess(ct, step_results, step, reward, macro_action=None):
-    visual_obs = step_results[3]["batched_step_result"].obs[0][0] # last 0 idx bc batched
-    vector_obs = step_results[3]["batched_step_result"].obs[1][0]
+    visual_obs = step_results.obs[0][0] # last 0 idx bc batched
+    vector_obs = step_results.obs[1][0]
     vector_obs = [vector_obs[0]/9.45, vector_obs[1]/5.8, vector_obs[2]/18.8]
     bboxes = ef.run(visual_obs)
     ids = {k:[] for k in object_types}
@@ -258,8 +258,8 @@ def preprocess(ct, step_results, step, reward, macro_action=None):
     res = {
         "obj": obj, # list of tuples
         "velocity": vector_obs,  # array
-        "reward": step_results[1]+reward,  # float
-        "done": step_results[2],  # bool
+        "reward": step_results.reward[0]+reward,  # float
+        "done": step_results.done[0],  # bool
         "visual_obs": visual_obs
         # "step": step_results[-1],
     }

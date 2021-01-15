@@ -69,6 +69,19 @@ mps = {
 :~ initiate(interact(V1)).[-1@2, V1]
 :~ initiate(rotate).[-1@1]
 """,
+7:"""
+:~ initiate(climb).[-1@11]
+:~ initiate(interact(V1)).[-1@2, V1]
+:~ initiate(collect).[-1@4]
+:~ initiate(balance).[-1@5]
+:~ initiate(rotate).[-1@1]
+:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@8, V1, V2]
+:~ initiate(explore(V2)), occludes(V1).[-1@7, V1, V2]
+:~ danger, initiate(observe).[-1@6]
+:~ bigger(V1,V2), initiate(interact(V1)).[-1@10, V1, V2]
+:~ initiate(drop(V1)), more_goals(V1).[-1@12, V1]
+:~ danger, initiate(avoid), not on(agent,platform).[-1@9]
+"""
 	101:"""
 :~ initiate(climb).[-1@10]
 :~ danger, initiate(observe), on(agent,platform).[-1@10]

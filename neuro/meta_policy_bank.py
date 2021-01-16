@@ -102,7 +102,7 @@ mps = {
  30: ':~ initiate(collect).[-1@6]\n:~ initiate(climb).[-1@4]\n:~ initiate(avoid).[-1@3]\n:~ initiate(interact(V1)).[-1@2, V1]\n:~ initiate(observe).[-1@1]\n:~ initiate(explore(V2)), occludes(V1).[-1@9, V1, V2]\n:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@8, V1, V2]\n:~ initiate(balance), not danger.[-1@7]\n:~ bigger(V1,V2), initiate(interact(V1)).[-1@10, V1, V2]\n:~ initiate(observe), on(agent,platform).[-1@5]\n:~ initiate(drop(V1)), more_goals(V1).[-1@11, V1]\n\n',
  35: ':~ initiate(balance).[-1@5]\n:~ initiate(climb).[-1@4]\n:~ initiate(interact(V1)).[-1@3, V1]\n:~ initiate(collect).[-1@1]\n:~ initiate(avoid), not on(agent,platform).[-1@9]\n:~ initiate(drop(V1)), more_goals(V1).[-1@8, V1]\n:~ danger, initiate(observe).[-1@6]\n:~ initiate(explore(V1)), occludes(V1).[-1@10, V1]\n:~ bigger(V1,V2), initiate(interact(V1)).[-1@11, V1, V2]\n:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@2, V1, V2]\n\n',
  40: ':~ initiate(climb).[-1@7]\n:~ initiate(explore(V1)).[-1@5, V1]\n:~ initiate(balance).[-1@4]\n:~ initiate(rotate).[-1@3]\n:~ initiate(collect).[-1@1]\n:~ initiate(drop(V1)), more_goals(V1).[-1@9, V1]\n:~ bigger(V1,V2), initiate(interact(V1)).[-1@8, V1, V2]\n:~ initiate(interact(V1)), not on(agent,platform).[-1@6, V1]\n:~ danger, initiate(observe).[-1@10]\n:~ initiate(explore(V1)), occludes_more(V1,V2).[-1@2, V1, V2]\n:~ danger, initiate(avoid), not on(agent,platform).[-1@11]\n\n'
-​
+
 
 
 }

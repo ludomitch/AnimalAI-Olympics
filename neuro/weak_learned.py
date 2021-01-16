@@ -13,7 +13,7 @@ class Pipeline:
         self.args = args
         self.ct = None
         env_path = args.env
-        worker_id = rnd.randint(21,200)
+        worker_id = rnd.randint(21,2000)
         seed = args.seed
         self.arenas = args.arenas
         self.arena_distribution = args.distribution

@@ -148,12 +148,16 @@ class Pipeline:
             success_count = 0
             choice = 'test'
             traces = [] # list of lists: [actions, observables, success, macro_steps]
+            if self.arenas is None:
+                use = cfg.COMPETITION_CONFIGS
+            else:
+                use = {k:v for k,v in cfg.COMPETITION_CONFIGS.items() if k==self.arenas}
             self.arenas = []
-            for k,v in cfg.COMPETITION_CONFIGS.items():
+            for k,v in use.items():
                 for arena in v:
                     self.arenas.append([k,arena])
             self.arena_successes = {
-                k:{i:0 for i in v} for k,v in cfg.COMPETITION_CONFIGS.items()
+                k:{i:0 for i in v} for k,v in use.items()
             }
             count = 0
             for arena in self.arenas:

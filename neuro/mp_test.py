@@ -77,4 +77,4 @@ def run1(opt):
 
 if __name__ == '__main__':
     opt = get_args()
-    run1(opt)
+    run(opt)

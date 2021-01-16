@@ -70,7 +70,7 @@ def run1(opt):
                  inference=False, distribution=distribution,
                 max_steps=max_steps, mode='collect',save_path=save_path)
     pipe = Pipeline(args, test)
-    pipe.logic.clingo.meta_lp = mps[opt.arena][opt.mp]
+    pipe.logic.clingo.meta_lp = mps[opt.arena][opt.mp].decode("utf-8")
     res = pipe.test_run()
 
 if __name__ == '__main__':

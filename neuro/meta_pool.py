@@ -24,7 +24,7 @@ def trim_traces(content, h):
             break
     return res
 def run():
-    success_num = [5,10,15,20]
+    success_num = [1,2,3,4]
     arenas = ['wall', 'red_maze', 'ramp', 'ymaze3', 'numerosity', 'choice', 'moving']
     # Concat traces
     for s_n in success_num:
@@ -48,7 +48,7 @@ def run():
 
 
 def run1():
-    success_num = [5,10,15,20]
+    success_num = [1,2,3,4]
     arenas = ['wall', 'red_maze', 'ramp', 'ymaze3', 'numerosity', 'choice', 'moving']
     # Concat traces
     for s_n in success_num:
@@ -100,7 +100,7 @@ def run2():
         print(f"Trim {s_n} Done")
     print(res)
     print(trace_length)
-    with open("convergence.txt", "w") as text_file:
+    with open("convergence1.txt", "w") as text_file:
         text_file.write(str(trace_length)+str(res))
 if __name__ == '__main__':
     run2()

@@ -8,7 +8,6 @@
 #modeo(1, initiate(avoid), (positive)).
 #modeo(1, initiate(drop(var(side))), (positive) ).
 #modeo(1, on(agent, platform)).
-#modeo(1, on(goal, platform)).
 #modeo(1, occludes(var(x))).
 #modeo(1, occludes_more(var(x),var(y))).
 #modeo(1, bigger(var(x),var(y))).
@@ -17,21 +16,10 @@
 
 #weight(-1).
 #maxv(2).
-%#maxp(12).
 #maxp(7).
 #bias(":- #count { X: weak_body(initiate(X)) } != 1.").
 
 #pos(a0,
-{},
-{},
-{initiate(observe).}).
-%%Value was:0.030730427764326003
-#pos(a1,
-{},
-{},
-{initiate(rotate).}).
-%%Value was:-0.10516790531241411
-#pos(a2,
 {},
 {},
 {initiate(explore(a)).
@@ -39,8 +27,8 @@ lava.
 occludes(a).
 on(agent,platform).
 platform.}).
-%%Value was:3.9516955266955267
-#pos(a3,
+%%Value was:3.265311735941319
+#pos(a1,
 {},
 {},
 {initiate(balance).
@@ -48,8 +36,8 @@ lava.
 occludes(a).
 on(agent,platform).
 platform.}).
-%%Value was:0.7857142857142857
-#pos(a4,
+%%Value was:0.8061124694376528
+#pos(a2,
 {},
 {},
 {initiate(observe).
@@ -57,8 +45,8 @@ lava.
 occludes(a).
 on(agent,platform).
 platform.}).
-%%Value was:0.7849647266313933
-#pos(a5,
+%%Value was:0.8054966947387485
+#pos(a3,
 {},
 {},
 {initiate(rotate).
@@ -66,8 +54,8 @@ lava.
 occludes(a).
 on(agent,platform).
 platform.}).
-%%Value was:-0.10775510204081636
-#pos(a6,
+%%Value was:-0.08824967639867683
+#pos(a4,
 {},
 {},
 {initiate(drop(a)).
@@ -75,8 +63,8 @@ lava.
 occludes(b).
 on(agent,platform).
 platform.}).
-%%Value was:-0.10973639455782315
-#pos(a7,
+%%Value was:-0.09031408689110401
+#pos(a5,
 {},
 {},
 {initiate(avoid).
@@ -84,32 +72,32 @@ lava.
 occludes(a).
 on(agent,platform).
 platform.}).
-%%Value was:-0.11177248677248679
-#pos(a8,
+%%Value was:-0.09182287421896226
+#pos(a6,
 {},
 {},
 {goal(a).
 initiate(interact(a)).}).
-%%Value was:24.682539682539684
-#pos(a9,
+%%Value was:23.74572127139364
+#pos(a7,
 {},
 {},
 {goal(a).
 initiate(explore(b)).}).
-%%Value was:-0.11466165413533835
-#pos(a10,
+%%Value was:-0.09419637112340755
+#pos(a8,
 {},
 {},
 {goal(a).
 initiate(observe).}).
-%%Value was:-0.11666666666666665
-#pos(a11,
+%%Value was:-0.0958435207823961
+#pos(a9,
 {},
 {},
 {goal(a).
 initiate(rotate).}).
-%%Value was:-0.11666666666666667
-#pos(a12,
+%%Value was:-0.0958435207823961
+#pos(a10,
 {},
 {},
 {danger.
@@ -118,18 +106,8 @@ initiate(observe).
 lava.
 on(agent,platform).
 platform.}).
-%%Value was:1.0669379144062687
-#pos(a13,
-{},
-{},
-{danger.
-goal(a).
-initiate(balance).
-lava.
-on(agent,platform).
-platform.}).
-%%Value was:0.16645408163265316
-#pos(a14,
+%%Value was:1.1313350920087513
+#pos(a11,
 {},
 {},
 {danger.
@@ -138,8 +116,8 @@ initiate(explore(b)).
 lava.
 on(agent,platform).
 platform.}).
-%%Value was:0.13351865488463438
-#pos(a15,
+%%Value was:0.16478653375963898
+#pos(a12,
 {},
 {},
 {danger.
@@ -148,8 +126,8 @@ initiate(rotate).
 lava.
 on(agent,platform).
 platform.}).
-%%Value was:-0.0903929851510496
-#pos(a16,
+%%Value was:-0.07432440420215478
+#pos(a13,
 {},
 {},
 {danger.
@@ -158,8 +136,18 @@ initiate(drop(b)).
 lava.
 on(agent,platform).
 platform.}).
-%%Value was:-0.09146453373015867
-#pos(a17,
+%%Value was:-0.07505280133173794
+#pos(a14,
+{},
+{},
+{danger.
+goal(a).
+initiate(balance).
+lava.
+on(agent,platform).
+platform.}).
+%%Value was:-0.07544993738445939
+#pos(a15,
 {},
 {},
 {danger.
@@ -168,8 +156,8 @@ initiate(interact(a)).
 lava.
 on(agent,platform).
 platform.}).
-%%Value was:-0.0931751253132832
-#pos(a18,
+%%Value was:-0.0765448462231373
+#pos(a16,
 {},
 {},
 {danger.
@@ -178,19 +166,18 @@ initiate(avoid).
 lava.
 on(agent,platform).
 platform.}).
-%%Value was:-0.09547619047619041
+%%Value was:-0.0783838003886903
 #brave_ordering(b0@10, a0, a1).
-#brave_ordering(b1@10, a2, a3).
-#brave_ordering(b2@10, a2, a4).
-#brave_ordering(b3@10, a2, a5).
-#brave_ordering(b4@10, a2, a6).
-#brave_ordering(b5@10, a2, a7).
-#brave_ordering(b6@10, a8, a9).
-#brave_ordering(b7@10, a8, a10).
-#brave_ordering(b8@10, a8, a11).
-#brave_ordering(b9@10, a12, a13).
-#brave_ordering(b10@10, a12, a14).
-#brave_ordering(b11@10, a12, a15).
-#brave_ordering(b12@10, a12, a16).
-#brave_ordering(b13@10, a12, a17).
-#brave_ordering(b14@10, a12, a18).
+#brave_ordering(b1@10, a0, a2).
+#brave_ordering(b2@10, a0, a3).
+#brave_ordering(b3@10, a0, a4).
+#brave_ordering(b4@10, a0, a5).
+#brave_ordering(b5@10, a6, a7).
+#brave_ordering(b6@10, a6, a8).
+#brave_ordering(b7@10, a6, a9).
+#brave_ordering(b8@10, a10, a11).
+#brave_ordering(b9@10, a10, a12).
+#brave_ordering(b10@10, a10, a13).
+#brave_ordering(b11@10, a10, a14).
+#brave_ordering(b12@10, a10, a15).
+#brave_ordering(b13@10, a10, a16).

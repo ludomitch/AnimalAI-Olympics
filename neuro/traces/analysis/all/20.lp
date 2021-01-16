@@ -8,7 +8,7 @@
 #modeo(1, initiate(avoid), (positive)).
 #modeo(1, initiate(drop(var(side))), (positive) ).
 #modeo(1, on(agent, platform)).
-#modeo(1, on(goal, platform)).
+% #modeo(1, on(goal, platform)).
 #modeo(1, occludes(var(x))).
 #modeo(1, occludes_more(var(x),var(y))).
 #modeo(1, bigger(var(x),var(y))).

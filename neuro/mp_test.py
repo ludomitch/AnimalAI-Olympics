@@ -59,7 +59,9 @@ def run1(opt):
         "red_maze": "Avoid Red ",
         "ymaze3": "Y-Mazes",
         "ramp":"Ramp Usage",
-        "moving":"Object Permanence"
+        "moving":"Object Permanence",
+        "numerosity":"Numerosity",
+        "wall":"Basic Food and Obstacles "
     }
     arenas = arena_mapper[opt.arena]
     distribution = None

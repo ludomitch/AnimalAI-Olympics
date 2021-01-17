@@ -8,7 +8,7 @@
 #modeo(1, initiate(avoid), (positive)).
 #modeo(1, initiate(drop(var(side))), (positive) ).
 #modeo(1, on(agent, platform)).
-% #modeo(1, on(goal, platform)).
+#modeo(1, on(goal, platform)).
 #modeo(1, occludes(var(x))).
 #modeo(1, occludes_more(var(x),var(y))).
 #modeo(1, bigger(var(x),var(y))).
@@ -596,16 +596,7 @@ more_goals(b).
 on(agent,platform).
 platform.}).
 %%Value was:-2.344198453608248
-#pos(a69,
-{},
-{},
-{initiate(rotate).}).
-%%Value was:0.010354595161532685
-#pos(a70,
-{},
-{},
-{initiate(observe).}).
-%%Value was:-0.28650436850416605
+
 #brave_ordering(b0@10, a0, a1).
 #brave_ordering(b1@10, a2, a3).
 #brave_ordering(b2@10, a2, a4).
@@ -660,4 +651,3 @@ platform.}).
 #brave_ordering(b51@10, a63, a66).
 #brave_ordering(b52@10, a63, a67).
 #brave_ordering(b53@10, a63, a68).
-#brave_ordering(b54@10, a69, a70).

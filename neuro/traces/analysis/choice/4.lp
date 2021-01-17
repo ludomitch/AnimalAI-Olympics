@@ -8,7 +8,6 @@
 #modeo(1, initiate(avoid), (positive)).
 #modeo(1, initiate(drop(var(side))), (positive) ).
 #modeo(1, on(agent, platform)).
-#modeo(1, on(goal, platform)).
 #modeo(1, occludes(var(x))).
 #modeo(1, occludes_more(var(x),var(y))).
 #modeo(1, bigger(var(x),var(y))).
@@ -17,35 +16,10 @@
 
 #weight(-1).
 #maxv(2).
-%#maxp(12).
-#maxp(7).
+#maxp(5).
 #bias(":- #count { X: weak_body(initiate(X)) } != 1.").
 
 #pos(a0,
-{},
-{},
-{goal(a).
-initiate(interact(a)).}).
-%%Value was:25.406381697772428
-#pos(a1,
-{},
-{},
-{goal(a).
-initiate(explore(b)).}).
-%%Value was:-0.662251655629139
-#pos(a2,
-{},
-{},
-{goal(a).
-initiate(observe).}).
-%%Value was:-0.6622516556291391
-#pos(a3,
-{},
-{},
-{goal(a).
-initiate(rotate).}).
-%%Value was:-0.6622516556291391
-#pos(a4,
 {},
 {},
 {initiate(explore(a)).
@@ -54,8 +28,8 @@ occludes(a).
 occludes_more(a,b).
 on(agent,platform).
 platform.}).
-%%Value was:7.404201872573642
-#pos(a5,
+%%Value was:6.532432432432434
+#pos(a1,
 {},
 {},
 {initiate(explore(a)).
@@ -64,8 +38,18 @@ occludes(c).
 occludes_more(c,b).
 on(agent,platform).
 platform.}).
-%%Value was:0.8303899926416478
-#pos(a6,
+%%Value was:3.2027027027027035
+#pos(a2,
+{},
+{},
+{initiate(explore(a)).
+occludes(a).
+occludes(b).
+occludes_more(b,a).
+on(agent,platform).
+platform.}).
+%%Value was:-0.972972972972973
+#pos(a3,
 {},
 {},
 {initiate(observe).
@@ -74,28 +58,8 @@ occludes(b).
 occludes_more(b,a).
 on(agent,platform).
 platform.}).
-%%Value was:-0.6011207335710651
-#pos(a7,
-{},
-{},
-{initiate(explore(a)).
-occludes(a).
-occludes(b).
-occludes_more(b,a).
-on(agent,platform).
-platform.}).
-%%Value was:-0.6040537828617304
-#pos(a8,
-{},
-{},
-{initiate(balance).
-occludes(a).
-occludes(b).
-occludes_more(b,a).
-on(agent,platform).
-platform.}).
-%%Value was:-0.6067079683828246
-#pos(a9,
+%%Value was:-0.972972972972973
+#pos(a4,
 {},
 {},
 {initiate(rotate).
@@ -104,8 +68,18 @@ occludes(b).
 occludes_more(b,a).
 on(agent,platform).
 platform.}).
-%%Value was:-0.6138563423331639
-#pos(a10,
+%%Value was:-0.990990990990991
+#pos(a5,
+{},
+{},
+{initiate(balance).
+occludes(a).
+occludes(b).
+occludes_more(b,a).
+on(agent,platform).
+platform.}).
+%%Value was:-1.0038610038610039
+#pos(a6,
 {},
 {},
 {initiate(drop(a)).
@@ -114,13 +88,30 @@ occludes(c).
 occludes_more(c,b).
 on(agent,platform).
 platform.}).
-%%Value was:-0.6155044799376705
+%%Value was:-1.0270270270270272
+#pos(a7,
+{},
+{},
+{goal(a).
+initiate(interact(a)).}).
+%%Value was:21.18918918918919
+#pos(a8,
+{},
+{},
+{goal(a).
+initiate(observe).}).
+%%Value was:-1.0810810810810811
+#pos(a9,
+{},
+{},
+{goal(a).
+initiate(explore(b)).}).
+%%Value was:-1.0810810810810811
 #brave_ordering(b0@10, a0, a1).
 #brave_ordering(b1@10, a0, a2).
 #brave_ordering(b2@10, a0, a3).
-#brave_ordering(b3@10, a4, a5).
-#brave_ordering(b4@10, a4, a6).
-#brave_ordering(b5@10, a4, a7).
-#brave_ordering(b6@10, a4, a8).
-#brave_ordering(b7@10, a4, a9).
-#brave_ordering(b8@10, a4, a10).
+#brave_ordering(b3@10, a0, a4).
+#brave_ordering(b4@10, a0, a5).
+#brave_ordering(b5@10, a0, a6).
+#brave_ordering(b6@10, a7, a8).
+#brave_ordering(b7@10, a7, a9).

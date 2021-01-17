@@ -18,7 +18,7 @@
 #weight(-1).
 #maxv(2).
 %#maxp(12).
-#maxp(5).
+#maxp(7).
 #bias(":- #count { X: weak_body(initiate(X)) } != 1.").
 
 #pos(a0,

@@ -8,7 +8,7 @@ def run_ilasp(fpath):
     return output
 
 def run():
-    success_num = [5,10,15,20]
+    success_num = [1,2,3,4,5,10,15,20]
     arenas = ['wall', 'red_maze', 'ramp', 'ymaze3', 'numerosity', 'choice', 'moving']
     policies = {
     	a:{s:"" for s in success_num} for a in arenas
@@ -21,11 +21,11 @@ def run():
         	print(f"{arena}{s_n} done")
 
     print(policies)
-    with open("mp_analysis.txt", "w") as text_file:
+    with open("mp_analysis_individ.txt", "w") as text_file:
         text_file.write(str(policies))
 
 def run1():
-    success_num = [10,15,20]
+    success_num = [1,2,3,4,5,10,15,20]
     policies = {s:"" for s in success_num}
     for s_n in success_num:
     	res = run_ilasp(f"traces/analysis/all/{s_n}.lp")
@@ -34,7 +34,7 @@ def run1():
     	print(f"{s_n} done")
 
     print(policies)
-    with open("mp_analysis.txt", "w") as text_file:
+    with open("mp_analysis_all.txt", "w") as text_file:
         text_file.write(str(policies))
 
 

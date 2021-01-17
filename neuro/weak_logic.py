@@ -309,7 +309,7 @@ class Ilasp:
         for k,v in bias_observables.items():
             if k=='on':
                 res += f"#modeo(1, on(agent, platform)).\n"
-                res += f"#modeo(1, on(goal, platform)).\n"
+                # res += f"#modeo(1, on(goal, platform)).\n"
             elif k=='more_goals':
                 res += "#modeo(1, more_goals(var(side))).\n"
             elif v:
@@ -320,7 +320,7 @@ class Ilasp:
         res += f"""
 #weight(-1).
 #maxv(2).
-#maxp({len(macro_actions)+int(len(bias_observables)/2)}).
+#maxp({len(macro_actions)+int(len(bias_observables)/2-1)}).
 #bias(":- #count {{ X: weak_body(initiate(X)) }} != 1.").
 
 """
@@ -348,42 +348,46 @@ class Ilasp:
             actions += a
             states += s
             values += v
-        pairs = [variabilise(s+f"{a}.") for s,a in zip(states,actions)]
-        unique_pairs = list(set(pairs))
-        var_states = [variabilise(s) for s in states]
-        unique_states = list(set(var_states))
-        pairs = [[unique_pairs.index(p),unique_states.index(s)] for s,p in zip(var_states, pairs)]
-        tree = {s: {} for s in range(len(unique_states))}
-        for c, p in enumerate(pairs):
-            if p[0] in tree[p[1]]:
-                tree[p[1]][p[0]].append(c)
-            else:
-                tree[p[1]][p[0]] = [c]
+        # pairs = [variabilise(s+f"{a}.") for s,a in zip(states,actions)]
+        self.tree = values
 
-        examples = ""
-        order = ""
-        e_c = 0
-        o_c = 0
+        # unique_pairs = list(set(pairs))
+        # var_states = [variabilise(s) for s in states]
+        # unique_states = list(set(var_states))
+        # pairs = [[unique_pairs.index(p),unique_states.index(s)] for s,p in zip(var_states, pairs)]
+        # tree = {s: {} for s in range(len(unique_states))}
+        # for c, p in enumerate(pairs):
+        #     if p[0] in tree[p[1]]:
+        #         tree[p[1]][p[0]].append(c)
+        #     else:
+        #         tree[p[1]][p[0]] = [c]
+
+        # examples = ""
+        # order = ""
+        # e_c = 0
+        # o_c = 0
         # Rolling average for each action
-        for s,d in tree.items():
-            if len(d)==1:
-                continue
-            for a,v in d.items():
-                tree[s][a] = sum(values[i] for i in v)/len(v)
 
-            ranking = sorted(tree[s].items(), key=operator.itemgetter(1), reverse=True)
-            top_action = e_c
-            if ranking[0][1]<0: # Don't add examples or ordering when the best action didn't lead to positive episodes
-                continue
-            for c, i in enumerate(ranking):
-                action, val = i
-                examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[action]}}}).\n%%Value was:{val}\n"
-                if c!=0:
-                    order+= f"#brave_ordering(b{o_c}@10, a{top_action}, a{e_c}).\n"
-                    o_c +=1
-                e_c +=1
 
-        self.examples = examples + order
+        # for s,d in tree.items():
+        #     if len(d)==1:
+        #         continue
+        #     for a,v in d.items():
+        #         tree[s][a] = sum(values[i] for i in v)/len(v)
+
+        #     ranking = sorted(tree[s].items(), key=operator.itemgetter(1), reverse=True)
+        #     top_action = e_c
+        #     if ranking[0][1]<0: # Don't add examples or ordering when the best action didn't lead to positive episodes
+        #         continue
+        #     for c, i in enumerate(ranking):
+        #         action, val = i
+        #         examples += f"#pos(a{e_c},\n{{}},\n{{}},\n{{{unique_pairs[action]}}}).\n%%Value was:{val}\n"
+        #         if c!=0:
+        #             order+= f"#brave_ordering(b{o_c}@10, a{top_action}, a{e_c}).\n"
+        #             o_c +=1
+        #         e_c +=1
+
+        # self.examples = examples + order
 
 
     def run(self, fname = "tmp.lp"):        
